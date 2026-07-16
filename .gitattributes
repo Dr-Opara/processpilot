@@ -1,0 +1,23 @@
+# Normalize line endings for everyone regardless of OS/editor
+* text=auto eol=lf
+
+# Never let line endings mangle binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+
+# Lockfiles: keep diffs but let GitHub collapse them by default
+package-lock.json -diff linguist-generated=true
+pnpm-lock.yaml -diff linguist-generated=true
+yarn.lock -diff linguist-generated=true
+
+# Mark generated docs/reports so they don't skew GitHub's language stats
+docs/** linguist-documentation

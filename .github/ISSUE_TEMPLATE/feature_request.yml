@@ -1,0 +1,50 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for ProcessPilot
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement to ProcessPilot.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this feature solve? Who is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Related area
+      options:
+        - Cloud/dev infrastructure
+        - Frontend / UI
+        - Backend / API
+        - Database
+        - Auth
+        - Billing
+        - AI / automation
+        - Other
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+    validations:
+      required: false
