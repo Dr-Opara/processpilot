@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, IBM_Plex_Mono, Libre_Baskerville } from "next/font/google";
+import { getSiteUrl, SITE_NAME } from "@/lib/seo";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-geist-sans" });
 const mono = IBM_Plex_Mono({
@@ -15,8 +16,13 @@ const serif = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
-  title: "ProcessPilot",
-  description: "A calm operating system for repeatable business work.",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description:
+    "ProcessPilot converts policies, SOPs, and institutional knowledge into guided workflows, role-based training, approvals, evidence, and operational insight.",
 };
 
 export default function RootLayout({
