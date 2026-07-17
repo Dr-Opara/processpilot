@@ -20,10 +20,11 @@ pull request descriptions, screenshots, or logs. See
 
 ## Current variables
 
-| Variable              | Purpose                                   | Required in this phase?          |
-| --------------------- | ----------------------------------------- | -------------------------------- |
-| `NODE_ENV`            | Standard Node/Next.js environment flag    | Set automatically by the runtime |
-| `NEXT_PUBLIC_APP_URL` | Canonical app URL, exposed to the browser | Not yet consumed by code         |
+| Variable                           | Purpose                                                                       | Required in this phase?              |
+| ---------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------ |
+| `NODE_ENV`                         | Standard Node/Next.js environment flag                                        | Set automatically by the runtime     |
+| `NEXT_PUBLIC_APP_URL`              | Canonical app URL, exposed to the browser                                     | Not yet consumed by code             |
+| `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM` | Gates the internal `/design-system` component gallery route (404s when unset) | Set to `true` in Vercel Preview only |
 
 ## Planned variables (documented now, enforced as each phase lands)
 

@@ -16,11 +16,10 @@ This repository is production commercial software, not a prototype.
 
 ## Current phase
 
-**Phase 0: Product and engineering foundation** — establishing the
-product, architecture, security, and design documentation this project
-is built on, before any product feature is implemented. See
-[docs/project/phase-tracker.md](docs/project/phase-tracker.md) for the
-full, sequenced list of phases with entry/exit criteria.
+**Phase 1: Repository and design foundation** — turning the Phase 0
+design documentation into a working Tailwind theme and component
+primitive set. See [docs/project/phase-tracker.md](docs/project/phase-tracker.md)
+for the full, sequenced list of phases with entry/exit criteria.
 
 ## Cloud-first development
 

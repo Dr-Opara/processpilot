@@ -14,7 +14,7 @@ narrative grouping of these phases into horizons.
 | ----- | ------------------------------------------- | ----------- |
 | -1    | Cloud/CI foundation                         | Complete    |
 | 0     | Product and engineering foundation          | In Progress |
-| 1     | Repository and design foundation            | Not Started |
+| 1     | Repository and design foundation            | In Progress |
 | 2     | Marketing website                           | Not Started |
 | 3     | Authentication and organizations            | Not Started |
 | 4     | Database and tenant isolation               | Not Started |
@@ -91,16 +91,30 @@ narrative grouping of these phases into horizons.
   [design/colors.md](../../design/colors.md) and
   [design/typography.md](../../design/typography.md); base accessible
   component primitives per [design/components.md](../../design/components.md);
-  logo/icon assets in `design/logo/` and `design/icons/`.
+  logo/icon assets in `design/logo/` and `design/icons/`; an internal
+  `/design-system` gallery route (gated by
+  `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM`, see
+  [environment-variables.md](../development/environment-variables.md)); a
+  minimal marketing shell (header/footer, homepage) exercising the
+  primitives, brought forward to support Phase 2.
 - **Dependencies:** Phase 0.
 - **Entry criteria:** Design documentation complete and reviewed.
 - **Exit criteria:** A component gallery/preview route renders the base
   primitives correctly in light of accessibility requirements; visual
   review done via Vercel preview, not local screenshots.
-- **Status:** Not Started.
+- **Status:** In Progress — implementation complete, `npm run phase:commit`
+  green; visual review via Vercel preview still outstanding (Vercel
+  deployment is currently failing for platform-configuration reasons
+  unrelated to this phase's code — see Phase 0's notes). No approved logo
+  or icon asset exists yet, so the marketing shell uses a text-only
+  wordmark per [design/branding.md](../../design/branding.md) rather than
+  a fabricated mark.
 - **Risks:** Premature component abstraction before real product screens
-  exist to validate against — mitigate by keeping the primitive set
-  minimal until Phase 2 exercises it.
+  exist to validate against — mitigated by keeping the primitive set
+  minimal. Marketing shell/homepage were pulled forward into this phase
+  (rather than deferred entirely to Phase 2) because the two phases were
+  developed in parallel — Phase 2 builds the remaining marketing pages on
+  top of this shell.
 
 ## Phase 2: Marketing website
 

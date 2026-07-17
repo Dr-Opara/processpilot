@@ -3,8 +3,14 @@ import { render, screen } from "@testing-library/react";
 import Home from "./page";
 
 describe("Home", () => {
-  it("renders the ProcessPilot heading", () => {
+  it("renders the marketing header and hero heading", () => {
     render(<Home />);
-    expect(screen.getByRole("heading", { name: "ProcessPilot" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "ProcessPilot", level: 2 })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: /calm operations for teams/i,
+        level: 1,
+      }),
+    ).toBeInTheDocument();
   });
 });
