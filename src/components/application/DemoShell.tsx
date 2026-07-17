@@ -11,7 +11,7 @@ import {
   PanelRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Container, Stack } from "@/components/ui/Layout";
+import { Stack } from "@/components/ui/Layout";
 import { Heading, Text } from "@/components/ui/Typography";
 
 const navItems = [
@@ -42,18 +42,10 @@ export function DemoShell() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="quiet"
-            className="rounded-full p-2"
-            aria-label="Search"
-          >
+          <Button variant="quiet" className="rounded-full p-2" aria-label="Search">
             <Search size={16} />
           </Button>
-          <Button
-            variant="quiet"
-            className="rounded-full p-2"
-            aria-label="Notifications"
-          >
+          <Button variant="quiet" className="rounded-full p-2" aria-label="Notifications">
             <Bell size={16} />
           </Button>
         </div>

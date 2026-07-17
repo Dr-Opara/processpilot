@@ -19,11 +19,7 @@ export const metadata: Metadata = {
   description: "A calm operating system for repeatable business work.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

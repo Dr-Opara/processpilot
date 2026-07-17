@@ -9,8 +9,6 @@ describe("Design system route", () => {
     render(<DesignSystemPage />);
 
     expect(screen.getByText(/processpilot design system/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/internal demonstration content/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/internal demonstration content/i)).toBeInTheDocument();
   });
 });

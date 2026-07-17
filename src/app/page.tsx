@@ -16,16 +16,12 @@ export default function Home() {
           <Container className="grid gap-10 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <Stack className="max-w-2xl gap-6">
               <Badge>Phase 1 foundation</Badge>
-              <Heading
-                as="h1"
-                className="max-w-xl font-serif text-5xl leading-tight sm:text-6xl"
-              >
+              <Heading as="h1" className="max-w-xl font-serif text-5xl leading-tight sm:text-6xl">
                 Calm operations for teams that need to move without chaos.
               </Heading>
               <Text className="max-w-xl text-lg text-muted">
-                ProcessPilot gives operators a predictable canvas for
-                onboarding, approvals, and work rituals without the noise of
-                generic AI tools.
+                ProcessPilot gives operators a predictable canvas for onboarding, approvals, and
+                work rituals without the noise of generic AI tools.
               </Text>
               <div className="flex flex-wrap gap-3">
                 <Button>Request a demo</Button>

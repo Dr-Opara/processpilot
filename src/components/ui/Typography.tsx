@@ -10,26 +10,14 @@ export function Heading({
   children: React.ReactNode;
 }) {
   return (
-    <Component
-      className={clsx("font-semibold tracking-tight text-ink", className)}
-    >
+    <Component className={clsx("font-semibold tracking-tight text-ink", className)}>
       {children}
     </Component>
   );
 }
 
-export function Text({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <p className={clsx("text-base leading-7 text-ink", className)}>
-      {children}
-    </p>
-  );
+export function Text({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <p className={clsx("text-base leading-7 text-ink", className)}>{children}</p>;
 }
 
 export function Eyebrow({
@@ -40,12 +28,7 @@ export function Eyebrow({
   children: React.ReactNode;
 }) {
   return (
-    <p
-      className={clsx(
-        "text-xs font-semibold uppercase tracking-[0.3em] text-cobalt",
-        className,
-      )}
-    >
+    <p className={clsx("text-xs font-semibold uppercase tracking-[0.3em] text-cobalt", className)}>
       {children}
     </p>
   );
@@ -61,10 +44,7 @@ export function Label({
   children: React.ReactNode;
 }) {
   return (
-    <label
-      className={clsx("text-sm font-medium text-ink", className)}
-      htmlFor={htmlFor}
-    >
+    <label className={clsx("text-sm font-medium text-ink", className)} htmlFor={htmlFor}>
       {children}
     </label>
   );
@@ -77,9 +57,5 @@ export function CodeText({
   className?: string;
   children: React.ReactNode;
 }) {
-  return (
-    <code className={clsx("font-mono text-sm text-cobalt", className)}>
-      {children}
-    </code>
-  );
+  return <code className={clsx("font-mono text-sm text-cobalt", className)}>{children}</code>;
 }

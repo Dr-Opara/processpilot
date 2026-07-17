@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { ProcessPilotIcon } from "./ProcessPilotIcon";
 import { Button } from "@/components/ui/Button";
 import { Container, Stack } from "@/components/ui/Layout";
 import { Heading } from "@/components/ui/Typography";
@@ -15,19 +15,14 @@ export function MarketingHeader() {
   return (
     <header className="border-b border-border/70 bg-surface/90 backdrop-blur">
       <Container className="flex items-center justify-between py-4">
-        <a href="/" className="flex items-center gap-3">
-          <ProcessPilotIcon className="h-10 w-10" />
+        <Link href="/" className="flex items-center gap-3">
           <Heading as="h2" className="text-lg">
             ProcessPilot
           </Heading>
-        </a>
+        </Link>
         <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
           {links.map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="text-sm font-medium text-muted hover:text-ink"
-            >
+            <a key={link} href="#" className="text-sm font-medium text-muted hover:text-ink">
               {link}
             </a>
           ))}

@@ -9,12 +9,7 @@ export function Container({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={clsx(
-        "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8",
-        className,
-      )}
-    >
+    <div className={clsx("mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8", className)}>
       {children}
     </div>
   );
@@ -30,13 +25,7 @@ export function Section({
   return <section className={className}>{children}</section>;
 }
 
-export function Stack({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
+export function Stack({ className, children }: { className?: string; children: React.ReactNode }) {
   return <div className={clsx("flex flex-col", className)}>{children}</div>;
 }
 
@@ -47,11 +36,7 @@ export function Cluster({
   className?: string;
   children: React.ReactNode;
 }) {
-  return (
-    <div className={clsx("flex flex-wrap items-center gap-3", className)}>
-      {children}
-    </div>
-  );
+  return <div className={clsx("flex flex-wrap items-center gap-3", className)}>{children}</div>;
 }
 
 export function ResponsiveGrid({
@@ -62,11 +47,7 @@ export function ResponsiveGrid({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={clsx("grid gap-6 md:grid-cols-2 xl:grid-cols-3", className)}
-    >
-      {children}
-    </div>
+    <div className={clsx("grid gap-6 md:grid-cols-2 xl:grid-cols-3", className)}>{children}</div>
   );
 }
 

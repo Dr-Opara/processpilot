@@ -8,9 +8,7 @@ export function ProductPreviewFrame() {
         <div className="flex items-center justify-between border-b border-border pb-4">
           <div>
             <p className="text-sm font-semibold text-ink">Operations board</p>
-            <p className="text-sm text-muted">
-              Shared context for repeatable work
-            </p>
+            <p className="text-sm text-muted">Shared context for repeatable work</p>
           </div>
           <div className="rounded-full bg-signal/10 px-3 py-1 text-sm font-medium text-signal">
             Live

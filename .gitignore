@@ -1,33 +1,61 @@
-# dependencies
-node_modules
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 
-# next.js
-/.next/
-/out/
+# Next.js
+.next/
+out/
+build/
+dist/
 
-# production
-/build
+# Testing
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
 
-# testing
-/test-results/
-/playwright-report/
-/coverage
+# Environment variables (never commit real secrets)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+!.env.example
 
-# typescript
+# Vercel
+.vercel/
+
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# env
-.env*.local
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
 
-# local claude settings
+# Claude Code local state
 .claude/settings.local.json
+
+# Misc
+*.pem
+*.local
