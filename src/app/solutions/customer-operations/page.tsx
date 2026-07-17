@@ -5,9 +5,7 @@ import { SolutionPageTemplate } from "@/components/marketing/templates/SolutionP
 import { customerOperationsSolutionContent } from "@/content/solutions/customer-operations";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata(
-  customerOperationsSolutionContent.seo,
-);
+export const metadata: Metadata = buildMetadata(customerOperationsSolutionContent.seo);
 
 export default function CustomerOperationsSolutionPage() {
   return (

@@ -8,8 +8,7 @@ export const logisticsContent: IndustryPageContent = {
     path: "/industries/logistics",
   },
   eyebrow: "Logistics",
-  headline:
-    "Dispatch and safety procedures that run the same way at every facility",
+  headline: "Dispatch and safety procedures that run the same way at every facility",
   intro:
     "Logistics operations depend on dispatch, receiving, and safety procedures being followed exactly, every shift, at every facility — not just when a supervisor is watching.",
   accent: "warning",
@@ -35,8 +34,7 @@ export const logisticsContent: IndustryPageContent = {
   workflows: [
     {
       title: "Dispatch procedures",
-      description:
-        "A consistent dispatch workflow with handoff notes carried to the next shift.",
+      description: "A consistent dispatch workflow with handoff notes carried to the next shift.",
     },
     {
       title: "Receiving and inspection",
@@ -45,8 +43,7 @@ export const logisticsContent: IndustryPageContent = {
     },
     {
       title: "Safety checklists",
-      description:
-        "Required safety steps tracked as tasks, not a paper form that can be skipped.",
+      description: "Required safety steps tracked as tasks, not a paper form that can be skipped.",
     },
   ],
   whoUses: [
@@ -84,13 +81,11 @@ export const logisticsContent: IndustryPageContent = {
   templates: [
     {
       name: "Shift handoff checklist",
-      description:
-        "A structured handoff workflow carrying notes to the next shift.",
+      description: "A structured handoff workflow carrying notes to the next shift.",
     },
     {
       name: "Receiving discrepancy report",
-      description:
-        "An evidence-capture workflow triggered at the point a discrepancy is found.",
+      description: "An evidence-capture workflow triggered at the point a discrepancy is found.",
     },
   ],
   related: [
@@ -112,8 +107,7 @@ export const logisticsContent: IndustryPageContent = {
   ],
   cta: {
     title: "Make your safety checklist a tracked workflow",
-    description:
-      "See how a shift handoff and safety checklist run the same way at every facility.",
+    description: "See how a shift handoff and safety checklist run the same way at every facility.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

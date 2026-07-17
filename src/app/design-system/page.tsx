@@ -1,13 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Container, Section, Stack } from "@/components/ui/Layout";
-import {
-  Heading,
-  Text,
-  Eyebrow,
-  Label,
-  CodeText,
-} from "@/components/ui/Typography";
+import { Heading, Text, Eyebrow, Label, CodeText } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
@@ -30,8 +24,8 @@ export default function DesignSystemPage() {
             <Eyebrow>Internal demonstration content</Eyebrow>
             <Heading as="h1">ProcessPilot design system</Heading>
             <Text className="max-w-3xl text-lg text-muted">
-              This route is intentionally internal and only available when the
-              design-system flag is enabled.
+              This route is intentionally internal and only available when the design-system flag is
+              enabled.
             </Text>
           </Stack>
         </Container>
@@ -44,10 +38,13 @@ export default function DesignSystemPage() {
               <Heading as="h2">Brand assets</Heading>
               <div className="flex flex-wrap gap-3">
                 <Badge>ProcessPilot</Badge>
-                <StatusBadge status="success">Approved</StatusBadge>
-                <StatusBadge status="warning">Preview only</StatusBadge>
+                <StatusBadge status="warning">No approved logo yet</StatusBadge>
               </div>
-              <CodeText>src/components/marketing/ProcessPilotIcon.tsx</CodeText>
+              <Text className="text-sm text-muted">
+                No approved logo or icon has been supplied — the wordmark is text-only until{" "}
+                <CodeText>design/logo/</CodeText> is populated. See{" "}
+                <CodeText>design/branding.md</CodeText>.
+              </Text>
             </Stack>
           </Section>
 

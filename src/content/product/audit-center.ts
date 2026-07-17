@@ -45,36 +45,30 @@ export const auditCenterContent: ProductPageContent = {
       },
       {
         title: "Filter by process and location",
-        description:
-          "The audit center is filtered to onboarding workflows in Austin.",
+        description: "The audit center is filtered to onboarding workflows in Austin.",
       },
       {
         title: "Confirm evidence completeness",
-        description:
-          "All 8 required evidence items are present for each completed case.",
+        description: "All 8 required evidence items are present for each completed case.",
       },
       {
         title: "Export the record",
-        description:
-          "A complete evidence bundle is exported for the audit response.",
+        description: "A complete evidence bundle is exported for the audit response.",
       },
     ],
   },
   roles: [
     {
       role: "Compliance",
-      description:
-        "Retrieves and exports evidence without chasing down individual approvers.",
+      description: "Retrieves and exports evidence without chasing down individual approvers.",
     },
     {
       role: "Process owner",
-      description:
-        "Confirms required evidence steps are actually being completed.",
+      description: "Confirms required evidence steps are actually being completed.",
     },
     {
       role: "Auditor",
-      description:
-        "Reviews approval history and evidence for a specific process or period.",
+      description: "Reviews approval history and evidence for a specific process or period.",
     },
   ],
   uiDemo: {
@@ -108,8 +102,7 @@ export const auditCenterContent: ProductPageContent = {
   ],
   cta: {
     title: "Stop assembling evidence under deadline pressure",
-    description:
-      "See how approvals and evidence stay organized as workflows run, not after.",
+    description: "See how approvals and evidence stay organized as workflows run, not after.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

@@ -44,36 +44,30 @@ export const analyticsContent: ProductPageContent = {
       },
       {
         title: "Compare completion rates",
-        description:
-          "Houston and Austin complete on time more often than Dallas.",
+        description: "Houston and Austin complete on time more often than Dallas.",
       },
       {
         title: "Identify the stalled task",
-        description:
-          "Dallas onboarding stalls most often at the equipment-provisioning task.",
+        description: "Dallas onboarding stalls most often at the equipment-provisioning task.",
       },
       {
         title: "Route the finding to the process owner",
-        description:
-          "The finding is flagged for a workflow revision in process builder.",
+        description: "The finding is flagged for a workflow revision in process builder.",
       },
     ],
   },
   roles: [
     {
       role: "Process owner",
-      description:
-        "Uses workflow data to decide what to change in the next published version.",
+      description: "Uses workflow data to decide what to change in the next published version.",
     },
     {
       role: "Manager",
-      description:
-        "Compares team performance against other locations or departments.",
+      description: "Compares team performance against other locations or departments.",
     },
     {
       role: "Executive",
-      description:
-        "Sees completion rates and exception volume across the whole company.",
+      description: "Sees completion rates and exception volume across the whole company.",
     },
   ],
   uiDemo: {
@@ -102,14 +96,12 @@ export const analyticsContent: ProductPageContent = {
     {
       label: "Multi-location solution",
       href: "/solutions/multi-location",
-      description:
-        "How comparative analytics support a multi-location operating model.",
+      description: "How comparative analytics support a multi-location operating model.",
     },
   ],
   cta: {
     title: "Find the bottleneck before it becomes a pattern",
-    description:
-      "See workflow performance data across your locations and departments.",
+    description: "See workflow performance data across your locations and departments.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

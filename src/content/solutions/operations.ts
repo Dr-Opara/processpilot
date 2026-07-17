@@ -65,13 +65,11 @@ export const operationsSolutionContent: SolutionPageContent = {
       },
       {
         title: "Track exceptions",
-        description:
-          "Vendor-unavailable cases are routed and tracked as exceptions.",
+        description: "Vendor-unavailable cases are routed and tracked as exceptions.",
       },
       {
         title: "Compare performance",
-        description:
-          "Analytics show which location resolves requests fastest, and why.",
+        description: "Analytics show which location resolves requests fastest, and why.",
       },
     ],
   },

@@ -17,30 +17,16 @@ describe("StartTrialForm", () => {
 
     await user.type(screen.getByLabelText(/first name/i), "Ada");
     await user.type(screen.getByLabelText(/last name/i), "Lovelace");
-    await user.type(
-      screen.getByLabelText(/work email/i),
-      "ada@northstar.example",
-    );
-    await user.type(
-      screen.getByLabelText(/company name/i),
-      "Northstar Property Group",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/employee count/i),
-      "51-200",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/industry/i),
-      "Property management",
-    );
+    await user.type(screen.getByLabelText(/work email/i), "ada@northstar.example");
+    await user.type(screen.getByLabelText(/company name/i), "Northstar Property Group");
+    await user.selectOptions(screen.getByLabelText(/employee count/i), "51-200");
+    await user.selectOptions(screen.getByLabelText(/industry/i), "Property management");
     await user.type(screen.getByLabelText(/password/i), "weak");
     await user.click(screen.getByLabelText(/i agree to the/i));
 
     await user.click(screen.getByRole("button", { name: /start free trial/i }));
 
-    expect(
-      await screen.findByText(/password must be at least 8 characters/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/password must be at least 8 characters/i)).toBeInTheDocument();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -53,29 +39,15 @@ describe("StartTrialForm", () => {
 
     await user.type(screen.getByLabelText(/first name/i), "Ada");
     await user.type(screen.getByLabelText(/last name/i), "Lovelace");
-    await user.type(
-      screen.getByLabelText(/work email/i),
-      "ada@northstar.example",
-    );
-    await user.type(
-      screen.getByLabelText(/company name/i),
-      "Northstar Property Group",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/employee count/i),
-      "51-200",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/industry/i),
-      "Property management",
-    );
+    await user.type(screen.getByLabelText(/work email/i), "ada@northstar.example");
+    await user.type(screen.getByLabelText(/company name/i), "Northstar Property Group");
+    await user.selectOptions(screen.getByLabelText(/employee count/i), "51-200");
+    await user.selectOptions(screen.getByLabelText(/industry/i), "Property management");
     await user.type(screen.getByLabelText(/password/i), "Str0ngPass");
 
     await user.click(screen.getByRole("button", { name: /start free trial/i }));
 
-    expect(
-      await screen.findByText(/you must agree to the terms/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/you must agree to the terms/i)).toBeInTheDocument();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -84,8 +56,7 @@ describe("StartTrialForm", () => {
       json: async () => ({
         ok: true,
         devMode: true,
-        message:
-          "Development mode: this signup was validated but no account was created.",
+        message: "Development mode: this signup was validated but no account was created.",
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -95,22 +66,10 @@ describe("StartTrialForm", () => {
 
     await user.type(screen.getByLabelText(/first name/i), "Ada");
     await user.type(screen.getByLabelText(/last name/i), "Lovelace");
-    await user.type(
-      screen.getByLabelText(/work email/i),
-      "ada@northstar.example",
-    );
-    await user.type(
-      screen.getByLabelText(/company name/i),
-      "Northstar Property Group",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/employee count/i),
-      "51-200",
-    );
-    await user.selectOptions(
-      screen.getByLabelText(/industry/i),
-      "Property management",
-    );
+    await user.type(screen.getByLabelText(/work email/i), "ada@northstar.example");
+    await user.type(screen.getByLabelText(/company name/i), "Northstar Property Group");
+    await user.selectOptions(screen.getByLabelText(/employee count/i), "51-200");
+    await user.selectOptions(screen.getByLabelText(/industry/i), "Property management");
     await user.type(screen.getByLabelText(/password/i), "Str0ngPass");
     await user.click(screen.getByLabelText(/i agree to the/i));
 

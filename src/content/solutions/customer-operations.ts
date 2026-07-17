@@ -57,18 +57,15 @@ export const customerOperationsSolutionContent: SolutionPageContent = {
     steps: [
       {
         title: "Request submitted",
-        description:
-          "A tenant submits a maintenance request through the standard intake form.",
+        description: "A tenant submits a maintenance request through the standard intake form.",
       },
       {
         title: "Standard path attempted",
-        description:
-          "The assigned vendor doesn't respond within the defined window.",
+        description: "The assigned vendor doesn't respond within the defined window.",
       },
       {
         title: "Escalation triggered",
-        description:
-          "The request routes automatically to a regional operations manager.",
+        description: "The request routes automatically to a regional operations manager.",
       },
       {
         title: "Resolution recorded",

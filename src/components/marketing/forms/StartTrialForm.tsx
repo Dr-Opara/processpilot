@@ -61,10 +61,7 @@ export function StartTrialForm() {
             aria-describedby={errors.firstName ? "firstName-error" : undefined}
             {...register("firstName", { required: "First name is required" })}
           />
-          <FieldError
-            id="firstName-error"
-            message={errors.firstName?.message}
-          />
+          <FieldError id="firstName-error" message={errors.firstName?.message} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="lastName">Last name</Label>
@@ -95,15 +92,10 @@ export function StartTrialForm() {
         <Input
           id="companyName"
           aria-invalid={!!errors.companyName}
-          aria-describedby={
-            errors.companyName ? "companyName-error" : undefined
-          }
+          aria-describedby={errors.companyName ? "companyName-error" : undefined}
           {...register("companyName", { required: "Company name is required" })}
         />
-        <FieldError
-          id="companyName-error"
-          message={errors.companyName?.message}
-        />
+        <FieldError id="companyName-error" message={errors.companyName?.message} />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -113,9 +105,7 @@ export function StartTrialForm() {
             id="employeeCount"
             defaultValue=""
             aria-invalid={!!errors.employeeCount}
-            aria-describedby={
-              errors.employeeCount ? "employeeCount-error" : undefined
-            }
+            aria-describedby={errors.employeeCount ? "employeeCount-error" : undefined}
             {...register("employeeCount", {
               required: "Select an employee count range",
             })}
@@ -129,10 +119,7 @@ export function StartTrialForm() {
               </option>
             ))}
           </Select>
-          <FieldError
-            id="employeeCount-error"
-            message={errors.employeeCount?.message}
-          />
+          <FieldError id="employeeCount-error" message={errors.employeeCount?.message} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">Industry</Label>
@@ -162,9 +149,7 @@ export function StartTrialForm() {
           id="password"
           type="password"
           aria-invalid={!!errors.password}
-          aria-describedby={
-            errors.password ? "password-error" : "password-hint"
-          }
+          aria-describedby={errors.password ? "password-error" : "password-hint"}
           {...register("password", { required: "Password is required" })}
         />
         {!errors.password ? (
@@ -176,16 +161,11 @@ export function StartTrialForm() {
       </div>
 
       <div className="space-y-2">
-        <label
-          className="flex items-start gap-2 text-sm text-muted"
-          htmlFor="agreeToTerms"
-        >
+        <label className="flex items-start gap-2 text-sm text-muted" htmlFor="agreeToTerms">
           <Checkbox
             id="agreeToTerms"
             aria-invalid={!!errors.agreeToTerms}
-            aria-describedby={
-              errors.agreeToTerms ? "agreeToTerms-error" : undefined
-            }
+            aria-describedby={errors.agreeToTerms ? "agreeToTerms-error" : undefined}
             {...register("agreeToTerms", {
               required: "You must agree to the terms to continue",
             })}
@@ -202,10 +182,7 @@ export function StartTrialForm() {
             .
           </span>
         </label>
-        <FieldError
-          id="agreeToTerms-error"
-          message={errors.agreeToTerms?.message}
-        />
+        <FieldError id="agreeToTerms-error" message={errors.agreeToTerms?.message} />
       </div>
 
       <Stack className="gap-4">

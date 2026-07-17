@@ -28,20 +28,15 @@ export function AICapabilities() {
           <Stack className="max-w-2xl gap-3">
             <Heading as="h2">Where AI assists, and where people decide</Heading>
             <Text className="text-muted">
-              ProcessPilot uses AI to speed up drafting and pattern recognition.
-              A person always reviews and approves what gets published or acted
-              on.
+              ProcessPilot uses AI to speed up drafting and pattern recognition. A person always
+              reviews and approves what gets published or acted on.
             </Text>
           </Stack>
           <div className="grid gap-6 md:grid-cols-3">
             {capabilities.map((capability) => (
               <Stack key={capability.title} className="gap-2">
-                <Text className="font-semibold text-ink">
-                  {capability.title}
-                </Text>
-                <Text className="text-sm text-muted">
-                  {capability.description}
-                </Text>
+                <Text className="font-semibold text-ink">{capability.title}</Text>
+                <Text className="text-sm text-muted">{capability.description}</Text>
               </Stack>
             ))}
           </div>

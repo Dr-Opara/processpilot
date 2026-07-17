@@ -2,8 +2,7 @@ import type { IndustryPageContent } from "@/content/types";
 
 export const professionalServicesContent: IndustryPageContent = {
   seo: {
-    title:
-      "Professional services — delivery playbooks that hold up under growth",
+    title: "Professional services — delivery playbooks that hold up under growth",
     description:
       "Standardize client onboarding and delivery playbooks so quality doesn't depend on which team member is staffed on the engagement.",
     path: "/industries/professional-services",
@@ -35,25 +34,21 @@ export const professionalServicesContent: IndustryPageContent = {
   workflows: [
     {
       title: "Client onboarding",
-      description:
-        "A standard kickoff workflow from signed contract to first working session.",
+      description: "A standard kickoff workflow from signed contract to first working session.",
     },
     {
       title: "Engagement delivery playbooks",
-      description:
-        "Repeatable phase-by-phase workflows for common engagement types.",
+      description: "Repeatable phase-by-phase workflows for common engagement types.",
     },
     {
       title: "Quality review checkpoints",
-      description:
-        "Built-in review and approval steps before a deliverable reaches the client.",
+      description: "Built-in review and approval steps before a deliverable reaches the client.",
     },
   ],
   whoUses: [
     {
       role: "Engagement lead",
-      description:
-        "Runs client delivery against a standard, repeatable playbook.",
+      description: "Runs client delivery against a standard, repeatable playbook.",
     },
     {
       role: "Consultant",
@@ -61,20 +56,17 @@ export const professionalServicesContent: IndustryPageContent = {
     },
     {
       role: "Practice lead",
-      description:
-        "Reviews delivery consistency and quality-check completion across engagements.",
+      description: "Reviews delivery consistency and quality-check completion across engagements.",
     },
   ],
   lifecycle: [
     {
       title: "Import",
-      description:
-        "An existing delivery methodology is imported as a starting draft.",
+      description: "An existing delivery methodology is imported as a starting draft.",
     },
     {
       title: "Publish",
-      description:
-        "A practice lead reviews and publishes the standard playbook.",
+      description: "A practice lead reviews and publishes the standard playbook.",
     },
     {
       title: "Run",
@@ -82,20 +74,17 @@ export const professionalServicesContent: IndustryPageContent = {
     },
     {
       title: "Review",
-      description:
-        "Delivery data informs updates to the next playbook version.",
+      description: "Delivery data informs updates to the next playbook version.",
     },
   ],
   templates: [
     {
       name: "Client onboarding kickoff",
-      description:
-        "A standard workflow from signed contract to first working session.",
+      description: "A standard workflow from signed contract to first working session.",
     },
     {
       name: "Engagement quality checkpoint",
-      description:
-        "A review-and-approval step inserted before client-facing deliverables ship.",
+      description: "A review-and-approval step inserted before client-facing deliverables ship.",
     },
   ],
   related: [
@@ -117,8 +106,7 @@ export const professionalServicesContent: IndustryPageContent = {
   ],
   cta: {
     title: "Turn your best engagement lead's approach into the standard",
-    description:
-      "See how a delivery playbook keeps quality consistent as your team grows.",
+    description: "See how a delivery playbook keeps quality consistent as your team grows.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

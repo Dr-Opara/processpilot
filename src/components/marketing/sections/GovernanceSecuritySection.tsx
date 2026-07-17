@@ -12,14 +12,12 @@ const controls = [
   {
     icon: Lock,
     title: "Tenant isolation",
-    description:
-      "Each customer's workflows, files, and data are kept separate.",
+    description: "Each customer's workflows, files, and data are kept separate.",
   },
   {
     icon: FileClock,
     title: "Audit logging",
-    description:
-      "Approvals, edits, and publishes are recorded with a timestamp.",
+    description: "Approvals, edits, and publishes are recorded with a timestamp.",
   },
   {
     icon: ShieldCheck,
@@ -36,8 +34,8 @@ export function GovernanceSecuritySection() {
           <Stack className="max-w-2xl gap-3">
             <Heading as="h2">Built with governance in mind</Heading>
             <Text className="text-muted">
-              Operational data — approvals, evidence, and process history —
-              deserves the same care as any other system of record.
+              Operational data — approvals, evidence, and process history — deserves the same care
+              as any other system of record.
             </Text>
           </Stack>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

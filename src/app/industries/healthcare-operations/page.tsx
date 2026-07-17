@@ -5,9 +5,7 @@ import { IndustryPageTemplate } from "@/components/marketing/templates/IndustryP
 import { healthcareOperationsContent } from "@/content/industries/healthcare-operations";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata(
-  healthcareOperationsContent.seo,
-);
+export const metadata: Metadata = buildMetadata(healthcareOperationsContent.seo);
 
 export default function HealthcareOperationsPage() {
   return (

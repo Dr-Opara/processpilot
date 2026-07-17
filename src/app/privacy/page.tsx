@@ -6,8 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Privacy Policy",
-  description:
-    "How ProcessPilot handles information submitted through this website.",
+  description: "How ProcessPilot handles information submitted through this website.",
   path: "/privacy",
 });
 
@@ -33,9 +32,7 @@ const sections = [
   },
   {
     heading: "Contact",
-    body: [
-      "Questions about this policy can be sent to privacy@processpilot.com.",
-    ],
+    body: ["Questions about this policy can be sent to privacy@processpilot.com."],
   },
 ];
 

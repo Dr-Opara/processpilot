@@ -33,13 +33,11 @@ export const complianceSolutionContent: SolutionPageContent = {
   capabilities: [
     {
       title: "Controlled documents",
-      description:
-        "Every policy has one owner, one current version, and a visible change history.",
+      description: "Every policy has one owner, one current version, and a visible change history.",
     },
     {
       title: "Evidence",
-      description:
-        "Approvals, uploads, and confirmations captured automatically as workflows run.",
+      description: "Approvals, uploads, and confirmations captured automatically as workflows run.",
     },
     {
       title: "Approvals",
@@ -57,8 +55,7 @@ export const complianceSolutionContent: SolutionPageContent = {
     steps: [
       {
         title: "Scope the request",
-        description:
-          "Compliance is asked for evidence on onboarding across all three locations.",
+        description: "Compliance is asked for evidence on onboarding across all three locations.",
       },
       {
         title: "Filter the audit center",
@@ -66,13 +63,11 @@ export const complianceSolutionContent: SolutionPageContent = {
       },
       {
         title: "Verify evidence completeness",
-        description:
-          "Each case shows whether all required evidence items are present.",
+        description: "Each case shows whether all required evidence items are present.",
       },
       {
         title: "Export the response",
-        description:
-          "A complete evidence bundle is exported with a generation record.",
+        description: "A complete evidence bundle is exported with a generation record.",
       },
     ],
   },

@@ -35,10 +35,7 @@ export default function SecurityPage() {
         />
 
         <Container className="pb-4">
-          <Alert
-            title="No certifications claimed"
-            description={certificationDisclaimer}
-          />
+          <Alert title="No certifications claimed" description={certificationDisclaimer} />
         </Container>
 
         <Section className="py-14 sm:py-16">
@@ -52,16 +49,10 @@ export default function SecurityPage() {
                     className="gap-2 rounded-2xl border border-border bg-surface p-5"
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <Text className="font-semibold text-ink">
-                        {control.title}
-                      </Text>
-                      <StatusBadge status="warning">
-                        {control.status}
-                      </StatusBadge>
+                      <Text className="font-semibold text-ink">{control.title}</Text>
+                      <StatusBadge status="warning">{control.status}</StatusBadge>
                     </div>
-                    <Text className="text-sm text-muted">
-                      {control.description}
-                    </Text>
+                    <Text className="text-sm text-muted">{control.description}</Text>
                   </Stack>
                 ))}
               </div>
@@ -74,8 +65,8 @@ export default function SecurityPage() {
             <Stack className="max-w-2xl gap-4">
               <Heading as="h2">Report a security concern</Heading>
               <Text className="text-muted">
-                If you believe you&apos;ve found a security issue, contact us
-                directly rather than filing a public report.
+                If you believe you&apos;ve found a security issue, contact us directly rather than
+                filing a public report.
               </Text>
               <a
                 href={`mailto:${securityContactEmail}`}

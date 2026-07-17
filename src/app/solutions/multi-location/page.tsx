@@ -5,9 +5,7 @@ import { SolutionPageTemplate } from "@/components/marketing/templates/SolutionP
 import { multiLocationSolutionContent } from "@/content/solutions/multi-location";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata(
-  multiLocationSolutionContent.seo,
-);
+export const metadata: Metadata = buildMetadata(multiLocationSolutionContent.seo);
 
 export default function MultiLocationSolutionPage() {
   return (

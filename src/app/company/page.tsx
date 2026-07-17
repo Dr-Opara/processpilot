@@ -51,12 +51,8 @@ export default function CompanyPage() {
               <div className="grid gap-6 border-t border-border/70 pt-6 md:grid-cols-3">
                 {values.map((value) => (
                   <Stack key={value.title} className="gap-2">
-                    <Text className="font-semibold text-ink">
-                      {value.title}
-                    </Text>
-                    <Text className="text-sm text-muted">
-                      {value.description}
-                    </Text>
+                    <Text className="font-semibold text-ink">{value.title}</Text>
+                    <Text className="text-sm text-muted">{value.description}</Text>
                   </Stack>
                 ))}
               </div>
@@ -69,14 +65,13 @@ export default function CompanyPage() {
             <Stack className="max-w-2xl gap-4">
               <Heading as="h2">Where we are today</Heading>
               <Text className="text-muted">
-                ProcessPilot is in early development. We&apos;re building the
-                platform in the open with the operators, HR leaders, compliance
-                teams, and multi-location operators who feel this problem most
-                directly.
+                ProcessPilot is in early development. We&apos;re building the platform in the open
+                with the operators, HR leaders, compliance teams, and multi-location operators who
+                feel this problem most directly.
               </Text>
               <Text className="text-muted">
-                If that sounds like your team, we&apos;d like to hear what your
-                highest-friction process is.
+                If that sounds like your team, we&apos;d like to hear what your highest-friction
+                process is.
               </Text>
             </Stack>
           </Container>

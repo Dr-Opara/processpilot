@@ -13,8 +13,8 @@ export function PricingPreview() {
             <Stack className="max-w-xl gap-3">
               <Heading as="h2">Plans for one team or every location</Heading>
               <Text className="text-muted">
-                Three plan concepts, scaled to how many locations and
-                departments you&apos;re standardizing.
+                Three plan concepts, scaled to how many locations and departments you&apos;re
+                standardizing.
               </Text>
             </Stack>
             <Button href="/pricing" variant="quiet">
@@ -37,10 +37,7 @@ export function PricingPreview() {
                 </Stack>
                 <ul className="space-y-2">
                   {plan.features.slice(0, 3).map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-start gap-2 text-sm text-muted"
-                    >
+                    <li key={feature} className="flex items-start gap-2 text-sm text-muted">
                       <Check
                         size={16}
                         className="mt-0.5 shrink-0 text-success"

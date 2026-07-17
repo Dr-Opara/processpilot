@@ -26,13 +26,12 @@ export default function RequestDemoPage() {
                 See ProcessPilot with your own process
               </Heading>
               <Text className="text-muted">
-                Tell us a bit about your team. We&apos;ll follow up to schedule
-                a walkthrough tailored to the process you want to standardize
-                first.
+                Tell us a bit about your team. We&apos;ll follow up to schedule a walkthrough
+                tailored to the process you want to standardize first.
               </Text>
               <Text className="text-sm text-muted">
-                This form runs in development mode: submissions are validated
-                but not stored, and no email is sent yet.
+                This form runs in development mode: submissions are validated but not stored, and no
+                email is sent yet.
               </Text>
             </Stack>
             <div className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-soft sm:p-8">

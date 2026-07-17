@@ -39,22 +39,12 @@ export default function ResourcesPage() {
                     className="gap-2 rounded-2xl border border-border bg-surface p-5"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <Text className="font-semibold text-ink">
-                        {category.title}
-                      </Text>
-                      <StatusBadge
-                        status={
-                          category.status === "Available"
-                            ? "success"
-                            : "neutral"
-                        }
-                      >
+                      <Text className="font-semibold text-ink">{category.title}</Text>
+                      <StatusBadge status={category.status === "Available" ? "success" : "neutral"}>
                         {category.status}
                       </StatusBadge>
                     </div>
-                    <Text className="text-sm text-muted">
-                      {category.description}
-                    </Text>
+                    <Text className="text-sm text-muted">{category.description}</Text>
                   </Stack>
                 ))}
               </div>
@@ -69,9 +59,7 @@ export default function ResourcesPage() {
               <dl className="grid gap-6 border-t border-border/70 pt-6 sm:grid-cols-2">
                 {glossary.map((entry) => (
                   <div key={entry.term} className="flex flex-col gap-1">
-                    <dt className="text-sm font-semibold text-ink">
-                      {entry.term}
-                    </dt>
+                    <dt className="text-sm font-semibold text-ink">{entry.term}</dt>
                     <dd className="text-sm text-muted">{entry.definition}</dd>
                   </div>
                 ))}

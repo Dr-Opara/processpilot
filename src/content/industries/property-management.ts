@@ -34,13 +34,11 @@ export const propertyManagementContent: IndustryPageContent = {
   workflows: [
     {
       title: "Move-in and move-out",
-      description:
-        "A consistent checklist from lease signing through key handoff and inspection.",
+      description: "A consistent checklist from lease signing through key handoff and inspection.",
     },
     {
       title: "Maintenance requests",
-      description:
-        "Intake, vendor assignment, escalation, and completion in one tracked workflow.",
+      description: "Intake, vendor assignment, escalation, and completion in one tracked workflow.",
     },
     {
       title: "Unit inspections",
@@ -59,8 +57,7 @@ export const propertyManagementContent: IndustryPageContent = {
     },
     {
       role: "Regional operations lead",
-      description:
-        "Compares performance and standardizes process across properties.",
+      description: "Compares performance and standardizes process across properties.",
     },
   ],
   lifecycle: [
@@ -70,30 +67,25 @@ export const propertyManagementContent: IndustryPageContent = {
     },
     {
       title: "Publish",
-      description:
-        "A regional lead reviews and publishes the standard workflow.",
+      description: "A regional lead reviews and publishes the standard workflow.",
     },
     {
       title: "Run",
-      description:
-        "Property teams execute the workflow for each unit or request.",
+      description: "Property teams execute the workflow for each unit or request.",
     },
     {
       title: "Review",
-      description:
-        "Completion data is reviewed to refine the next published version.",
+      description: "Completion data is reviewed to refine the next published version.",
     },
   ],
   templates: [
     {
       name: "Move-in / move-out checklist",
-      description:
-        "A 12-step workflow covering lease signing through key handoff.",
+      description: "A 12-step workflow covering lease signing through key handoff.",
     },
     {
       name: "Maintenance request routing",
-      description:
-        "Intake, vendor assignment, and escalation for unresponsive vendors.",
+      description: "Intake, vendor assignment, and escalation for unresponsive vendors.",
     },
   ],
   related: [

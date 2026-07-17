@@ -44,8 +44,6 @@ export function buildMetadata({
       title: fullTitle,
       description,
     },
-    robots: noIndex
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+    robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
   };
 }

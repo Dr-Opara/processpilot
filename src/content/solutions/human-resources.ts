@@ -48,8 +48,7 @@ export const humanResourcesSolutionContent: SolutionPageContent = {
     },
     {
       title: "Certification tracking",
-      description:
-        "Expiring certifications are visible before they lapse, not discovered after.",
+      description: "Expiring certifications are visible before they lapse, not discovered after.",
     },
   ],
   workflowExample: {
@@ -57,13 +56,11 @@ export const humanResourcesSolutionContent: SolutionPageContent = {
     steps: [
       {
         title: "Offer accepted",
-        description:
-          "The 14-task onboarding workflow is assigned across 4 responsible roles.",
+        description: "The 14-task onboarding workflow is assigned across 4 responsible roles.",
       },
       {
         title: "Policy acknowledgment",
-        description:
-          "The new hire acknowledges the remote-work and safety policies.",
+        description: "The new hire acknowledges the remote-work and safety policies.",
       },
       {
         title: "Manager approval",
@@ -71,8 +68,7 @@ export const humanResourcesSolutionContent: SolutionPageContent = {
       },
       {
         title: "Workflow closes",
-        description:
-          "All 14 tasks and 8 evidence requirements are complete and recorded.",
+        description: "All 14 tasks and 8 evidence requirements are complete and recorded.",
       },
     ],
   },
@@ -101,8 +97,7 @@ export const humanResourcesSolutionContent: SolutionPageContent = {
   ],
   cta: {
     title: "Replace the onboarding checklist with a workflow",
-    description:
-      "See how a new hire, a manager, and IT experience the same onboarding process.",
+    description: "See how a new hire, a manager, and IT experience the same onboarding process.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

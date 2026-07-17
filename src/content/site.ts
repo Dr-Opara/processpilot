@@ -38,8 +38,7 @@ export const primaryNav: NavGroup[] = [
       {
         label: "Exceptions",
         href: "/product/exceptions",
-        description:
-          "Route and resolve work that falls outside the standard path.",
+        description: "Route and resolve work that falls outside the standard path.",
       },
       {
         label: "Analytics",
@@ -65,8 +64,7 @@ export const primaryNav: NavGroup[] = [
       {
         label: "Human Resources",
         href: "/solutions/human-resources",
-        description:
-          "Onboarding, policy acknowledgment, and training in one flow.",
+        description: "Onboarding, policy acknowledgment, and training in one flow.",
       },
       {
         label: "Compliance",
@@ -112,8 +110,7 @@ export const primaryNav: NavGroup[] = [
       {
         label: "Franchises",
         href: "/industries/franchises",
-        description:
-          "One brand standard, applied consistently by every location.",
+        description: "One brand standard, applied consistently by every location.",
       },
     ],
   },
@@ -167,13 +164,7 @@ export const demoCompany = {
   name: "Northstar Property Group",
   isDemonstrationData: true,
   locations: ["Houston", "Dallas", "Austin"],
-  departments: [
-    "People Operations",
-    "IT",
-    "Finance",
-    "Operations",
-    "Compliance",
-  ],
+  departments: ["People Operations", "IT", "Finance", "Operations", "Compliance"],
   exampleProcess: {
     name: "New employee onboarding",
     taskCount: 14,
@@ -239,8 +230,7 @@ export const productPillars = [
   },
   {
     title: "Improve operations",
-    description:
-      "See where work slows down or breaks, backed by evidence instead of anecdotes.",
+    description: "See where work slows down or breaks, backed by evidence instead of anecdotes.",
     href: "/product/analytics",
   },
 ];
@@ -248,27 +238,22 @@ export const productPillars = [
 export const rolePreviews = [
   {
     role: "Employee",
-    summary:
-      "Follows a guided workflow one task at a time, with training and context attached.",
+    summary: "Follows a guided workflow one task at a time, with training and context attached.",
   },
   {
     role: "Manager",
-    summary:
-      "Sees team workload, approves exceptions, and reassigns work when someone is out.",
+    summary: "Sees team workload, approves exceptions, and reassigns work when someone is out.",
   },
   {
     role: "Process owner",
-    summary:
-      "Publishes new workflow versions and reviews where the current version breaks down.",
+    summary: "Publishes new workflow versions and reviews where the current version breaks down.",
   },
   {
     role: "Compliance",
-    summary:
-      "Pulls evidence and approval history for a process without asking around for it.",
+    summary: "Pulls evidence and approval history for a process without asking around for it.",
   },
   {
     role: "Executive",
-    summary:
-      "Sees completion rates and exception volume across locations in one view.",
+    summary: "Sees completion rates and exception volume across locations in one view.",
   },
 ] as const;

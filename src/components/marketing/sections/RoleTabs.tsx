@@ -9,8 +9,7 @@ import { demoCompany } from "@/content/site";
 const roleDemos = [
   {
     role: "Employee",
-    summary:
-      "Follows a guided workflow one task at a time, with training and context attached.",
+    summary: "Follows a guided workflow one task at a time, with training and context attached.",
     panel: {
       heading: "New employee onboarding — task 4 of 14",
       rows: [
@@ -22,8 +21,7 @@ const roleDemos = [
   },
   {
     role: "Manager",
-    summary:
-      "Sees team workload, approves exceptions, and reassigns work when someone is out.",
+    summary: "Sees team workload, approves exceptions, and reassigns work when someone is out.",
     panel: {
       heading: "Approval queue — Dallas office",
       rows: [
@@ -35,8 +33,7 @@ const roleDemos = [
   },
   {
     role: "Process owner",
-    summary:
-      "Publishes new workflow versions and reviews where the current version breaks down.",
+    summary: "Publishes new workflow versions and reviews where the current version breaks down.",
     panel: {
       heading: "New employee onboarding — v6 draft",
       rows: [
@@ -48,8 +45,7 @@ const roleDemos = [
   },
   {
     role: "Compliance",
-    summary:
-      "Pulls evidence and approval history for a process without asking around for it.",
+    summary: "Pulls evidence and approval history for a process without asking around for it.",
     panel: {
       heading: "Audit trail — onboarding, Austin",
       rows: [
@@ -61,8 +57,7 @@ const roleDemos = [
   },
   {
     role: "Executive",
-    summary:
-      "Sees completion rates and exception volume across locations in one view.",
+    summary: "Sees completion rates and exception volume across locations in one view.",
     panel: {
       heading: "Onboarding performance — 3 locations",
       rows: [
@@ -108,8 +103,8 @@ export function RoleTabs() {
           <Stack className="max-w-2xl gap-3">
             <Heading as="h2">See it from every role</Heading>
             <Text className="text-muted">
-              ProcessPilot looks different depending on who is using it. Select
-              a role to see what they see.
+              ProcessPilot looks different depending on who is using it. Select a role to see what
+              they see.
             </Text>
           </Stack>
 
@@ -164,9 +159,7 @@ export function RoleTabs() {
                 </Badge>
               </Stack>
               <div className="rounded-2xl border border-border bg-paper p-4">
-                <Text className="text-sm font-semibold text-ink">
-                  {demo.panel.heading}
-                </Text>
+                <Text className="text-sm font-semibold text-ink">{demo.panel.heading}</Text>
                 <ul className="mt-3 space-y-2">
                   {demo.panel.rows.map((row) => (
                     <li

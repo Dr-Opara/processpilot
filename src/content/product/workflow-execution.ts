@@ -52,16 +52,14 @@ export const workflowExecutionContent: ProductPageContent = {
       },
       {
         title: "Workflow marked complete",
-        description:
-          "The full 14-task onboarding workflow closes once all steps finish.",
+        description: "The full 14-task onboarding workflow closes once all steps finish.",
       },
     ],
   },
   roles: [
     {
       role: "Employee",
-      description:
-        "Sees their next task and completes it without hunting for instructions.",
+      description: "Sees their next task and completes it without hunting for instructions.",
     },
     {
       role: "Manager",
@@ -69,8 +67,7 @@ export const workflowExecutionContent: ProductPageContent = {
     },
     {
       role: "Process owner",
-      description:
-        "Sees where the current version of a workflow is slow or unclear.",
+      description: "Sees where the current version of a workflow is slow or unclear.",
     },
   ],
   uiDemo: {
@@ -99,8 +96,7 @@ export const workflowExecutionContent: ProductPageContent = {
     {
       label: "Training",
       href: "/product/training",
-      description:
-        "Attach training to a task before someone has to complete it.",
+      description: "Attach training to a task before someone has to complete it.",
     },
   ],
   cta: {

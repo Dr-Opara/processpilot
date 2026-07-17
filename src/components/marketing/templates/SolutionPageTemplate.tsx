@@ -10,11 +10,7 @@ import { Container } from "@/components/ui/Layout";
 import { demoCompany } from "@/content/site";
 import type { SolutionPageContent } from "@/content/types";
 
-export function SolutionPageTemplate({
-  content,
-}: {
-  content: SolutionPageContent;
-}) {
+export function SolutionPageTemplate({ content }: { content: SolutionPageContent }) {
   return (
     <>
       <PageHero
@@ -35,10 +31,7 @@ export function SolutionPageTemplate({
         )}
         variant="list"
       />
-      <CapabilitiesGrid
-        title="What ProcessPilot provides"
-        items={content.capabilities}
-      />
+      <CapabilitiesGrid title="What ProcessPilot provides" items={content.capabilities} />
       <WorkflowSteps
         title={content.workflowExample.title}
         steps={content.workflowExample.steps}

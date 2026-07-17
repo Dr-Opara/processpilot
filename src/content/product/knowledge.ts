@@ -50,8 +50,7 @@ export const knowledgeContent: ProductPageContent = {
       },
       {
         title: "Edit and tag",
-        description:
-          "The policy is tagged to the maintenance-request workflow it governs.",
+        description: "The policy is tagged to the maintenance-request workflow it governs.",
       },
       {
         title: "Publish a new version",
@@ -67,13 +66,11 @@ export const knowledgeContent: ProductPageContent = {
     },
     {
       role: "Compliance",
-      description:
-        "Confirms the current version matches what's actually being followed.",
+      description: "Confirms the current version matches what's actually being followed.",
     },
     {
       role: "Employee",
-      description:
-        "Reads the current version linked directly from their workflow.",
+      description: "Reads the current version linked directly from their workflow.",
     },
   ],
   uiDemo: {
@@ -102,14 +99,12 @@ export const knowledgeContent: ProductPageContent = {
     {
       label: "Compliance solution",
       href: "/solutions/compliance",
-      description:
-        "How controlled documents fit into a broader compliance program.",
+      description: "How controlled documents fit into a broader compliance program.",
     },
   ],
   cta: {
     title: "Start with the policies people ask about most",
-    description:
-      "Import your highest-traffic SOPs first and give them a single, governed home.",
+    description: "Import your highest-traffic SOPs first and give them a single, governed home.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

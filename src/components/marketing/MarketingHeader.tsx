@@ -1,17 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { ProcessPilotIcon } from "./ProcessPilotIcon";
 import { Button } from "@/components/ui/Button";
 import { Container, Stack } from "@/components/ui/Layout";
 import { Heading } from "@/components/ui/Typography";
-import {
-  primaryNav,
-  resourcesNav,
-  pricingNav,
-  type NavGroup,
-} from "@/content/site";
+import { primaryNav, resourcesNav, pricingNav, type NavGroup } from "@/content/site";
 
 function NavDropdown({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false);
@@ -19,10 +14,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     }
@@ -72,9 +64,7 @@ function NavDropdown({ group }: { group: NavGroup }) {
               >
                 <span className="block font-medium text-ink">{item.label}</span>
                 {item.description ? (
-                  <span className="mt-0.5 block text-xs text-muted">
-                    {item.description}
-                  </span>
+                  <span className="mt-0.5 block text-xs text-muted">{item.description}</span>
                 ) : null}
               </a>
             ))}
@@ -92,36 +82,26 @@ export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-sticky border-b border-border/70 bg-surface/90 backdrop-blur">
       <Container className="flex items-center justify-between py-4">
-        <a href="/" className="flex items-center gap-3">
-          <ProcessPilotIcon className="h-9 w-9" />
+        <Link href="/" className="flex items-center gap-3">
           <Heading as="h2" className="text-lg">
             ProcessPilot
           </Heading>
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
           {primaryNav.map((group) => (
             <NavDropdown key={group.label} group={group} />
           ))}
-          <a
-            href={resourcesNav.href}
-            className="text-sm font-medium text-muted hover:text-ink"
-          >
+          <a href={resourcesNav.href} className="text-sm font-medium text-muted hover:text-ink">
             {resourcesNav.label}
           </a>
-          <a
-            href={pricingNav.href}
-            className="text-sm font-medium text-muted hover:text-ink"
-          >
+          <a href={pricingNav.href} className="text-sm font-medium text-muted hover:text-ink">
             {pricingNav.label}
           </a>
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a
-            href="/sign-in"
-            className="text-sm font-medium text-muted hover:text-ink"
-          >
+          <a href="/sign-in" className="text-sm font-medium text-muted hover:text-ink">
             Sign in
           </a>
           <Button href="/request-demo" variant="secondary">
@@ -144,18 +124,12 @@ export function MarketingHeader() {
       </Container>
 
       {mobileOpen ? (
-        <div
-          id="mobile-nav"
-          className="border-t border-border bg-surface px-4 py-4 lg:hidden"
-        >
+        <div id="mobile-nav" className="border-t border-border bg-surface px-4 py-4 lg:hidden">
           <Stack className="gap-1">
             {primaryNav.map((group) => {
               const isExpanded = expandedGroup === group.label;
               return (
-                <div
-                  key={group.label}
-                  className="border-b border-border/60 py-2"
-                >
+                <div key={group.label} className="border-b border-border/60 py-2">
                   <div className="flex items-center justify-between">
                     <a
                       href={group.href}
@@ -169,9 +143,7 @@ export function MarketingHeader() {
                       aria-expanded={isExpanded}
                       aria-controls={`mobile-group-${group.label}`}
                       aria-label={`Toggle ${group.label} submenu`}
-                      onClick={() =>
-                        setExpandedGroup(isExpanded ? null : group.label)
-                      }
+                      onClick={() => setExpandedGroup(isExpanded ? null : group.label)}
                       className="rounded-full p-1.5 text-muted"
                     >
                       <ChevronDown
@@ -182,10 +154,7 @@ export function MarketingHeader() {
                     </button>
                   </div>
                   {isExpanded ? (
-                    <div
-                      id={`mobile-group-${group.label}`}
-                      className="mt-2 grid gap-2 pl-2"
-                    >
+                    <div id={`mobile-group-${group.label}`} className="mt-2 grid gap-2 pl-2">
                       {group.items.map((item) => (
                         <a
                           key={item.href}
@@ -222,18 +191,10 @@ export function MarketingHeader() {
             >
               Sign in
             </a>
-            <Button
-              href="/request-demo"
-              variant="secondary"
-              className="mt-2 justify-center"
-            >
+            <Button href="/request-demo" variant="secondary" className="mt-2 justify-center">
               Request demo
             </Button>
-            <Button
-              href="/start-trial"
-              variant="primary"
-              className="mt-2 justify-center"
-            >
+            <Button href="/start-trial" variant="primary" className="mt-2 justify-center">
               Start free trial
             </Button>
           </Stack>

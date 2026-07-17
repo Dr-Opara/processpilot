@@ -40,18 +40,12 @@ export function PageHero({
           {primary || secondary ? (
             <div className="flex flex-wrap gap-3 pt-2">
               {primary ? (
-                <Button
-                  href={primary.href}
-                  variant={primary.variant ?? "primary"}
-                >
+                <Button href={primary.href} variant={primary.variant ?? "primary"}>
                   {primary.label}
                 </Button>
               ) : null}
               {secondary ? (
-                <Button
-                  href={secondary.href}
-                  variant={secondary.variant ?? "secondary"}
-                >
+                <Button href={secondary.href} variant={secondary.variant ?? "secondary"}>
                   {secondary.label}
                 </Button>
               ) : null}

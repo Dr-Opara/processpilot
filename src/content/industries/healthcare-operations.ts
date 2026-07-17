@@ -39,20 +39,17 @@ export const healthcareOperationsContent: IndustryPageContent = {
     },
     {
       title: "Facilities and equipment maintenance",
-      description:
-        "Scheduled maintenance and vendor coordination tracked as recurring workflows.",
+      description: "Scheduled maintenance and vendor coordination tracked as recurring workflows.",
     },
     {
       title: "Administrative staff onboarding",
-      description:
-        "Consistent onboarding for front-office and operations staff across locations.",
+      description: "Consistent onboarding for front-office and operations staff across locations.",
     },
   ],
   whoUses: [
     {
       role: "Practice operations manager",
-      description:
-        "Owns administrative and facilities workflows for one or more locations.",
+      description: "Owns administrative and facilities workflows for one or more locations.",
     },
     {
       role: "Front-office staff",
@@ -66,8 +63,7 @@ export const healthcareOperationsContent: IndustryPageContent = {
   lifecycle: [
     {
       title: "Import",
-      description:
-        "Existing administrative procedures are imported as a starting draft.",
+      description: "Existing administrative procedures are imported as a starting draft.",
     },
     {
       title: "Publish",
@@ -75,8 +71,7 @@ export const healthcareOperationsContent: IndustryPageContent = {
     },
     {
       title: "Run",
-      description:
-        "Front-office and facilities staff execute the published workflow.",
+      description: "Front-office and facilities staff execute the published workflow.",
     },
     {
       title: "Review",
@@ -86,21 +81,18 @@ export const healthcareOperationsContent: IndustryPageContent = {
   templates: [
     {
       name: "Administrative staff onboarding",
-      description:
-        "A standard onboarding workflow for front-office and operations hires.",
+      description: "A standard onboarding workflow for front-office and operations hires.",
     },
     {
       name: "Equipment maintenance schedule",
-      description:
-        "Recurring maintenance tasks with vendor coordination and completion tracking.",
+      description: "Recurring maintenance tasks with vendor coordination and completion tracking.",
     },
   ],
   related: [
     {
       label: "Operations solution",
       href: "/solutions/operations",
-      description:
-        "The broader case for standardized administrative execution.",
+      description: "The broader case for standardized administrative execution.",
     },
     {
       label: "Human Resources solution",

@@ -25,11 +25,7 @@ export const metadata: Metadata = {
     "ProcessPilot converts policies, SOPs, and institutional knowledge into guided workflows, role-based training, approvals, evidence, and operational insight.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

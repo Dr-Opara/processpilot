@@ -12,13 +12,11 @@ export function ProcedureTransformDemo() {
       <Container>
         <Stack className="gap-8">
           <Stack className="max-w-2xl gap-3">
-            <Heading as="h2">
-              From procedure document to guided workflow
-            </Heading>
+            <Heading as="h2">From procedure document to guided workflow</Heading>
             <Text className="text-muted">
-              ProcessPilot reads an existing procedure document and proposes a
-              structured workflow — tasks, roles, approvals, and branches — for
-              a process owner to review before anything goes live.
+              ProcessPilot reads an existing procedure document and proposes a structured workflow —
+              tasks, roles, approvals, and branches — for a process owner to review before anything
+              goes live.
             </Text>
           </Stack>
 
@@ -56,9 +54,7 @@ export function ProcedureTransformDemo() {
               <dl className="mt-4 grid grid-cols-3 gap-3 text-center">
                 <div>
                   <dt className="text-xs text-muted">Tasks</dt>
-                  <dd className="text-lg font-semibold text-ink">
-                    {exampleProcess.taskCount}
-                  </dd>
+                  <dd className="text-lg font-semibold text-ink">{exampleProcess.taskCount}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted">Roles</dt>
@@ -68,9 +64,7 @@ export function ProcedureTransformDemo() {
                 </div>
                 <div>
                   <dt className="text-xs text-muted">Approvals</dt>
-                  <dd className="text-lg font-semibold text-ink">
-                    {exampleProcess.approvals}
-                  </dd>
+                  <dd className="text-lg font-semibold text-ink">{exampleProcess.approvals}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted">Branches</dt>
@@ -95,8 +89,7 @@ export function ProcedureTransformDemo() {
           </div>
 
           <Badge className="w-fit border-cobalt/30 bg-cobalt/5 text-cobalt">
-            Product demonstration data · {demoCompany.name}, not a customer
-            outcome
+            Product demonstration data · {demoCompany.name}, not a customer outcome
           </Badge>
         </Stack>
       </Container>

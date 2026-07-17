@@ -92,10 +92,7 @@ export function SignInForm() {
 
       <p className="text-sm text-muted">
         Don&apos;t have an account?{" "}
-        <a
-          href="/start-trial"
-          className="font-medium text-cobalt hover:underline"
-        >
+        <a href="/start-trial" className="font-medium text-cobalt hover:underline">
           Create one
         </a>
       </p>

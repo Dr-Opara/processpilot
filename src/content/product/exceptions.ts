@@ -40,13 +40,11 @@ export const exceptionsContent: ProductPageContent = {
     steps: [
       {
         title: "Standard path blocked",
-        description:
-          "A maintenance request comes in for a repair type with no assigned vendor.",
+        description: "A maintenance request comes in for a repair type with no assigned vendor.",
       },
       {
         title: "Routed as an exception",
-        description:
-          "The task routes automatically to the regional Operations manager.",
+        description: "The task routes automatically to the regional Operations manager.",
       },
       {
         title: "Manager resolves manually",
@@ -54,8 +52,7 @@ export const exceptionsContent: ProductPageContent = {
       },
       {
         title: "Resolution recorded",
-        description:
-          "The exception and its resolution are attached to the original request.",
+        description: "The exception and its resolution are attached to the original request.",
       },
     ],
   },
@@ -66,13 +63,11 @@ export const exceptionsContent: ProductPageContent = {
     },
     {
       role: "Process owner",
-      description:
-        "Reviews recurring exceptions to decide if the workflow needs a new branch.",
+      description: "Reviews recurring exceptions to decide if the workflow needs a new branch.",
     },
     {
       role: "Executive",
-      description:
-        "Sees exception volume as a signal of where a process is breaking down.",
+      description: "Sees exception volume as a signal of where a process is breaking down.",
     },
   ],
   uiDemo: {

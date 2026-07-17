@@ -28,10 +28,7 @@ export function CapabilityDemo({
           <Text className="text-muted">{description}</Text>
           <ul className="grid gap-3 pt-2">
             {bullets.map((bullet) => (
-              <li
-                key={bullet}
-                className="flex gap-3 text-sm leading-6 text-ink"
-              >
+              <li key={bullet} className="flex gap-3 text-sm leading-6 text-ink">
                 <span
                   aria-hidden="true"
                   className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-signal"

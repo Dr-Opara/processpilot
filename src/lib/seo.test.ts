@@ -13,9 +13,7 @@ describe("buildMetadata", () => {
     // The main `title` field is left unsuffixed: the root layout's
     // title.template appends " | ProcessPilot" for every nested segment.
     expect(metadata.title).toBe("Knowledge");
-    expect(metadata.alternates?.canonical).toBe(
-      new URL("/product/knowledge", siteUrl).toString(),
-    );
+    expect(metadata.alternates?.canonical).toBe(new URL("/product/knowledge", siteUrl).toString());
     expect(metadata.openGraph?.title).toBe("Knowledge | ProcessPilot");
     expect(metadata.robots).toEqual({ index: true, follow: true });
   });
@@ -28,9 +26,7 @@ describe("buildMetadata", () => {
     });
 
     expect(metadata.title).toBe("The operating system for repeatable work");
-    expect(metadata.openGraph?.title).toBe(
-      "The operating system for repeatable work",
-    );
+    expect(metadata.openGraph?.title).toBe("The operating system for repeatable work");
   });
 
   it("marks noIndex pages as non-indexable", () => {

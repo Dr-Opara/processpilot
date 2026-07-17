@@ -5,9 +5,7 @@ import { IndustryPageTemplate } from "@/components/marketing/templates/IndustryP
 import { professionalServicesContent } from "@/content/industries/professional-services";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata(
-  professionalServicesContent.seo,
-);
+export const metadata: Metadata = buildMetadata(professionalServicesContent.seo);
 
 export default function ProfessionalServicesPage() {
   return (

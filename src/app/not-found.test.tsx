@@ -7,12 +7,7 @@ describe("NotFound", () => {
     render(<NotFound />);
 
     expect(screen.getByText("404")).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: /doesn't exist/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute(
-      "href",
-      "/",
-    );
+    expect(screen.getByRole("heading", { name: /doesn't exist/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /back to home/i })).toHaveAttribute("href", "/");
   });
 });

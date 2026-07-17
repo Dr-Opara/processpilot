@@ -11,8 +11,7 @@ const variants = {
   // string order, so overriding a variant's colors via className can
   // silently produce invisible text.
   onDark: "bg-surface text-ink hover:bg-paper",
-  outlineOnDark:
-    "border border-surface/30 bg-transparent text-surface hover:bg-surface/10",
+  outlineOnDark: "border border-surface/30 bg-transparent text-surface hover:bg-surface/10",
 };
 
 type Variant = keyof typeof variants;

@@ -32,9 +32,7 @@ export function WorkflowSteps({
                 </span>
                 <div>
                   <Text className="font-semibold text-ink">{step.title}</Text>
-                  <Text className="mt-1 text-sm text-muted">
-                    {step.description}
-                  </Text>
+                  <Text className="mt-1 text-sm text-muted">{step.description}</Text>
                 </div>
               </li>
             ))}

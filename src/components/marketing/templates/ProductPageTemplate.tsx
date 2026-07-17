@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { PageHero } from "@/components/marketing/sections/PageHero";
 import { PointsSection } from "@/components/marketing/sections/PointsSection";
 import { CapabilityDemo } from "@/components/marketing/sections/CapabilityDemo";
@@ -8,11 +9,7 @@ import { CtaBand } from "@/components/marketing/sections/CtaBand";
 import { demoCompany } from "@/content/site";
 import type { ProductPageContent } from "@/content/types";
 
-export function ProductPageTemplate({
-  content,
-}: {
-  content: ProductPageContent;
-}) {
+export function ProductPageTemplate({ content }: { content: ProductPageContent }) {
   const problem = (
     <PointsSection
       key="problem"
@@ -54,9 +51,7 @@ export function ProductPageTemplate({
     />
   );
 
-  const roles = (
-    <RoleList key="roles" title="Who uses this" roles={content.roles} />
-  );
+  const roles = <RoleList key="roles" title="Who uses this" roles={content.roles} />;
 
   const orderByLayout: Record<ProductPageContent["layout"], JSX.Element[]> = {
     "capability-first": [capability, problem, workflow, roles, governance],

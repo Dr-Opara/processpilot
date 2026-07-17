@@ -61,10 +61,7 @@ export function RequestDemoForm() {
             aria-describedby={errors.firstName ? "firstName-error" : undefined}
             {...register("firstName", { required: "First name is required" })}
           />
-          <FieldError
-            id="firstName-error"
-            message={errors.firstName?.message}
-          />
+          <FieldError id="firstName-error" message={errors.firstName?.message} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="lastName">Last name</Label>
@@ -120,9 +117,7 @@ export function RequestDemoForm() {
             id="employeeCount"
             defaultValue=""
             aria-invalid={!!errors.employeeCount}
-            aria-describedby={
-              errors.employeeCount ? "employeeCount-error" : undefined
-            }
+            aria-describedby={errors.employeeCount ? "employeeCount-error" : undefined}
             {...register("employeeCount", {
               required: "Select an employee count range",
             })}
@@ -136,10 +131,7 @@ export function RequestDemoForm() {
               </option>
             ))}
           </Select>
-          <FieldError
-            id="employeeCount-error"
-            message={errors.employeeCount?.message}
-          />
+          <FieldError id="employeeCount-error" message={errors.employeeCount?.message} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="primaryUseCase">Primary use case</Label>
@@ -147,9 +139,7 @@ export function RequestDemoForm() {
             id="primaryUseCase"
             defaultValue=""
             aria-invalid={!!errors.primaryUseCase}
-            aria-describedby={
-              errors.primaryUseCase ? "primaryUseCase-error" : undefined
-            }
+            aria-describedby={errors.primaryUseCase ? "primaryUseCase-error" : undefined}
             {...register("primaryUseCase", {
               required: "Select a primary use case",
             })}
@@ -163,10 +153,7 @@ export function RequestDemoForm() {
               </option>
             ))}
           </Select>
-          <FieldError
-            id="primaryUseCase-error"
-            message={errors.primaryUseCase?.message}
-          />
+          <FieldError id="primaryUseCase-error" message={errors.primaryUseCase?.message} />
         </div>
       </div>
 

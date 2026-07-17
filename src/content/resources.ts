@@ -48,8 +48,7 @@ export const resourceCategories: {
   },
   {
     title: "Workflow template library",
-    description:
-      "Example templates referenced across product and industry pages.",
+    description: "Example templates referenced across product and industry pages.",
     status: "In progress",
   },
 ];

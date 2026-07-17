@@ -25,21 +25,17 @@ export function BusinessProblem() {
       <Container>
         <Stack className="gap-10">
           <Stack className="max-w-2xl gap-3">
-            <Heading as="h2">
-              Procedures and execution have drifted apart
-            </Heading>
+            <Heading as="h2">Procedures and execution have drifted apart</Heading>
             <Text className="text-muted">
-              Most companies have written down how work is supposed to happen.
-              Far fewer have a reliable way to make sure it happens that way.
+              Most companies have written down how work is supposed to happen. Far fewer have a
+              reliable way to make sure it happens that way.
             </Text>
           </Stack>
           <div className="grid gap-6 border-t border-border/70 pt-8 md:grid-cols-3">
             {problems.map((problem) => (
               <Stack key={problem.title} className="gap-2">
                 <Text className="font-semibold text-ink">{problem.title}</Text>
-                <Text className="text-sm text-muted">
-                  {problem.description}
-                </Text>
+                <Text className="text-sm text-muted">{problem.description}</Text>
               </Stack>
             ))}
           </div>

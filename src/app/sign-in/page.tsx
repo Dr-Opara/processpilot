@@ -27,8 +27,8 @@ export default function SignInPage() {
                   Welcome back
                 </Heading>
                 <Text className="text-sm text-muted">
-                  Authentication is not implemented yet. This form runs in
-                  development mode and validates input only.
+                  Authentication is not implemented yet. This form runs in development mode and
+                  validates input only.
                 </Text>
               </Stack>
               <div className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-soft sm:p-8">

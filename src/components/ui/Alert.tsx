@@ -11,10 +11,7 @@ export function Alert({
 }) {
   return (
     <div
-      className={clsx(
-        "rounded-2xl border border-border bg-[#fcfbf8] p-4",
-        className,
-      )}
+      className={clsx("rounded-2xl border border-border bg-[#fcfbf8] p-4", className)}
       role="status"
     >
       <p className="font-semibold text-ink">{title}</p>

@@ -34,8 +34,7 @@ export const franchisesContent: IndustryPageContent = {
   workflows: [
     {
       title: "New location opening",
-      description:
-        "A guided workflow from signed agreement to opening day, step by step.",
+      description: "A guided workflow from signed agreement to opening day, step by step.",
     },
     {
       title: "Brand standard operating procedures",
@@ -65,13 +64,11 @@ export const franchisesContent: IndustryPageContent = {
   lifecycle: [
     {
       title: "Import",
-      description:
-        "The existing operations manual is imported as a starting draft.",
+      description: "The existing operations manual is imported as a starting draft.",
     },
     {
       title: "Publish",
-      description:
-        "The franchisor's operations team reviews and publishes the standard.",
+      description: "The franchisor's operations team reviews and publishes the standard.",
     },
     {
       title: "Run",
@@ -85,27 +82,23 @@ export const franchisesContent: IndustryPageContent = {
   templates: [
     {
       name: "New location opening checklist",
-      description:
-        "A step-by-step workflow from signed agreement to opening day.",
+      description: "A step-by-step workflow from signed agreement to opening day.",
     },
     {
       name: "Daily operating procedure",
-      description:
-        "A recurring workflow covering opening and closing procedures.",
+      description: "A recurring workflow covering opening and closing procedures.",
     },
   ],
   related: [
     {
       label: "Multi-location solution",
       href: "/solutions/multi-location",
-      description:
-        "The underlying model for running one standard across many sites.",
+      description: "The underlying model for running one standard across many sites.",
     },
     {
       label: "Training",
       href: "/product/training",
-      description:
-        "How franchisee and staff training ties to specific procedures.",
+      description: "How franchisee and staff training ties to specific procedures.",
     },
     {
       label: "Analytics",
@@ -115,8 +108,7 @@ export const franchisesContent: IndustryPageContent = {
   ],
   cta: {
     title: "Turn your operations manual into a guided workflow",
-    description:
-      "See how a new location opening runs step by step, the same way every time.",
+    description: "See how a new location opening runs step by step, the same way every time.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

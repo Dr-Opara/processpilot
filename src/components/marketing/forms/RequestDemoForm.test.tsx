@@ -35,19 +35,10 @@ describe("RequestDemoForm", () => {
 
     await user.type(screen.getByLabelText(/first name/i), "Ada");
     await user.type(screen.getByLabelText(/last name/i), "Lovelace");
-    await user.type(
-      screen.getByLabelText(/work email/i),
-      "ada@northstar.example",
-    );
-    await user.type(
-      screen.getByLabelText(/^company$/i),
-      "Northstar Property Group",
-    );
+    await user.type(screen.getByLabelText(/work email/i), "ada@northstar.example");
+    await user.type(screen.getByLabelText(/^company$/i), "Northstar Property Group");
     await user.type(screen.getByLabelText(/job title/i), "Operations Director");
-    await user.selectOptions(
-      screen.getByLabelText(/employee count/i),
-      "51-200",
-    );
+    await user.selectOptions(screen.getByLabelText(/employee count/i), "51-200");
     await user.selectOptions(
       screen.getByLabelText(/primary use case/i),
       "Standardizing operations across locations",

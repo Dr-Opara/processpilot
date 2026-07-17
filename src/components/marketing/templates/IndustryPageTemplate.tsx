@@ -9,11 +9,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Container } from "@/components/ui/Layout";
 import type { IndustryPageContent } from "@/content/types";
 
-export function IndustryPageTemplate({
-  content,
-}: {
-  content: IndustryPageContent;
-}) {
+export function IndustryPageTemplate({ content }: { content: IndustryPageContent }) {
   return (
     <>
       <PageHero
@@ -35,25 +31,16 @@ export function IndustryPageTemplate({
         points={content.challenges.map((c) => `${c.title} — ${c.description}`)}
         variant="list"
       />
-      <CapabilitiesGrid
-        title="Relevant ProcessPilot workflows"
-        items={content.workflows}
-      />
+      <CapabilitiesGrid title="Relevant ProcessPilot workflows" items={content.workflows} />
       <RoleList title="Who uses ProcessPilot here" roles={content.whoUses} />
-      <WorkflowSteps
-        title="How the process lifecycle works"
-        steps={content.lifecycle}
-      />
+      <WorkflowSteps title="How the process lifecycle works" steps={content.lifecycle} />
       <PointsSection
         title="Example templates"
         points={content.templates.map((t) => `${t.name} — ${t.description}`)}
         variant="cards"
         className="border-t border-border/70 bg-[#fcfbf8]"
       />
-      <RelatedLinks
-        title="Related industries and solutions"
-        links={content.related}
-      />
+      <RelatedLinks title="Related industries and solutions" links={content.related} />
       <CtaBand
         title={content.cta.title}
         description={content.cta.description}

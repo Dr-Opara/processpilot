@@ -1,14 +1,8 @@
 import { Container, Section, Stack } from "@/components/ui/Layout";
-import { Heading, Text } from "@/components/ui/Typography";
+import { Heading } from "@/components/ui/Typography";
 import type { RoleRef } from "@/content/types";
 
-export function RoleList({
-  title,
-  roles,
-}: {
-  title: string;
-  roles: RoleRef[];
-}) {
+export function RoleList({ title, roles }: { title: string; roles: RoleRef[] }) {
   return (
     <Section className="py-14 sm:py-16">
       <Container>

@@ -26,15 +26,13 @@ export const multiLocationSolutionContent: SolutionPageContent = {
     },
     {
       title: "Comparing locations is manual",
-      description:
-        "There's no fast way to see which sites are ahead or behind on a given process.",
+      description: "There's no fast way to see which sites are ahead or behind on a given process.",
     },
   ],
   capabilities: [
     {
       title: "Standard operating models",
-      description:
-        "A central process owner publishes one workflow that every location runs from.",
+      description: "A central process owner publishes one workflow that every location runs from.",
     },
     {
       title: "Location-specific rules",
@@ -57,23 +55,19 @@ export const multiLocationSolutionContent: SolutionPageContent = {
     steps: [
       {
         title: "Publish the central workflow",
-        description:
-          "Onboarding is published once, for Houston, Dallas, and Austin.",
+        description: "Onboarding is published once, for Houston, Dallas, and Austin.",
       },
       {
         title: "Local branch added",
-        description:
-          "Austin adds a conditional step for a state-specific tax form.",
+        description: "Austin adds a conditional step for a state-specific tax form.",
       },
       {
         title: "Rollout tracked centrally",
-        description:
-          "Adoption is tracked as each location's first cohort completes onboarding.",
+        description: "Adoption is tracked as each location's first cohort completes onboarding.",
       },
       {
         title: "Performance compared",
-        description:
-          "Analytics show Dallas onboarding running slower than the other two sites.",
+        description: "Analytics show Dallas onboarding running slower than the other two sites.",
       },
     ],
   },
@@ -97,8 +91,7 @@ export const multiLocationSolutionContent: SolutionPageContent = {
     {
       label: "Franchises",
       href: "/industries/franchises",
-      description:
-        "How this model applies to franchise operators specifically.",
+      description: "How this model applies to franchise operators specifically.",
     },
   ],
   cta: {

@@ -8,8 +8,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Start free trial",
-  description:
-    "Create a ProcessPilot workspace and publish your first workflow.",
+  description: "Create a ProcessPilot workspace and publish your first workflow.",
   path: "/start-trial",
 });
 
@@ -26,13 +25,12 @@ export default function StartTrialPage() {
                 Publish your first workflow
               </Heading>
               <Text className="text-muted">
-                Create a workspace, then import your first policy or SOP and see
-                it become a draft workflow.
+                Create a workspace, then import your first policy or SOP and see it become a draft
+                workflow.
               </Text>
               <Text className="text-sm text-muted">
-                This form runs in development mode: signups are validated but no
-                account is created, no password is stored, and no email is sent
-                yet.
+                This form runs in development mode: signups are validated but no account is created,
+                no password is stored, and no email is sent yet.
               </Text>
             </Stack>
             <div className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-soft sm:p-8">

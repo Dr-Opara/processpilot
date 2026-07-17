@@ -19,26 +19,15 @@ export function PricingTable() {
               }`}
             >
               <Stack className="gap-2">
-                <Text className="text-lg font-semibold text-ink">
-                  {plan.name}
-                </Text>
+                <Text className="text-lg font-semibold text-ink">{plan.name}</Text>
                 <Text className="text-sm text-muted">{plan.audience}</Text>
               </Stack>
-              <Text className="text-sm font-medium text-cobalt">
-                {plan.priceHypothesis}
-              </Text>
+              <Text className="text-sm font-medium text-cobalt">{plan.priceHypothesis}</Text>
               <Text className="text-sm text-muted">{plan.description}</Text>
               <ul className="space-y-2 border-t border-border/70 pt-4">
                 {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-2 text-sm text-ink"
-                  >
-                    <Check
-                      size={16}
-                      className="mt-0.5 shrink-0 text-success"
-                      aria-hidden="true"
-                    />
+                  <li key={feature} className="flex items-start gap-2 text-sm text-ink">
+                    <Check size={16} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
                     {feature}
                   </li>
                 ))}

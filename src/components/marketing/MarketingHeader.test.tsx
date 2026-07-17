@@ -8,12 +8,8 @@ describe("MarketingHeader", () => {
     render(<MarketingHeader />);
 
     expect(screen.getByRole("link", { name: /sign in/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /request demo/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /start free trial/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /request demo/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /start free trial/i })).toBeInTheDocument();
 
     const primaryNav = screen.getByRole("navigation", { name: /primary/i });
     expect(within(primaryNav).getByText("Product")).toBeInTheDocument();
@@ -31,9 +27,7 @@ describe("MarketingHeader", () => {
     await user.click(trigger);
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
-    expect(
-      screen.getByRole("link", { name: /knowledge/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /knowledge/i })).toBeInTheDocument();
   });
 
   it("toggles the mobile menu open and closed", async () => {
@@ -46,8 +40,6 @@ describe("MarketingHeader", () => {
     await user.click(toggle);
 
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(
-      screen.getByRole("button", { name: /close menu/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /close menu/i })).toBeInTheDocument();
   });
 });

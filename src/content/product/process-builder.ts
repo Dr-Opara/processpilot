@@ -40,8 +40,7 @@ export const processBuilderContent: ProductPageContent = {
     steps: [
       {
         title: "Import the vendor policy",
-        description:
-          "Finance imports the existing vendor approval policy document.",
+        description: "Finance imports the existing vendor approval policy document.",
       },
       {
         title: "Review the proposed tasks",
@@ -55,8 +54,7 @@ export const processBuilderContent: ProductPageContent = {
       },
       {
         title: "Publish the workflow",
-        description:
-          "The workflow goes live for the Operations and Finance teams.",
+        description: "The workflow goes live for the Operations and Finance teams.",
       },
     ],
   },
@@ -67,13 +65,11 @@ export const processBuilderContent: ProductPageContent = {
     },
     {
       role: "Manager",
-      description:
-        "Reviews proposed approval points before a workflow goes live.",
+      description: "Reviews proposed approval points before a workflow goes live.",
     },
     {
       role: "Compliance",
-      description:
-        "Confirms required approvals and evidence steps are present.",
+      description: "Confirms required approvals and evidence steps are present.",
     },
   ],
   uiDemo: {
@@ -92,8 +88,7 @@ export const processBuilderContent: ProductPageContent = {
     {
       label: "Knowledge",
       href: "/product/knowledge",
-      description:
-        "Where the source documents a workflow is built from are governed.",
+      description: "Where the source documents a workflow is built from are governed.",
     },
     {
       label: "Workflow execution",
@@ -108,8 +103,7 @@ export const processBuilderContent: ProductPageContent = {
   ],
   cta: {
     title: "Turn your next policy update into a workflow",
-    description:
-      "Import a document and see a draft workflow in minutes, ready for your review.",
+    description: "Import a document and see a draft workflow in minutes, ready for your review.",
     primary: { label: "Request a demo", href: "/request-demo" },
     secondary: { label: "Start free trial", href: "/start-trial" },
   },

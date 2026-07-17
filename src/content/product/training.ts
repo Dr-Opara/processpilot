@@ -40,23 +40,19 @@ export const trainingContent: ProductPageContent = {
     steps: [
       {
         title: "Training attached to a task",
-        description:
-          "A safety-training module is attached to the 'enter occupied unit' task.",
+        description: "A safety-training module is attached to the 'enter occupied unit' task.",
       },
       {
         title: "Technician assigned the task",
-        description:
-          "A maintenance technician is assigned a work order requiring the task.",
+        description: "A maintenance technician is assigned a work order requiring the task.",
       },
       {
         title: "Training required before task starts",
-        description:
-          "The task stays blocked until the technician completes the module.",
+        description: "The task stays blocked until the technician completes the module.",
       },
       {
         title: "Completion recorded",
-        description:
-          "Completion is logged and tied to that technician's task history.",
+        description: "Completion is logged and tied to that technician's task history.",
       },
     ],
   },
@@ -67,13 +63,11 @@ export const trainingContent: ProductPageContent = {
     },
     {
       role: "Manager",
-      description:
-        "Sees who on the team is currently qualified for a given task.",
+      description: "Sees who on the team is currently qualified for a given task.",
     },
     {
       role: "Compliance",
-      description:
-        "Pulls certification records without chasing down a separate LMS.",
+      description: "Pulls certification records without chasing down a separate LMS.",
     },
   ],
   uiDemo: {
@@ -92,8 +86,7 @@ export const trainingContent: ProductPageContent = {
     {
       label: "Workflow execution",
       href: "/product/workflow-execution",
-      description:
-        "Where a training-gated task appears in someone's task list.",
+      description: "Where a training-gated task appears in someone's task list.",
     },
     {
       label: "Audit center",

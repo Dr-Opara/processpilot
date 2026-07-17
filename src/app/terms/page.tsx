@@ -6,8 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Terms of Service",
-  description:
-    "Terms for using the current version of the ProcessPilot website.",
+  description: "Terms for using the current version of the ProcessPilot website.",
   path: "/terms",
 });
 
@@ -39,9 +38,7 @@ const sections = [
   },
   {
     heading: "Contact",
-    body: [
-      "Questions about these terms can be sent to legal@processpilot.com.",
-    ],
+    body: ["Questions about these terms can be sent to legal@processpilot.com."],
   },
 ];
 

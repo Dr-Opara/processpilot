@@ -35,16 +35,12 @@ export default function Home() {
           <Container className="grid gap-10 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <Stack className="max-w-2xl gap-6">
               <Eyebrow>The operating system for repeatable work</Eyebrow>
-              <Heading
-                as="h1"
-                className="max-w-xl font-serif text-5xl leading-tight sm:text-6xl"
-              >
+              <Heading as="h1" className="max-w-xl font-serif text-5xl leading-tight sm:text-6xl">
                 Turn company procedures into work people can actually complete.
               </Heading>
               <Text className="max-w-xl text-lg text-muted">
-                ProcessPilot converts policies, SOPs, and institutional
-                knowledge into guided workflows, role-based training, approvals,
-                evidence, and operational insight.
+                ProcessPilot converts policies, SOPs, and institutional knowledge into guided
+                workflows, role-based training, approvals, evidence, and operational insight.
               </Text>
               <div className="flex flex-wrap gap-3">
                 <Button href="/product">See the platform</Button>
