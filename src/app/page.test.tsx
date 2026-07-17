@@ -8,7 +8,7 @@ describe("Home", () => {
     expect(screen.getByRole("heading", { name: "ProcessPilot", level: 2 })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /calm operations for teams/i,
+        name: /turn company procedures into work people can actually complete/i,
         level: 1,
       }),
     ).toBeInTheDocument();

@@ -16,10 +16,21 @@ This repository is production commercial software, not a prototype.
 
 ## Current phase
 
-**Phase 1: Repository and design foundation** — turning the Phase 0
-design documentation into a working Tailwind theme and component
-primitive set. See [docs/project/phase-tracker.md](docs/project/phase-tracker.md)
+**Phase 2: Marketing website** — processpilot.com, built on the Phase 1
+design foundation: 30 public routes (homepage; product hub + 7 product
+pages; solutions hub + 5 solution pages; industries hub + 5 industry
+pages; pricing, security, resources, company; request-demo, start-trial,
+sign-in; privacy, terms) using shared, content-driven page templates;
+request-demo/start-trial/sign-in forms validated client- and
+server-side (react-hook-form + zod) against isolated development-mode
+API routes under `/api/*` — nothing is persisted, no email is sent, and
+every response says so explicitly; per-page SEO metadata, sitemap, and
+robots.txt. See [docs/project/phase-tracker.md](docs/project/phase-tracker.md)
 for the full, sequenced list of phases with entry/exit criteria.
+
+Set `NEXT_PUBLIC_SITE_URL` to override the canonical/OpenGraph base URL
+(defaults to `https://www.processpilot.com`) — see
+[docs/development/environment-variables.md](docs/development/environment-variables.md).
 
 ## Cloud-first development
 

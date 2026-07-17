@@ -16,8 +16,20 @@ export function Heading({
   );
 }
 
-export function Text({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <p className={clsx("text-base leading-7 text-ink", className)}>{children}</p>;
+export function Text({
+  className,
+  children,
+  id,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  id?: string;
+}) {
+  return (
+    <p id={id} className={clsx("text-base leading-7 text-ink", className)}>
+      {children}
+    </p>
+  );
 }
 
 export function Eyebrow({

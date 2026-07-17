@@ -15,7 +15,7 @@ narrative grouping of these phases into horizons.
 | -1    | Cloud/CI foundation                         | Complete    |
 | 0     | Product and engineering foundation          | In Progress |
 | 1     | Repository and design foundation            | In Progress |
-| 2     | Marketing website                           | Not Started |
+| 2     | Marketing website                           | In Progress |
 | 3     | Authentication and organizations            | Not Started |
 | 4     | Database and tenant isolation               | Not Started |
 | 5     | Business onboarding and employee management | Not Started |
@@ -120,15 +120,38 @@ narrative grouping of these phases into horizons.
 
 - **Goal:** Build processpilot.com per
   [product/information-architecture.md](../../product/information-architecture.md).
-- **Deliverables:** Home, Product, Solutions, Industries, Pricing,
-  Security, Resources, Company, Request demo, Start trial (stub linking to
-  Phase 3), Sign in (stub), Privacy, Terms.
+- **Deliverables:** All 30 required public routes — homepage; a Product
+  hub and 7 product pages; a Solutions hub and 5 solution pages; an
+  Industries hub and 5 industry pages; Pricing, Security, Resources,
+  Company; Request demo, Start trial, Sign in; Privacy, Terms — built
+  with shared, content-driven page templates (`ProductPageTemplate`,
+  `SolutionPageTemplate`, `IndustryPageTemplate`) rather than one-off
+  page components. Request demo, Start trial, and Sign in are full
+  development-mode forms (react-hook-form + zod, client- and
+  server-side validated) posting to isolated `/api/*` routes — nothing
+  is persisted, no email is sent, every response says so explicitly —
+  rather than static stubs, since Phase 3 (real auth/persistence)
+  hadn't landed when this phase was built.
 - **Dependencies:** Phase 1.
 - **Entry criteria:** Design foundation available.
 - **Exit criteria:** All pages listed exist, are responsive, meet WCAG 2.1
   AA, and contain no fabricated statistics/testimonials/logos per
   [product/product-principles.md](../../product/product-principles.md).
-- **Status:** Not Started.
+- **Status:** In Progress — implementation complete: homepage's 14
+  required sections (sticky nav, hero, business problem, operating loop,
+  product pillars, role-preview tabs, procedure-to-workflow demo, AI
+  capabilities with human-review framing, multi-location, governance/
+  security, pricing preview, FAQ accordion, final CTA, footer); Security
+  page states only planned/designed controls and explicitly disclaims
+  SOC 2/ISO 27001/HIPAA/FedRAMP/HITRUST/GDPR/PCI certification; per-page
+  SEO metadata, OpenGraph/Twitter tags, `sitemap.ts`, `robots.ts`;
+  keyboard-operable nav dropdowns/mobile menu/tabs/accordion with ARIA
+  wiring; 17 Vitest + 48 Playwright tests. `npm run phase:commit` green.
+  Visual/WCAG review via Vercel preview still outstanding — same
+  platform-configuration blocker noted under Phase 1. Demo content
+  consistently uses one fictional company (Northstar Property Group),
+  labeled as product demonstration data throughout; no product
+  screenshots or competitor assets used.
 - **Risks:** Content requiring real legal review (Privacy, Terms) before
   public launch — tracked against Phase 25.
 
