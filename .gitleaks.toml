@@ -10,4 +10,9 @@ regexes = [
   # sign hand-crafted Standard Webhooks test payloads. Looks plausible
   # enough (whsec_ prefix) to trip the generic-api-key entropy rule.
   '''whsec_A{32}''',
+  # The same fixture's original value, before it was replaced with the
+  # one above — still flagged by "full history" scans of the commit that
+  # first introduced it, regardless of later commits. Never a real
+  # credential; safe to allowlist alongside its replacement.
+  '''whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw''',
 ]
