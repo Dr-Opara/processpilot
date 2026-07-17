@@ -8,7 +8,11 @@ import { POST } from "./route";
 // over the base64-decoded secret (after its "whsec_" prefix), base64
 // encoded, prefixed "v1,". No svix package needed to construct this in
 // tests; it's a stable, documented spec.
-const TEST_SECRET = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw";
+//
+// Deliberately all-zero-byte base64 (not a randomly-generated-looking
+// string) — a plausible-looking fake secret here previously tripped
+// gitleaks' generic-api-key entropy check in CI as a false positive.
+const TEST_SECRET = "whsec_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 function sign(id: string, timestamp: string, payload: string, secret: string) {
   const secretBytes = Buffer.from(secret.split("_")[1], "base64");
