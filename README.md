@@ -16,21 +16,26 @@ This repository is production commercial software, not a prototype.
 
 ## Current phase
 
-**Phase 2: Marketing website** — processpilot.com, built on the Phase 1
-design foundation: 30 public routes (homepage; product hub + 7 product
-pages; solutions hub + 5 solution pages; industries hub + 5 industry
-pages; pricing, security, resources, company; request-demo, start-trial,
-sign-in; privacy, terms) using shared, content-driven page templates;
-request-demo/start-trial/sign-in forms validated client- and
+**Phase 3: Authentication and organizations** — real Clerk sign-up,
+sign-in, organization creation, and invitation at `/app/*` (in
+production, `app.processpilot.com` — see
+[deployment-architecture.md](docs/architecture/deployment-architecture.md)),
+gated server-side by `requireAuth()`. Role assignment uses Clerk's
+built-in roles as an interim stand-in until Phase 4 adds ProcessPilot's
+own `Member`/`Role` schema. Built on Phase 2's marketing site: 30 public
+routes, still request-demo/start-trial validated client- and
 server-side (react-hook-form + zod) against isolated development-mode
-API routes under `/api/*` — nothing is persisted, no email is sent, and
-every response says so explicitly; per-page SEO metadata, sitemap, and
-robots.txt. See [docs/project/phase-tracker.md](docs/project/phase-tracker.md)
-for the full, sequenced list of phases with entry/exit criteria.
+API routes under `/api/*` — start-trial now hands off into real sign-up
+rather than a dev-mode success message. See
+[docs/project/phase-tracker.md](docs/project/phase-tracker.md) for the
+full, sequenced list of phases with entry/exit criteria.
 
 Set `NEXT_PUBLIC_SITE_URL` to override the canonical/OpenGraph base URL
 (defaults to `https://www.processpilot.com`) — see
 [docs/development/environment-variables.md](docs/development/environment-variables.md).
+Clerk keys (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`,
+`CLERK_WEBHOOK_SIGNING_SECRET`) are required for the app to function —
+same doc.
 
 ## Cloud-first development
 

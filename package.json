@@ -21,6 +21,7 @@
     "phase:commit": "bash scripts/prepare-phase-commit.sh"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.5.20",
     "clsx": "^2.1.1",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
@@ -30,6 +31,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@clerk/testing": "^2.2.10",
     "@playwright/test": "^1.55.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

@@ -40,19 +40,21 @@ test.describe("Start trial form", () => {
     await page.getByLabel(/i agree to the/i).check();
     await page.getByLabel("Password").fill("weak");
 
-    await page.getByRole("button", { name: /start free trial/i }).click();
+    await page.getByRole("button", { name: /continue to sign up/i }).click();
 
     await expect(page.getByText(/password must be at least 8 characters/i)).toBeVisible();
 
     await page.getByLabel(/i agree to the/i).uncheck();
     await page.getByLabel("Password").fill("Str0ngPass");
-    await page.getByRole("button", { name: /start free trial/i }).click();
+    await page.getByRole("button", { name: /continue to sign up/i }).click();
 
     await expect(page.getByText(/you must agree to the terms/i)).toBeVisible();
 
     await page.getByLabel(/i agree to the/i).check();
-    await page.getByRole("button", { name: /start free trial/i }).click();
+    await page.getByRole("button", { name: /continue to sign up/i }).click();
 
-    await expect(page.getByText(/development mode: this signup was validated/i)).toBeVisible();
+    // Valid, agreed-to submission now hands off into real Clerk sign-up
+    // rather than showing a dev-mode message — see Phase 3.
+    await expect(page).toHaveURL(/\/app\/sign-up$/);
   });
 });

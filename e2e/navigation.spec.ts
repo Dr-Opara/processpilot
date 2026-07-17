@@ -43,6 +43,6 @@ test.describe("Mobile navigation", () => {
     await expect(mobileNav.getByRole("link", { name: "Knowledge" })).toBeVisible();
 
     await mobileNav.getByRole("link", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/sign-in$/);
+    await expect(page).toHaveURL(/\/app\/sign-in$/);
   });
 });

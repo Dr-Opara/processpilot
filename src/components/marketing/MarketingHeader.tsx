@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { Route } from "next";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -101,9 +102,12 @@ export function MarketingHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a href="/sign-in" className="text-sm font-medium text-muted hover:text-ink">
+          <Link
+            href={"/app/sign-in" as Route}
+            className="text-sm font-medium text-muted hover:text-ink"
+          >
             Sign in
-          </a>
+          </Link>
           <Button href="/request-demo" variant="secondary">
             Request demo
           </Button>
@@ -184,13 +188,13 @@ export function MarketingHeader() {
             >
               {pricingNav.label}
             </a>
-            <a
-              href="/sign-in"
+            <Link
+              href={"/app/sign-in" as Route}
               className="py-3 text-sm font-semibold text-ink"
               onClick={() => setMobileOpen(false)}
             >
               Sign in
-            </a>
+            </Link>
             <Button href="/request-demo" variant="secondary" className="mt-2 justify-center">
               Request demo
             </Button>

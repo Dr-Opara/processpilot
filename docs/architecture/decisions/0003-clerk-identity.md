@@ -2,8 +2,11 @@
 
 ## Status
 
-Proposed — not yet integrated. Implemented in Phase 3 (Authentication and
-organizations).
+Accepted — integrated in Phase 3 (Authentication and organizations).
+`Member`/`Role` sync described below (the "kept in sync with
+ProcessPilot's own `Member`/`Role` records" line) is Phase 4 work — see
+[authentication-and-authorization.md](../authentication-and-authorization.md)
+for the current interim role mapping.
 
 ## Context
 

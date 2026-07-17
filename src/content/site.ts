@@ -146,7 +146,7 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
     links: [
       { label: "Request a demo", href: "/request-demo" },
       { label: "Start free trial", href: "/start-trial" },
-      { label: "Sign in", href: "/sign-in" },
+      { label: "Sign in", href: "/app/sign-in" },
     ],
   },
 ];

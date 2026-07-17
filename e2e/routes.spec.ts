@@ -28,7 +28,6 @@ const criticalRoutes = [
   "/company",
   "/request-demo",
   "/start-trial",
-  "/sign-in",
   "/privacy",
   "/terms",
 ];

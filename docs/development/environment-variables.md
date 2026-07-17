@@ -20,18 +20,20 @@ pull request descriptions, screenshots, or logs. See
 
 ## Current variables
 
-| Variable                           | Purpose                                                                       | Required in this phase?              |
-| ---------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------ |
-| `NODE_ENV`                         | Standard Node/Next.js environment flag                                        | Set automatically by the runtime     |
-| `NEXT_PUBLIC_APP_URL`              | Canonical app URL, exposed to the browser                                     | Not yet consumed by code             |
-| `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM` | Gates the internal `/design-system` component gallery route (404s when unset) | Set to `true` in Vercel Preview only |
+| Variable                            | Purpose                                                                       | Required in this phase?              |
+| ----------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------ |
+| `NODE_ENV`                          | Standard Node/Next.js environment flag                                        | Set automatically by the runtime     |
+| `NEXT_PUBLIC_APP_URL`               | Canonical app URL, exposed to the browser                                     | Not yet consumed by code             |
+| `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM`  | Gates the internal `/design-system` component gallery route (404s when unset) | Set to `true` in Vercel Preview only |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key, exposed to the browser                                 | Required                             |
+| `CLERK_SECRET_KEY`                  | Clerk secret key, server-only                                                 | Required                             |
+| `CLERK_WEBHOOK_SIGNING_SECRET`      | Verifies `svix` signatures on `/api/webhooks/clerk`                           | Required                             |
 
 ## Planned variables (documented now, enforced as each phase lands)
 
 | Variable                                                                    | Purpose                                          |
 | --------------------------------------------------------------------------- | ------------------------------------------------ |
 | `DATABASE_URL`                                                              | Postgres connection string (e.g. Neon, Supabase) |
-| `AUTH_SECRET`, `AUTH_URL`                                                   | Authentication provider configuration            |
 | `STORAGE_BUCKET_NAME`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY` | Object storage for uploads                       |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`                                | Billing                                          |
 | `QUEUE_CONNECTION_URL`                                                      | Background job / queue connection                |

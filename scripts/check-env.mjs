@@ -20,10 +20,13 @@ if (!fs.existsSync(exampleFile)) {
   process.exit(1);
 }
 
-// No integrations are implemented yet in Phase -1 (cloud/CI foundation
-// only), so nothing is required at runtime. Populate this as each
-// integration (database, auth, storage, billing, queues, email, AI) lands.
-const REQUIRED_VARS = [];
+// Populate this as each integration (database, auth, storage, billing,
+// queues, email, AI) lands.
+const REQUIRED_VARS = [
+  "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+  "CLERK_SECRET_KEY",
+  "CLERK_WEBHOOK_SIGNING_SECRET",
+];
 
 const documented = new Set(
   fs

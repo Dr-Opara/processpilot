@@ -62,10 +62,3 @@ export const startTrialSchema = z
   .strict();
 
 export type StartTrialInput = z.infer<typeof startTrialSchema>;
-
-export const signInSchema = z.object({
-  email: workEmail,
-  password: z.string().min(1, "Password is required"),
-});
-
-export type SignInInput = z.infer<typeof signInSchema>;
