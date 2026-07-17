@@ -1,0 +1,28 @@
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 24px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.main h1 {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.status {
+  color: var(--foreground);
+  opacity: 0.6;
+  font-size: 14px;
+}

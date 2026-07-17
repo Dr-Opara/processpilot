@@ -1,0 +1,81 @@
+name: Phase Work
+description: Track work for a specific phase from the phase tracker
+title: "[Phase <n>]: "
+labels: ["phase-work", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for work tracked against
+        [docs/project/phase-tracker.md](../../docs/project/phase-tracker.md).
+        For a bug or a feature idea unrelated to a specific phase, use the
+        Bug Report or Feature Request templates instead.
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      description: Which phase does this work belong to?
+      options:
+        - "Phase 0: Product and engineering foundation"
+        - "Phase 1: Repository and design foundation"
+        - "Phase 2: Marketing website"
+        - "Phase 3: Authentication and organizations"
+        - "Phase 4: Database and tenant isolation"
+        - "Phase 5: Business onboarding and employee management"
+        - "Phase 6: Knowledge management"
+        - "Phase 7: Process builder"
+        - "Phase 8: Workflow execution engine"
+        - "Phase 9: Forms and evidence"
+        - "Phase 10: Approvals and escalations"
+        - "Phase 11: Exception management"
+        - "Phase 12: Training and certifications"
+        - "Phase 13: AI ingestion and copilot"
+        - "Phase 14: Analytics"
+        - "Phase 15: Audit and compliance center"
+        - "Phase 16: Notifications"
+        - "Phase 17: Billing and entitlements"
+        - "Phase 18: Integrations"
+        - "Phase 19: External portal"
+        - "Phase 20: Responsive PWA"
+        - "Phase 21: Organization administration"
+        - "Phase 22: Security hardening"
+        - "Phase 23: Reliability and observability"
+        - "Phase 24: Complete QA"
+        - "Phase 25: Legal and trust readiness"
+        - "Phase 26: Deployment"
+        - "Phase 27: Internal support console"
+        - "Phase 28: Demo workspace"
+        - "Phase 29: Final product and design audit"
+        - "Phase 30: Release candidate"
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What does this issue cover within the phase?
+      description: A specific deliverable or slice of the phase's scope — not necessarily the whole phase.
+    validations:
+      required: true
+  - type: textarea
+    id: exit-criteria
+    attributes:
+      label: Relevant exit criteria
+      description: Copy the specific exit criteria from the phase tracker that this issue must satisfy.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Any other phase or issue this depends on, per the phase tracker's dependency list.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have reviewed docs/project/phase-tracker.md and this issue's scope matches the selected phase
+          required: true
+        - label: I have confirmed this report contains no secrets or credentials
+          required: true

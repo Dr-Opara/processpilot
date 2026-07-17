@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Phase tracker
+    url: https://github.com/Dr-Opara/processpilot/blob/main/docs/project/phase-tracker.md
+    about: See the full, sequenced list of phases with entry/exit criteria before filing phase work.
+  - name: Security vulnerability
+    url: https://github.com/Dr-Opara/processpilot/security/advisories/new
+    about: Report a security vulnerability privately — do not open a public issue.

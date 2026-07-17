@@ -1,0 +1,17 @@
+# Code owners for ProcessPilot
+# These owners are automatically requested for review when a pull request
+# touches matching paths. See https://docs.github.com/articles/about-codeowners
+
+# Default owner for everything in the repo
+* @Dr-Opara
+
+# Cloud/CI/dev-environment foundation requires explicit owner review
+/.github/ @Dr-Opara
+/.devcontainer/ @Dr-Opara
+/docs/development/ @Dr-Opara
+
+# Product, architecture, and design decisions require explicit owner review
+/product/ @Dr-Opara
+/docs/architecture/ @Dr-Opara
+/docs/project/ @Dr-Opara
+/design/ @Dr-Opara
