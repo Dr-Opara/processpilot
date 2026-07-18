@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Stack } from "@/components/ui/Layout";
 import { Label, Text } from "@/components/ui/Typography";
@@ -9,7 +11,6 @@ import { Select } from "@/components/ui/Select";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { FieldError } from "@/components/ui/FieldError";
-import { DevModeResult } from "./DevModeResult";
 import {
   startTrialSchema,
   employeeCountRanges,
@@ -18,16 +19,17 @@ import {
 } from "@/lib/validation";
 
 export function StartTrialForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<StartTrialInput>();
-  const [result, setResult] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function onSubmit(data: StartTrialInput) {
-    setResult(null);
+    setSubmitError(null);
     const parsed = startTrialSchema.safeParse(data);
 
     if (!parsed.success) {
@@ -41,13 +43,23 @@ export function StartTrialForm() {
       return;
     }
 
+    // This pre-qualification step (company size, industry, etc.) isn't
+    // persisted anywhere yet — there's no database until Phase 4. Account
+    // creation itself now goes through real Clerk sign-up rather than the
+    // dev-mode simulation this form used before Phase 3.
     const response = await fetch("/api/start-trial", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(parsed.data),
     });
     const payload = await response.json();
-    setResult(payload.message ?? "Something went wrong. Please try again.");
+
+    if (!response.ok || !payload.ok) {
+      setSubmitError("Something went wrong. Please try again.");
+      return;
+    }
+
+    router.push("/app/sign-up" as Route);
   }
 
   return (
@@ -187,9 +199,9 @@ export function StartTrialForm() {
 
       <Stack className="gap-4">
         <Button type="submit" disabled={isSubmitting} className="w-fit">
-          {isSubmitting ? "Creating..." : "Start free trial"}
+          {isSubmitting ? "Continuing..." : "Continue to sign up"}
         </Button>
-        {result ? <DevModeResult message={result} /> : null}
+        {submitError ? <FieldError id="start-trial-error" message={submitError} /> : null}
       </Stack>
     </form>
   );

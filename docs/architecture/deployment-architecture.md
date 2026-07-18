@@ -47,6 +47,38 @@ project environment variables (scoped per environment) for Preview/
 Production. No environment shares live production credentials with
 Preview.
 
+## Marketing/app subdomain routing
+
+Per [ADR-0002](decisions/0002-nextjs-app-router.md) and
+[product/information-architecture.md](../../product/information-architecture.md),
+one Next.js app serves both `processpilot.com` (marketing, statically
+generated) and the authenticated `app.processpilot.com`. No custom domain
+is configured yet, so `middleware.ts` only rewrites when a request's host
+actually starts with `app.` — production, once that domain exists.
+Everywhere else (Codespaces, Vercel preview URLs, localhost, none of
+which can have that subdomain), the routes under `src/app/app/` are
+reachable directly at `/app/*` by path instead, which is how this app is
+tested today.
+
+Route protection is not done in middleware — it's enforced per-route in
+`src/app/app/(protected)/layout.tsx` via `requireAuth()`
+(`src/lib/auth.ts`), matching the "server-enforced, always, on every
+request" rule in
+[authentication-and-authorization.md](authentication-and-authorization.md)
+rather than relying on a single path-matching gate (Clerk's
+`createRouteMatcher`-based middleware auth is deprecated in the SDK
+version this project uses).
+
+Redirect targets for sign-in/sign-up (`ClerkProvider`'s `signInUrl`/
+`signUpUrl` in `src/app/layout.tsx`) are fixed `/app/sign-in` and
+`/app/sign-up` paths rather than host-detected: computing them would
+require reading `headers()` in the root layout, which wraps every
+marketing page too and would force the entire static marketing site into
+dynamic rendering just to pick a redirect path. The only cost today is a
+redundant `/app` segment remaining in the URL if reached through a real
+`app.processpilot.com` host — cosmetic, not functional, and worth
+revisiting once a real deployment phase configures that domain.
+
 ## Rollback
 
 Vercel retains prior deployments; rolling back to a previous production

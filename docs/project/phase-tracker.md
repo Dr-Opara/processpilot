@@ -16,7 +16,7 @@ narrative grouping of these phases into horizons.
 | 0     | Product and engineering foundation          | In Progress |
 | 1     | Repository and design foundation            | In Progress |
 | 2     | Marketing website                           | In Progress |
-| 3     | Authentication and organizations            | Not Started |
+| 3     | Authentication and organizations            | In Progress |
 | 4     | Database and tenant isolation               | Not Started |
 | 5     | Business onboarding and employee management | Not Started |
 | 6     | Knowledge management                        | Not Started |
@@ -168,10 +168,27 @@ narrative grouping of these phases into horizons.
   and be assigned a role; server-side session verification covers every
   protected route; automated tests cover unauthenticated/unauthorized
   access rejection.
-- **Status:** Not Started.
+- **Status:** In Progress — sign-up/sign-in, organization creation, and
+  invitation (via Clerk's `<OrganizationProfile>`) are implemented at
+  `/app/*`, re-themed to design/components.md. `requireAuth()`
+  (`src/lib/auth.ts`) gates every route under
+  `src/app/app/(protected)/`, server-side. `/api/webhooks/clerk`
+  verifies and acknowledges Clerk events (signature-verified, log-only —
+  persistence is Phase 4). Role assignment uses Clerk's built-in
+  `org:admin`/`org:member` roles as an interim stand-in for the full
+  7-role model — real `Member`/`Role` sync is explicitly Phase 4's job,
+  not this phase's (see authentication-and-authorization.md). Unit tests
+  cover the auth guard and webhook signature verification; e2e coverage
+  for unauthenticated redirect and full sign-in/sign-out
+  (`e2e/app-auth.spec.ts`) requires real Clerk test-mode keys plus one
+  pre-created test user to actually run — see that file's header comment.
+  `npm run phase:commit` green.
 - **Risks:** External-user auth flow (Phase 19) must not be bolted on
   awkwardly — the base auth design should anticipate it without
-  implementing it yet.
+  implementing it yet. Clerk's `createRouteMatcher`-based middleware auth
+  is deprecated in the installed SDK version, so route protection is
+  done per-layout instead (see deployment-architecture.md) — worth
+  re-checking against Clerk's migration guide if this SDK is upgraded.
 
 ## Phase 4: Database and tenant isolation
 

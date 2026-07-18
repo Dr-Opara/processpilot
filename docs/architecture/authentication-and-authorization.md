@@ -3,13 +3,32 @@
 ## Authentication
 
 Clerk provides identity and organization membership (see
-[ADR-0003](decisions/0003-clerk-identity.md)). Planned shape:
+[ADR-0003](decisions/0003-clerk-identity.md)), implemented in Phase 3:
 
-- Every authenticated user has a Clerk identity.
+- Every authenticated user has a Clerk identity. Sign-up/sign-in are
+  Clerk's prebuilt `<SignIn>`/`<SignUp>` components, re-themed to
+  design/components.md (see `src/lib/clerk-appearance.ts`), served at
+  `/app/sign-in` and `/app/sign-up`.
 - Organization membership (which `Organization`(s) a user belongs to, and
-  their role(s) within each) is modeled using Clerk Organizations, kept in
-  sync with ProcessPilot's own `Member`/`Role` records (see
-  [domain model](domain-model.md)).
+  their role(s) within each) is modeled using Clerk Organizations
+  (creation, invitation, and member management via `<CreateOrganization>`
+  and `<OrganizationProfile>`), **kept in sync with ProcessPilot's own
+  `Member`/`Role` records (see [domain model](domain-model.md)) starting
+  in Phase 4** — that schema doesn't exist yet, so Phase 3 uses Clerk's
+  own built-in `org:admin`/`org:member` roles as an interim stand-in for
+  the full 7-role model in
+  [product/user-roles.md](../../product/user-roles.md). Do not treat
+  Clerk's org role alone as authoritative for permission checks once
+  Phase 4 lands the real model.
+- The `/api/webhooks/clerk` route verifies and acknowledges Clerk
+  organization/membership/user events now (signature-verified,
+  log-only); persisting them into ProcessPilot's own tables is Phase 4's
+  "identity mapping" work.
+- The authenticated app lives at `app.processpilot.com` in production
+  (see [deployment-architecture.md](deployment-architecture.md)); until a
+  custom domain is configured, `/app/*` paths serve the same routes
+  directly, which is also how Codespaces/Playwright/Vercel-preview reach
+  them.
 - `external_user` sessions (see [user roles](../../product/user-roles.md))
   use a lighter-weight, resource-scoped authentication flow — not a full
   Clerk organization membership — appropriate to one-off, invitation-based
@@ -23,6 +42,12 @@ Clerk provides identity and organization membership (see
 Authorization is **role- and permission-based**, defined in
 [product/user-roles.md](../../product/user-roles.md) and
 [product/permissions-matrix.md](../../product/permissions-matrix.md).
+The full permission-matrix enforcement described below is Phase 4+ work,
+once ProcessPilot's own `Member`/`Role`/`Permission` tables exist to
+enforce it against. Phase 3 implements only rule 1 below, scoped to
+session verification: `src/lib/auth.ts`'s `requireAuth()` gates every
+route under `src/app/app/(protected)/`, server-side, redirecting
+signed-out callers before any protected content renders.
 
 ### Non-negotiable rules
 
@@ -51,7 +76,7 @@ Authorization is **role- and permission-based**, defined in
    [multi-tenancy](multi-tenancy.md)) are independent, redundant controls
    — a bug in one must not be sufficient for a breach.
 
-## Session and token handling (planned)
+## Session and token handling
 
 - Session tokens are managed by Clerk's SDKs; ProcessPilot application
   code does not hand-roll session/token storage.

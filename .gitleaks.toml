@@ -1,0 +1,18 @@
+[extend]
+useDefault = true
+
+# Known false positives — real, deliberately-not-real test fixtures, not
+# leaked credentials. Keep this narrow (exact values), never a broad
+# path/rule exclusion, so real secrets in test files still get caught.
+[allowlist]
+regexes = [
+  # src/app/api/webhooks/clerk/route.test.ts: all-zero-byte base64 used to
+  # sign hand-crafted Standard Webhooks test payloads. Looks plausible
+  # enough (whsec_ prefix) to trip the generic-api-key entropy rule.
+  '''whsec_A{32}''',
+  # The same fixture's original value, before it was replaced with the
+  # one above — still flagged by "full history" scans of the commit that
+  # first introduced it, regardless of later commits. Never a real
+  # credential; safe to allowlist alongside its replacement.
+  '''whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw''',
+]
