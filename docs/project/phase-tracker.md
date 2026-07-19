@@ -4,7 +4,11 @@ Authoritative, sequenced record of every planned phase of ProcessPilot
 work. A phase does not start until its dependencies are `Complete`, and
 does not close until its exit criteria are verifiably met — not merely
 attempted. See [product/roadmap.md](../../product/roadmap.md) for the
-narrative grouping of these phases into horizons.
+narrative grouping of these phases into horizons, and
+[milestones.md](milestones.md) for the coarser, outcome-level grouping used
+for cross-team status reporting (each milestone maps to a contiguous run of
+phases from this tracker and does not close until those phases are
+`Complete`).
 
 **Status legend:** `Complete` · `In Progress` · `Not Started`
 
@@ -17,11 +21,12 @@ narrative grouping of these phases into horizons.
 | 1     | Repository and design foundation            | In Progress |
 | 2     | Marketing website                           | In Progress |
 | 3     | Authentication and organizations            | In Progress |
-| 4     | Database and tenant isolation               | Not Started |
+| 4     | Database and tenant isolation               | In Progress |
 | 5     | Business onboarding and employee management | Not Started |
 | 6     | Knowledge management                        | Not Started |
 | 7     | Process builder                             | Not Started |
 | 8     | Workflow execution engine                   | Not Started |
+| 8.5   | MVP staging and design-partner validation   | Not Started |
 | 9     | Forms and evidence                          | Not Started |
 | 10    | Approvals and escalations                   | Not Started |
 | 11    | Exception management                        | Not Started |
@@ -203,11 +208,16 @@ narrative grouping of these phases into horizons.
 - **Exit criteria:** Cross-tenant isolation tests pass at 100%; every
   tenant-owned table has an RLS policy; no query path bypasses
   organization scoping.
-- **Status:** Not Started.
+- **Status:** In Progress — repository investigation and
+  [Milestone 2 documentation](milestone-2-core-platform.md) complete;
+  schema, RLS, identity mapping, and authorization-service implementation
+  in progress on `feature/phase-4-database-tenancy`.
 - **Risks:** RLS policy authoring mistakes are the single highest-severity
   risk category in the whole roadmap — mandates dedicated test coverage
   before this phase can close, per
   [product/assumptions-and-risks.md](../../product/assumptions-and-risks.md).
+  Requires a Supabase project to be provisioned (manual dashboard step,
+  tracked as a blocker, not fabricated).
 
 ## Phase 5: Business onboarding and employee management
 
@@ -271,6 +281,29 @@ narrative grouping of these phases into horizons.
 - **Status:** Not Started.
 - **Risks:** Highest architectural complexity phase to date — event
   idempotency bugs would silently corrupt operational data if untested.
+
+## Phase 8.5: MVP staging and design-partner validation
+
+- **Goal:** Prove the Milestone 2 core loop (account → organization →
+  structure → knowledge → process → workflow → task completion) works
+  end-to-end for one real design partner on a stable deployment, closing
+  out [Milestone 2: Core Platform](milestone-2-core-platform.md).
+- **Deliverables:** Expanded critical-path Playwright coverage of the full
+  12-step customer journey, a reset-able demo workspace for walkthroughs,
+  a stable Vercel staging deployment, at least one design-partner
+  walkthrough with recorded feedback, documented known limitations.
+- **Dependencies:** Phases 4–8.
+- **Entry criteria:** A workflow can be started from a published process
+  and driven to completion (Phase 8 exit criteria met).
+- **Exit criteria:** Every item in
+  [Milestone 2's definition of done](milestone-2-core-platform.md#definition-of-done)
+  is verifiably met.
+- **Status:** Not Started.
+- **Risks:** Narrower in scope than
+  [Phase 24 (Complete QA)](#phase-24-complete-qa) and
+  [Phase 28 (Demo workspace)](#phase-28-demo-workspace) — do not treat this
+  phase's pass as a substitute for either of those later, broader passes
+  across every persona and the full finished product.
 
 ## Phase 9: Forms and evidence
 
@@ -623,6 +656,9 @@ narrative grouping of these phases into horizons.
 
 ## Related documents
 
-- [Roadmap](../../product/roadmap.md)
+- [Milestones](milestones.md)
+- [Project roadmap](roadmap.md)
+- [Current project status](current-project-status.md)
+- [product/roadmap.md](../../product/roadmap.md)
 - [Release plan](../../product/release-plan.md)
 - [Architecture decisions](../architecture/architecture-decisions.md)
