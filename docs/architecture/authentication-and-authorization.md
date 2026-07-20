@@ -13,17 +13,21 @@ Clerk provides identity and organization membership (see
   their role(s) within each) is modeled using Clerk Organizations
   (creation, invitation, and member management via `<CreateOrganization>`
   and `<OrganizationProfile>`), **kept in sync with ProcessPilot's own
-  `Member`/`Role` records (see [domain model](domain-model.md)) starting
-  in Phase 4** — that schema doesn't exist yet, so Phase 3 uses Clerk's
-  own built-in `org:admin`/`org:member` roles as an interim stand-in for
-  the full 7-role model in
-  [product/user-roles.md](../../product/user-roles.md). Do not treat
-  Clerk's org role alone as authoritative for permission checks once
-  Phase 4 lands the real model.
-- The `/api/webhooks/clerk` route verifies and acknowledges Clerk
-  organization/membership/user events now (signature-verified,
-  log-only); persisting them into ProcessPilot's own tables is Phase 4's
-  "identity mapping" work.
+  `organization_members`/`roles` records (see
+  [domain model](domain-model.md) and
+  [clerk-supabase-identity-sync.md](clerk-supabase-identity-sync.md)) as
+  of Phase 4**. Clerk's own `org:admin`/`org:member` roles (stored as
+  `organization_members.clerk_role`) remain the source of truth for
+  Clerk's own UI (`<OrganizationProfile>`) but are never treated as
+  authoritative for ProcessPilot permission checks — every
+  `requirePermission()` call resolves against the real
+  `role_permissions`/`member_role_assignments` tables instead.
+- The `/api/webhooks/clerk` route verifies, acknowledges, and (as of
+  Phase 4) persists Clerk organization/membership/user events into
+  ProcessPilot's own tables — idempotently, inside a transaction, with an
+  audit event per change. See
+  [clerk-supabase-identity-sync.md](clerk-supabase-identity-sync.md) for
+  the full mapping and idempotency model.
 - The authenticated app lives at `app.processpilot.com` in production
   (see [deployment-architecture.md](deployment-architecture.md)); until a
   custom domain is configured, `/app/*` paths serve the same routes
@@ -41,13 +45,15 @@ Clerk provides identity and organization membership (see
 
 Authorization is **role- and permission-based**, defined in
 [product/user-roles.md](../../product/user-roles.md) and
-[product/permissions-matrix.md](../../product/permissions-matrix.md).
-The full permission-matrix enforcement described below is Phase 4+ work,
-once ProcessPilot's own `Member`/`Role`/`Permission` tables exist to
-enforce it against. Phase 3 implements only rule 1 below, scoped to
-session verification: `src/lib/auth.ts`'s `requireAuth()` gates every
-route under `src/app/app/(protected)/`, server-side, redirecting
-signed-out callers before any protected content renders.
+[product/permissions-matrix.md](../../product/permissions-matrix.md), and
+enforced by `src/lib/authz.ts`'s `requirePermission()` — built on Phase 3's
+`src/lib/auth.ts`'s `requireAuth()` (session verification, unchanged) plus
+Phase 4's `organization_members`/`roles`/`role_permissions` tables.
+`requirePermission(permission)` resolves the caller's active membership
+and checks their _unscoped_ ("✓") permission grants; a caller lacking the
+permission gets `AppError("forbidden", ...)`, normalized by
+`src/lib/errors.ts` into a safe HTTP response that never leaks a raw
+database error.
 
 ### Non-negotiable rules
 
@@ -85,9 +91,29 @@ signed-out callers before any protected content renders.
   configuration (see [environment-variables.md](../development/environment-variables.md))
   and is never exposed to client bundles.
 
+## Known limitations
+
+- **Scoped permission grants are not yet enforced.** `product/permissions-matrix.md`
+  marks some grants "Scoped" (e.g. a `manager`'s `department.manage`,
+  narrowed to the department/location/team they manage) rather than
+  organization-wide. The data model for _which_ department/location/team a
+  manager manages doesn't exist until Phase 5 (Business onboarding and
+  employee management). Until then, `requirePermission()` and RLS policies
+  only recognize a member's _unscoped_ grants — a manager currently gets
+  no write access to `departments`/`teams`/`organization_members` at all
+  via this path, rather than incorrectly organization-wide access. This is
+  a deliberate under-provisioning, not an oversight; Phase 5 is expected
+  to close this gap.
+- **Custom roles are schema-ready but not implemented.** `roles.organization_id`
+  is nullable specifically so Phase 21 (Organization administration) can
+  add custom, org-scoped roles without a breaking schema change. No UI or
+  service exists yet to create one.
+
 ## Related documents
 
 - [User roles](../../product/user-roles.md)
 - [Permissions matrix](../../product/permissions-matrix.md)
 - [Multi-tenancy](multi-tenancy.md)
+- [Clerk↔Supabase identity sync](clerk-supabase-identity-sync.md)
+- [Database schema](database-schema.md)
 - [ADR-0003: Clerk for identity and organization membership](decisions/0003-clerk-identity.md)

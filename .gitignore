@@ -62,3 +62,7 @@ Thumbs.db
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# Supabase CLI local cache/link state (not project source)
+/supabase/.temp/
+/supabase/.branches/

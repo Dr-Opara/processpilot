@@ -25,20 +25,39 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   [product/information-architecture.md](../../product/information-architecture.md).
 - Authentication: Clerk sign-up/sign-in, organization creation and
   invitation at `/app/*`, server-side session gating via `requireAuth()`.
-  Role assignment still uses Clerk's built-in `org:admin`/`org:member`
-  roles as an interim stand-in — Phase 4's job to replace.
-- `/api/webhooks/clerk`: signature-verified, currently log-only (no
-  persistence yet — that's Phase 4's identity-mapping work).
+- Database schema: all 17 tables in
+  [docs/architecture/database-schema.md](../architecture/database-schema.md),
+  committed as SQL migrations with Row-Level Security enabled and at
+  least one policy on every table — statically enforced by
+  `src/lib/db/schema-coverage.test.ts` on every change.
+- Clerk↔Supabase identity sync: `/api/webhooks/clerk` persists
+  user/organization/membership events idempotently (see
+  [clerk-supabase-identity-sync.md](../architecture/clerk-supabase-identity-sync.md)),
+  replacing Phase 3's log-only handler. Role assignment now resolves
+  against real `roles`/`role_permissions`/`member_role_assignments`
+  tables instead of Clerk's built-in `org:admin`/`org:member` roles.
+- Server-side authorization (`src/lib/authz.ts`): `getCurrentProfile()`,
+  `getCurrentOrganization()`, `getCurrentMembership()`,
+  `requirePermission()`.
+- Audit foundation: `recordAuditEvent()`, called from every identity-sync
+  path.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
-  tests against Vercel previews (`preview-checks.yml`).
+  tests against Vercel previews (`preview-checks.yml`), plus Phase 4's new
+  service-role client-bundle leak check
+  (`npm run check:bundle-secrets`, wired into `phase:commit`).
+- **Not yet applied anywhere real:** no Supabase project has been
+  provisioned, so none of the above has run against a live database —
+  see [supabase-setup.md](../development/supabase-setup.md) for the
+  manual steps that unblock this.
 
 ## What's not built yet
 
-- No database. No `Organization`/`Member`/`Role`/`Permission` schema exists
-  outside Clerk's own model. No Row-Level Security. No audit log. All of
-  this is Phase 4 scope — see
-  [milestone-2-core-platform.md](milestone-2-core-platform.md).
+- Scoped (non-organization-wide) permission enforcement — e.g. a
+  `manager`'s department-scoped `department.manage` — deferred to Phase 5,
+  which builds the location/department/team scope-assignment model this
+  needs. See
+  [authentication-and-authorization.md — known limitations](../architecture/authentication-and-authorization.md#known-limitations).
 - No knowledge management, process builder, or workflow execution (Phases
   6–8).
 - No billing, analytics, AI, notifications, integrations, or external
@@ -46,19 +65,22 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
 ## Immediate next steps
 
-1. Phase 4: Supabase Postgres schema, Clerk↔database identity sync,
-   Row-Level Security, server-side authorization services, foundational
-   audit events, cross-tenant isolation tests. Requires a Supabase project
-   to be provisioned (manual dashboard step — tracked as a Phase 4
-   blocker, not fabricated).
-2. Phase 5: business onboarding and employee management, once Phase 4's
-   schema and authorization layer exist to build on.
+1. Provision a Supabase project (dev + preview) — manual dashboard step,
+   see [supabase-setup.md](../development/supabase-setup.md). Blocks
+   applying the committed migrations, regenerating real database types,
+   and running the live-DB tenant-isolation tests for real.
+2. Phase 4 audit, once requested.
+3. Phase 5: business onboarding and employee management, once Phase 4 is
+   marked `Complete`.
 
 ## Known risks carried forward
 
 - RLS policy-authoring mistakes are flagged in the phase tracker as the
-  single highest-severity risk category in the roadmap — Phase 4 cannot
-  close without dedicated cross-tenant isolation test coverage.
+  single highest-severity risk category in the roadmap — the static
+  schema-coverage test and hand-written policies are unverified against a
+  live Postgres engine until a Supabase project exists; the live-DB
+  `tenant-isolation.integration.test.ts` suite must actually run (not just
+  compile) before Phase 4 can be considered proven, not just written.
 - Vercel preview/visual review has been blocked since Phase 1 by a
   platform-configuration issue unrelated to application code — carried
   forward, not yet resolved.

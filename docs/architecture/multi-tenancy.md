@@ -68,4 +68,6 @@ isolation between tenants.
 - [Domain model](domain-model.md)
 - [Authentication and authorization](authentication-and-authorization.md)
 - [Data ownership](data-ownership.md)
+- [Database schema](database-schema.md) — the implemented schema and RLS/session-context model as of Phase 4.
+- [Clerk↔Supabase identity sync](clerk-supabase-identity-sync.md)
 - [ADR-0005: PostgreSQL Row-Level Security](decisions/0005-postgresql-row-level-security.md)

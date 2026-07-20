@@ -2,8 +2,12 @@
 
 ## Status
 
-Proposed — not yet integrated. Implemented in Phase 4 (Database and
-tenant isolation).
+Accepted — implemented in Phase 4 (Database and tenant isolation). Every
+table in [supabase/migrations/](../../../supabase/migrations/) has RLS
+enabled and at least one policy, enforced by
+`src/lib/db/schema-coverage.test.ts` on every change. See
+[docs/architecture/database-schema.md](../database-schema.md#rlssession-context-model)
+for the session-context mechanism policies read.
 
 ## Context
 
