@@ -55,3 +55,4 @@ Immutability of published/executed records is what makes
 - [Domain model](domain-model.md)
 - [Multi-tenancy](multi-tenancy.md)
 - [Event model](event-model.md)
+- [Database schema](database-schema.md) — `archived_at`/`status` lifecycle columns and `audit_events`' append-only enforcement as implemented in Phase 4.

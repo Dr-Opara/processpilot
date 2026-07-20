@@ -20,25 +20,28 @@ pull request descriptions, screenshots, or logs. See
 
 ## Current variables
 
-| Variable                            | Purpose                                                                       | Required in this phase?              |
-| ----------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------ |
-| `NODE_ENV`                          | Standard Node/Next.js environment flag                                        | Set automatically by the runtime     |
-| `NEXT_PUBLIC_APP_URL`               | Canonical app URL, exposed to the browser                                     | Not yet consumed by code             |
-| `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM`  | Gates the internal `/design-system` component gallery route (404s when unset) | Set to `true` in Vercel Preview only |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key, exposed to the browser                                 | Required                             |
-| `CLERK_SECRET_KEY`                  | Clerk secret key, server-only                                                 | Required                             |
-| `CLERK_WEBHOOK_SIGNING_SECRET`      | Verifies `svix` signatures on `/api/webhooks/clerk`                           | Required                             |
+| Variable                               | Purpose                                                                                                                                                                                                                                                                                            | Required in this phase?              |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `NODE_ENV`                             | Standard Node/Next.js environment flag                                                                                                                                                                                                                                                             | Set automatically by the runtime     |
+| `NEXT_PUBLIC_APP_URL`                  | Canonical app URL, exposed to the browser                                                                                                                                                                                                                                                          | Not yet consumed by code             |
+| `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM`     | Gates the internal `/design-system` component gallery route (404s when unset)                                                                                                                                                                                                                      | Set to `true` in Vercel Preview only |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`    | Clerk publishable key, exposed to the browser                                                                                                                                                                                                                                                      | Required                             |
+| `CLERK_SECRET_KEY`                     | Clerk secret key, server-only                                                                                                                                                                                                                                                                      | Required                             |
+| `CLERK_WEBHOOK_SIGNING_SECRET`         | Verifies `svix` signatures on `/api/webhooks/clerk`                                                                                                                                                                                                                                                | Required                             |
+| `SUPABASE_DB_URL`                      | Direct Postgres connection string — see [supabase-setup.md](supabase-setup.md)                                                                                                                                                                                                                     | Required                             |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Supabase project URL, exposed to the browser                                                                                                                                                                                                                                                       | Documented, not yet consumed         |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (`sb_publishable_...` — Supabase's current key format, replacing the legacy JWT-based anon key), exposed to the browser                                                                                                                                                   | Documented, not yet consumed         |
+| `SUPABASE_SECRET_KEY`                  | Supabase secret key (`sb_secret_...`, replacing the legacy `service_role` JWT) — reserved for future `@supabase/supabase-js` use (e.g. Storage); Phase 4's own admin access uses `SUPABASE_DB_URL` instead, see [clerk-supabase-identity-sync.md](../architecture/clerk-supabase-identity-sync.md) | Documented, not yet consumed         |
 
 ## Planned variables (documented now, enforced as each phase lands)
 
-| Variable                                                                    | Purpose                                          |
-| --------------------------------------------------------------------------- | ------------------------------------------------ |
-| `DATABASE_URL`                                                              | Postgres connection string (e.g. Neon, Supabase) |
-| `STORAGE_BUCKET_NAME`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY` | Object storage for uploads                       |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`                                | Billing                                          |
-| `QUEUE_CONNECTION_URL`                                                      | Background job / queue connection                |
-| `EMAIL_FROM_ADDRESS`, `EMAIL_PROVIDER_API_KEY`                              | Transactional email                              |
-| `ANTHROPIC_API_KEY`                                                         | AI features backed by the Claude API             |
+| Variable                                                                    | Purpose                              |
+| --------------------------------------------------------------------------- | ------------------------------------ |
+| `STORAGE_BUCKET_NAME`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY` | Object storage for uploads           |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`                                | Billing                              |
+| `QUEUE_CONNECTION_URL`                                                      | Background job / queue connection    |
+| `EMAIL_FROM_ADDRESS`, `EMAIL_PROVIDER_API_KEY`                              | Transactional email                  |
+| `ANTHROPIC_API_KEY`                                                         | AI features backed by the Claude API |
 
 Vercel also injects its own build/runtime variables (`VERCEL`,
 `VERCEL_ENV`, `VERCEL_URL`, etc.) automatically — no action needed.

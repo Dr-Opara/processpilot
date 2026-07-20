@@ -21,6 +21,9 @@ npm run test
 echo "==> Production build"
 npm run build
 
+echo "==> Service-role client-bundle leak check"
+npm run check:bundle-secrets
+
 echo
 echo "All checks passed. Review 'git status' and 'git diff', then commit and push:"
 echo "  git add <files>"

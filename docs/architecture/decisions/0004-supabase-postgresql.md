@@ -2,8 +2,10 @@
 
 ## Status
 
-Proposed — not yet integrated. Implemented in Phase 4 (Database and
-tenant isolation).
+Accepted — implemented in Phase 4 (Database and tenant isolation). See
+[docs/architecture/database-schema.md](../database-schema.md) for the
+schema and [docs/development/supabase-setup.md](../../development/supabase-setup.md)
+for project provisioning, which remains a manual step per environment.
 
 ## Context
 
