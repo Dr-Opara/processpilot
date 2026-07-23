@@ -54,3 +54,8 @@ export function createFakeSql(handlers: FakeQueryHandler[]): FakeSql {
 export function asSql(fake: FakeSql): postgres.Sql {
   return fake as unknown as postgres.Sql;
 }
+
+/** Same bridge as asSql(), for call sites (withTenantContext callbacks) typed against postgres.TransactionSql instead of postgres.Sql. */
+export function asTransactionSql(fake: FakeSql): postgres.TransactionSql {
+  return fake as unknown as postgres.TransactionSql;
+}

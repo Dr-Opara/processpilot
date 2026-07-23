@@ -41,6 +41,13 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
   let memberRemovedA: { id: string };
   let roleAuditorId: string;
   let departmentB: { id: string };
+  let profileManagerA: { id: string; clerk_user_id: string };
+  let memberManagerA: { id: string };
+  let departmentOwnedByManagerA: { id: string };
+  let departmentNotOwnedA: { id: string };
+  let locationB: { id: string };
+  let teamB: { id: string };
+  let importBatchA: { id: string };
 
   const suffix = `test_${Date.now()}`;
   const NONEXISTENT_MEMBER_ID = "00000000-0000-0000-0000-000000000000";
@@ -73,6 +80,7 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     profileSuspendedA = await makeProfile("suspended_a");
     profileRemovedA = await makeProfile("removed_a");
     profileNonMemberA = await makeProfile("nonmember");
+    profileManagerA = await makeProfile("manager_a");
 
     const makeMember = async (profile: { id: string }, org: { id: string }, status: string) => {
       const [member] = await db<{ id: string }[]>`
@@ -88,6 +96,7 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     memberAuditorA = await makeMember(profileAuditorA, orgA, "active");
     memberSuspendedA = await makeMember(profileSuspendedA, orgA, "suspended");
     memberRemovedA = await makeMember(profileRemovedA, orgA, "removed");
+    memberManagerA = await makeMember(profileManagerA, orgA, "active");
     // profileNonMemberA deliberately gets no organization_members row at all.
 
     const [ownerRole] = await db<
@@ -99,15 +108,47 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     const [auditorRole] = await db<
       { id: string }[]
     >`select id from roles where key = 'auditor' and organization_id is null`;
+    const [managerRole] = await db<
+      { id: string }[]
+    >`select id from roles where key = 'manager' and organization_id is null`;
     roleAuditorId = auditorRole.id;
 
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberOwnerA.id}, ${ownerRole.id})`;
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberEmployeeA.id}, ${employeeRole.id})`;
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberAuditorA.id}, ${auditorRole.id})`;
+    await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberManagerA.id}, ${managerRole.id})`;
 
     [departmentB] = await db<{ id: string }[]>`
       insert into departments (organization_id, name)
       values (${orgB.id}, ${`Test Department B ${suffix}`})
+      returning id
+    `;
+
+    [departmentOwnedByManagerA] = await db<{ id: string }[]>`
+      insert into departments (organization_id, name, owner_member_id)
+      values (${orgA.id}, ${`Owned By Manager A ${suffix}`}, ${memberManagerA.id})
+      returning id
+    `;
+    [departmentNotOwnedA] = await db<{ id: string }[]>`
+      insert into departments (organization_id, name)
+      values (${orgA.id}, ${`Not Owned A ${suffix}`})
+      returning id
+    `;
+
+    [locationB] = await db<{ id: string }[]>`
+      insert into organization_locations (organization_id, name)
+      values (${orgB.id}, ${`Test Location B ${suffix}`})
+      returning id
+    `;
+    [teamB] = await db<{ id: string }[]>`
+      insert into teams (organization_id, name)
+      values (${orgB.id}, ${`Test Team B ${suffix}`})
+      returning id
+    `;
+
+    [importBatchA] = await db<{ id: string }[]>`
+      insert into member_import_batches (organization_id, status, total_rows)
+      values (${orgA.id}, 'completed', 1)
       returning id
     `;
   });
@@ -311,6 +352,99 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
         "ai.use",
         "ai.configure",
       ].sort(),
+    );
+  });
+
+  it("test 11: an active Org A member can read, but cannot update, Org B's location", async () => {
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const rows = await tx`select id from organization_locations where id = ${locationB.id}`;
+        expect(rows).toHaveLength(0);
+
+        const updated = await tx`
+          update organization_locations set name = 'hijacked' where id = ${locationB.id} returning id
+        `;
+        expect(updated).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 12: an active Org A member can read, but cannot update, Org B's team, and cannot insert into its team_members", async () => {
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const rows = await tx`select id from teams where id = ${teamB.id}`;
+        expect(rows).toHaveLength(0);
+
+        const updated =
+          await tx`update teams set name = 'hijacked' where id = ${teamB.id} returning id`;
+        expect(updated).toHaveLength(0);
+      },
+    );
+
+    // team_members_insert's WITH CHECK fails (no scoped/unscoped team.manage
+    // over Org B's team from an Org A identity) — a hard exception, so this
+    // needs the outer-rejects form (same reasoning as tests 7/8 above).
+    await expect(
+      withTestClaims(
+        db,
+        { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+        async (tx) => {
+          await tx`insert into team_members (organization_id, team_id, organization_member_id)
+             values (${orgA.id}, ${teamB.id}, ${memberOwnerA.id})`;
+        },
+      ),
+    ).rejects.toThrow();
+  });
+
+  it("test 13: a manager's scoped department.manage lets them update the department they own, but not a sibling department in the same org", async () => {
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_manager_a", organizationId: orgA.id, memberId: memberManagerA.id },
+      async (tx) => {
+        const ownUpdate = await tx`
+          update departments set name = 'Renamed By Owning Manager' where id = ${departmentOwnedByManagerA.id} returning id
+        `;
+        expect(ownUpdate).toHaveLength(1);
+
+        // Same statement shape, different department — has_scoped_permission()
+        // must re-check ownership per-row, not cache a yes from the query above.
+        const siblingUpdate = await tx`
+          update departments set name = 'hijacked' where id = ${departmentNotOwnedA.id} returning id
+        `;
+        expect(siblingUpdate).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 14: member_import_batches is gated on unscoped member.invite — an auditor is denied even within their own org", async () => {
+    const permissions = await unscopedPermissionsFor(memberAuditorA.id);
+    expect(permissions).not.toContain("member.invite");
+
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_auditor_a", organizationId: orgA.id, memberId: memberAuditorA.id },
+      async (tx) => {
+        const ownOrgRows =
+          await tx`select id from member_import_batches where id = ${importBatchA.id}`;
+        expect(ownOrgRows).toHaveLength(0);
+      },
+    );
+
+    // Tenant isolation still applies independently for a caller who does
+    // hold member.invite: Org A's owner cannot see this Org A batch from an
+    // Org B claim.
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgB.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const crossOrgRows =
+          await tx`select id from member_import_batches where id = ${importBatchA.id}`;
+        expect(crossOrgRows).toHaveLength(0);
+      },
     );
   });
 });

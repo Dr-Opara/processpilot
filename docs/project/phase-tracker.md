@@ -230,7 +230,13 @@ phases from this tracker and does not close until those phases are
 - **Entry criteria:** Tenant isolation verified.
 - **Exit criteria:** An admin can fully structure an organization and
   invite members with correct role/permission enforcement, server-verified.
-- **Status:** Not Started.
+- **Status:** Complete. `npm run phase:commit`'s checks (format, lint,
+  typecheck, unit tests, build) are green in CI on
+  `feature/phase-5-company-people`; permission/scope enforcement is
+  covered by unit tests per service plus live-RLS integration tests in
+  `tenant-isolation.integration.test.ts` (locations, departments, teams,
+  team_members, member_import, and the new scoped `department.manage`
+  grant).
 - **Risks:** None beyond standard permission-boundary test coverage.
 
 ## Phase 6: Knowledge management
