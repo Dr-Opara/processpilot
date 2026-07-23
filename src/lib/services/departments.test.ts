@@ -67,7 +67,7 @@ describe("departments service", () => {
   });
 
   it("rejects a department being set as its own parent before any permission check", async () => {
-    const deptId = "11111111-1111-1111-1111-111111111111";
+    const deptId = "11111111-1111-4111-8111-111111111111";
     await expect(updateDepartment(deptId, { parentDepartmentId: deptId })).rejects.toThrow(
       "cannot be its own parent",
     );

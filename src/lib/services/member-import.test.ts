@@ -8,9 +8,9 @@ vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
 
-const createInvitation = vi.fn();
+const mockCreateInvitation = vi.fn();
 vi.mock("@/lib/services/invitations", () => ({
-  createInvitation,
+  createInvitation: mockCreateInvitation,
 }));
 
 import { requirePermission } from "@/lib/authz";
@@ -88,7 +88,7 @@ function csvOf(
 describe("member-import service", () => {
   beforeEach(() => {
     vi.mocked(requirePermission).mockReset();
-    createInvitation.mockReset();
+    mockCreateInvitation.mockReset();
   });
 
   it("rejects an empty CSV file", () => {
@@ -172,7 +172,7 @@ describe("member-import service", () => {
     vi.mocked(requirePermission).mockResolvedValue(
       makeMembership({ permissions: ["member.invite"] }),
     );
-    createInvitation
+    mockCreateInvitation
       .mockResolvedValueOnce({ id: "inv-1" })
       .mockRejectedValueOnce(new AppError("conflict", "boom"));
     const fakeSql = wireDirectory({ roles: [EMPLOYEE_ROLE] }, [
@@ -205,7 +205,7 @@ describe("member-import service", () => {
     const outcome = await confirmImport(csv, csv.length, "employees.csv");
 
     expect(outcome.batch.status).toBe("partially_failed");
-    expect(createInvitation).toHaveBeenCalledTimes(2);
+    expect(mockCreateInvitation).toHaveBeenCalledTimes(2);
     expect(fakeSql.calls.some((c) => c.text.includes("insert into audit_events"))).toBe(true);
   });
 });

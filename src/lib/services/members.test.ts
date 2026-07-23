@@ -9,9 +9,9 @@ vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
 
-const assertRoleAssignable = vi.fn();
+const mockAssertRoleAssignable = vi.fn();
 vi.mock("@/lib/services/invitations", () => ({
-  assertRoleAssignable,
+  assertRoleAssignable: mockAssertRoleAssignable,
 }));
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
@@ -38,15 +38,15 @@ function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   return fakeSql;
 }
 
-const DEPARTMENT_ID = "11111111-1111-1111-1111-111111111111";
-const ROLE_ID = "22222222-2222-2222-2222-222222222222";
-const TARGET_MEMBER_ID = "33333333-3333-3333-3333-333333333333";
+const DEPARTMENT_ID = "11111111-1111-4111-8111-111111111111";
+const ROLE_ID = "22222222-2222-4222-8222-222222222222";
+const TARGET_MEMBER_ID = "33333333-3333-4333-8333-333333333333";
 
 describe("members service", () => {
   beforeEach(() => {
     vi.mocked(getCurrentMembership).mockReset();
     vi.mocked(requirePermission).mockReset();
-    assertRoleAssignable.mockReset().mockResolvedValue(undefined);
+    mockAssertRoleAssignable.mockReset().mockResolvedValue(undefined);
   });
 
   describe("updateMemberFields", () => {
@@ -108,13 +108,13 @@ describe("members service", () => {
       await expect(changeMemberRole(membership.member.id, ROLE_ID)).rejects.toThrow(
         "cannot change your own role",
       );
-      expect(assertRoleAssignable).not.toHaveBeenCalled();
+      expect(mockAssertRoleAssignable).not.toHaveBeenCalled();
     });
 
     it("propagates the role-assignability guard (no self- or caller-driven escalation)", async () => {
       const membership = makeMembership({ permissions: ["role.manage"] });
       vi.mocked(requirePermission).mockResolvedValue(membership);
-      assertRoleAssignable.mockRejectedValue(
+      mockAssertRoleAssignable.mockRejectedValue(
         new Error("You do not have permission to assign this role."),
       );
       wireTenantContext([

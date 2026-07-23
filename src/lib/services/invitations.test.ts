@@ -55,8 +55,8 @@ const ownerRole: RoleRow = {
   name: "Owner",
 };
 
-const ROLE_ID = "22222222-2222-2222-2222-222222222222";
-const DEPARTMENT_ID = "33333333-3333-3333-3333-333333333333";
+const ROLE_ID = "22222222-2222-4222-8222-222222222222";
+const DEPARTMENT_ID = "33333333-3333-4333-8333-333333333333";
 
 describe("invitations service", () => {
   beforeEach(() => {
