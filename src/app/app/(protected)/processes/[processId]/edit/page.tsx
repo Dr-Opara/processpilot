@@ -1,0 +1,70 @@
+import { notFound } from "next/navigation";
+import { Heading, Text } from "@/components/ui/Typography";
+import { Stack } from "@/components/ui/Layout";
+import { Alert } from "@/components/ui/Alert";
+import { getProcess } from "@/lib/services/processes";
+import { listDepartments } from "@/lib/services/departments";
+import { listMembers } from "@/lib/services/members";
+import { listRoles } from "@/lib/services/roles";
+import { listTeams } from "@/lib/services/teams";
+import { memberDisplayName } from "@/lib/services/member-display";
+import { AppError } from "@/lib/errors";
+import { updateDraftVersionAction } from "../../actions";
+import { ProcessBuilderForm } from "../../new/ProcessBuilderForm";
+
+export default async function EditProcessPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ processId: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { processId } = await params;
+  const { error } = await searchParams;
+
+  let detail;
+  try {
+    detail = await getProcess(processId);
+  } catch (err) {
+    if (err instanceof AppError && err.code === "not_found") notFound();
+    throw err;
+  }
+  const draft = detail.versions.find((v) => v.status === "draft");
+  if (!draft) notFound();
+
+  const [departments, membersResult, roleRows, teams] = await Promise.all([
+    listDepartments({ status: "active" }).catch(() => []),
+    listMembers({ status: "active", pageSize: 100 }).catch(() => ({ members: [], total: 0 })),
+    listRoles().catch(() => []),
+    listTeams({ status: "active" }).catch(() => []),
+  ]);
+  const members = membersResult.members.map((member) => ({
+    id: member.id,
+    label: memberDisplayName(member),
+  }));
+  const roles = roleRows.map(({ role }) => ({ id: role.id, name: role.name }));
+  const action = updateDraftVersionAction.bind(null, processId, draft.id);
+
+  return (
+    <Stack className="mx-auto max-w-3xl gap-6">
+      <Stack className="gap-1">
+        <Heading as="h1">Edit draft</Heading>
+        <Text className="text-muted">{detail.process.title}</Text>
+      </Stack>
+
+      {error && <Alert title="Could not save changes" description={error} />}
+
+      <ProcessBuilderForm
+        action={action}
+        mode="edit"
+        initialTitle={draft.title}
+        initialSteps={draft.definition}
+        departments={departments}
+        members={members}
+        roles={roles}
+        teams={teams}
+        cancelHref={`/app/processes/${processId}`}
+      />
+    </Stack>
+  );
+}

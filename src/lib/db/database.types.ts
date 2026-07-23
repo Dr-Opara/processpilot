@@ -310,6 +310,79 @@ export interface DocumentVersionRow {
   created_by: string | null;
 }
 
+export type ProcessStatus = "draft" | "in_review" | "published" | "archived";
+
+export interface ProcessRow {
+  id: string;
+  organization_id: string;
+  title: string;
+  owner_member_id: string | null;
+  department_id: string | null;
+  status: ProcessStatus;
+  current_version_id: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export type ProcessVersionStatus = "draft" | "in_review" | "published" | "superseded" | "rejected";
+export type ProcessStepSequencing = "linear" | "parallel" | "conditional";
+export type ProcessStepAssigneeType = "role" | "team";
+
+export interface ProcessStepFormField {
+  label: string;
+  type: "text" | "number" | "checkbox";
+}
+
+/**
+ * A single step's definition within a ProcessVersion — everything
+ * Phase 8's workflow engine will need to instantiate a Task from this
+ * step (sequencing relationship, role-or-team assignment rule,
+ * required flag) plus the minimal form/approval/evidence
+ * *requirement* flags Phase 7 authors; the real field-type system
+ * (Phase 9) and approval-chain execution (Phase 10) build on top of
+ * these later without needing this shape to change.
+ */
+export interface ProcessStep {
+  id: string;
+  name: string;
+  sequencing: ProcessStepSequencing;
+  parallelGroup: string | null;
+  branchOnStepId: string | null;
+  branchCondition: string | null;
+  assigneeType: ProcessStepAssigneeType;
+  assigneeRoleId: string | null;
+  assigneeTeamId: string | null;
+  required: boolean;
+  requiresForm: boolean;
+  formFields: ProcessStepFormField[];
+  requiresApproval: boolean;
+  approverRoleId: string | null;
+  requiresEvidence: boolean;
+  evidenceDescription: string | null;
+}
+
+export interface ProcessVersionRow {
+  id: string;
+  organization_id: string;
+  process_id: string;
+  department_id: string | null;
+  version_number: number;
+  title: string;
+  definition: ProcessStep[];
+  status: ProcessVersionStatus;
+  review_notes: string | null;
+  submitted_by: string | null;
+  submitted_at: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  published_by: string | null;
+  published_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
 export type WebhookEventStatus = "processed" | "rejected" | "failed";
 
 export interface WebhookEventRow {
