@@ -1,7 +1,13 @@
 import "server-only";
 import type postgres from "postgres";
 import { recordAuditEvent } from "./audit";
-import type { OrganizationMemberRow, OrganizationRow, ProfileRow } from "./database.types";
+import { AuditAction, AuditResourceType } from "./audit-actions";
+import type {
+  OrganizationInvitationRow,
+  OrganizationMemberRow,
+  OrganizationRow,
+  ProfileRow,
+} from "./database.types";
 
 /**
  * Maps Clerk webhook payloads onto ProcessPilot's own profiles/
@@ -208,7 +214,75 @@ export async function syncMembershipUpserted(
     metadata: { clerkMembershipId: data.id, clerkRole: data.role },
   });
 
+  await applyPendingInvitation(sql, organization.id, member.id, correlationId);
+
   return member;
+}
+
+/**
+ * Phase 5: a Clerk organization-invitation acceptance surfaces here as an
+ * ordinary organizationMembership.created event — Clerk doesn't tell us
+ * "this join came from invitation X," so this matches by (organization,
+ * lower(email)) against the one 'pending' organization_invitations row
+ * that should exist (the unique partial index on
+ * organization_invitations enforces at most one pending row per email).
+ * Runs with the admin client (webhook context has no tenant claims), so
+ * the RLS self-escalation check on member_role_assignments doesn't apply
+ * here — that's fine, the invitation's role_id was already authorized
+ * against the inviter's own permissions at creation time
+ * (src/lib/services/invitations.ts's assertRoleAssignable), not something
+ * that needs re-checking at acceptance.
+ */
+async function applyPendingInvitation(
+  sql: postgres.Sql | postgres.TransactionSql,
+  organizationId: string,
+  memberId: string,
+  correlationId: string,
+): Promise<void> {
+  const [profile] = await sql<Pick<ProfileRow, "id" | "email">[]>`
+    select p.id, p.email from organization_members om join profiles p on p.id = om.profile_id where om.id = ${memberId}
+  `;
+  if (!profile) return;
+
+  const [invitation] = await sql<OrganizationInvitationRow[]>`
+    update organization_invitations set status = 'accepted', accepted_at = now()
+    where organization_id = ${organizationId} and lower(email) = ${profile.email.toLowerCase()} and status = 'pending'
+    returning *
+  `;
+  if (!invitation) return;
+
+  await sql`
+    update organization_members set
+      location_id = ${invitation.location_id},
+      department_id = ${invitation.department_id}
+    where id = ${memberId}
+  `;
+
+  if (invitation.role_id) {
+    await sql`
+      insert into member_role_assignments (organization_id, organization_member_id, role_id)
+      values (${organizationId}, ${memberId}, ${invitation.role_id})
+      on conflict (organization_member_id, role_id) do nothing
+    `;
+  }
+
+  if (invitation.team_id) {
+    await sql`
+      insert into team_members (organization_id, team_id, organization_member_id)
+      values (${organizationId}, ${invitation.team_id}, ${memberId})
+      on conflict (team_id, organization_member_id) do nothing
+    `;
+  }
+
+  await recordAuditEvent(sql, {
+    organizationId,
+    actorProfileId: profile.id,
+    action: AuditAction.InvitationAccepted,
+    resourceType: AuditResourceType.Invitation,
+    resourceId: invitation.id,
+    correlationId,
+    source: "webhook",
+  });
 }
 
 export async function syncMembershipRemoved(

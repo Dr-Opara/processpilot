@@ -25,10 +25,43 @@ export interface OrganizationRow {
   clerk_org_id: string;
   name: string;
   slug: string;
+  legal_name: string | null;
+  industry: string | null;
+  employee_count_range: string | null;
+  website_url: string | null;
+  country: string | null;
+  primary_use_case: string | null;
+  logo_url: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
   archived_at: string | null;
+}
+
+export type OnboardingStep =
+  | "welcome"
+  | "company_profile"
+  | "locations"
+  | "departments"
+  | "teams"
+  | "invite_employees"
+  | "review"
+  | "finished";
+
+export interface OrganizationSettingsRow {
+  id: string;
+  organization_id: string;
+  timezone: string;
+  locale: string;
+  date_format: string;
+  week_start: "sunday" | "monday";
+  settings: Record<string, unknown>;
+  onboarding_step: OnboardingStep;
+  onboarding_completed_at: string | null;
+  onboarding_data: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
 }
 
 export type OrganizationMemberStatus = "active" | "suspended" | "removed";
@@ -40,6 +73,11 @@ export interface OrganizationMemberRow {
   clerk_membership_id: string;
   clerk_role: string | null;
   status: OrganizationMemberStatus;
+  job_title: string | null;
+  start_date: string | null;
+  location_id: string | null;
+  department_id: string | null;
+  manager_id: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -97,6 +135,130 @@ export interface AuditEventRow {
   reason: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+export interface OrganizationLocationRow {
+  id: string;
+  organization_id: string;
+  name: string;
+  address_line1: string | null;
+  address_line2: string | null;
+  city: string | null;
+  region: string | null;
+  postal_code: string | null;
+  country: string | null;
+  timezone: string | null;
+  manager_member_id: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export interface DepartmentRow {
+  id: string;
+  organization_id: string;
+  location_id: string | null;
+  parent_department_id: string | null;
+  owner_member_id: string | null;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export interface TeamRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  location_id: string | null;
+  manager_member_id: string | null;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export interface TeamMemberRow {
+  id: string;
+  organization_id: string;
+  team_id: string;
+  organization_member_id: string;
+  created_at: string;
+  created_by: string | null;
+}
+
+export type InvitationStatus = "pending" | "accepted" | "revoked" | "expired";
+
+export interface OrganizationInvitationRow {
+  id: string;
+  organization_id: string;
+  clerk_invitation_id: string | null;
+  email: string;
+  role_id: string | null;
+  location_id: string | null;
+  department_id: string | null;
+  team_id: string | null;
+  personal_message: string | null;
+  status: InvitationStatus;
+  invited_by: string | null;
+  created_at: string;
+  updated_at: string;
+  accepted_at: string | null;
+  expires_at: string | null;
+}
+
+export interface FeatureFlagRow {
+  id: string;
+  organization_id: string;
+  key: string;
+  enabled: boolean;
+  value: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export type MemberImportBatchStatus = "processing" | "completed" | "failed" | "partially_failed";
+
+export interface MemberImportBatchRow {
+  id: string;
+  organization_id: string;
+  status: MemberImportBatchStatus;
+  total_rows: number;
+  succeeded_rows: number;
+  failed_rows: number;
+  duplicate_rows: number;
+  original_filename: string | null;
+  created_at: string;
+  completed_at: string | null;
+  created_by: string | null;
+}
+
+export type MemberImportRowStatus = "pending" | "succeeded" | "failed" | "duplicate_skipped";
+
+export interface MemberImportRowRow {
+  id: string;
+  organization_id: string;
+  batch_id: string;
+  row_number: number;
+  raw_data: Record<string, unknown>;
+  status: MemberImportRowStatus;
+  error_message: string | null;
+  invitation_id: string | null;
+  created_at: string;
+}
+
+export interface IdempotencyKeyRow {
+  id: string;
+  organization_id: string | null;
+  scope: string;
+  key: string;
+  response_snapshot: Record<string, unknown> | null;
+  created_at: string;
+  expires_at: string | null;
 }
 
 export type WebhookEventStatus = "processed" | "rejected" | "failed";
