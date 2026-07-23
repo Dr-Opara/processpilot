@@ -251,10 +251,19 @@ phases from this tracker and does not close until those phases are
 - **Exit criteria:** A document can be uploaded, reviewed, published as an
   immutable version, and superseded by a new version without losing
   history, per [ADR-0011](../architecture/decisions/0011-immutable-published-versions.md).
-- **Status:** Not Started.
-- **Risks:** File storage private-access rules (Phase 4 dependency +
-  [file-storage.md](../architecture/file-storage.md)) must be correct
-  before real customer documents are uploaded.
+- **Status:** Complete. `npm run phase:commit`'s checks (format, lint,
+  typecheck, unit tests, build) and `npm audit` are green in CI on
+  `feature/phase-6-knowledge-management`; the immutable-version exit
+  criterion is enforced by a DB trigger (not just app logic) and proven
+  by a live-RLS integration test that publishing a version, then
+  attempting to mutate its content directly, is rejected.
+- **Risks:** File storage private-access rules are implemented (private
+  Supabase Storage bucket, signed URLs issued only after a
+  server-side permission check — no Storage-level RLS). Malware/virus
+  scanning is intentionally deferred: no scanner is wired up yet (no
+  vendor is documented anywhere), so uploads are tracked `pending_scan`
+  indefinitely and downloads are blocked only if ever `flagged` — real
+  scanning is a tracked follow-up, not faked.
 
 ## Phase 7: Process builder
 
