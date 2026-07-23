@@ -11,7 +11,11 @@ vi.mock("@/lib/db/tenant-context", () => ({
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { AppError } from "@/lib/errors";
 import {
@@ -23,7 +27,9 @@ import {
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -52,7 +58,9 @@ describe("departments service", () => {
   });
 
   it("rejects creation when the caller lacks department.manage", async () => {
-    vi.mocked(requirePermission).mockRejectedValue(new AppError("forbidden", "Missing permission: department.manage"));
+    vi.mocked(requirePermission).mockRejectedValue(
+      new AppError("forbidden", "Missing permission: department.manage"),
+    );
     wireTenantContext();
 
     await expect(createDepartment({ name: "Kitchen" })).rejects.toThrow("Missing permission");
@@ -60,9 +68,9 @@ describe("departments service", () => {
 
   it("rejects a department being set as its own parent before any permission check", async () => {
     const deptId = "11111111-1111-1111-1111-111111111111";
-    await expect(
-      updateDepartment(deptId, { parentDepartmentId: deptId }),
-    ).rejects.toThrow("cannot be its own parent");
+    await expect(updateDepartment(deptId, { parentDepartmentId: deptId })).rejects.toThrow(
+      "cannot be its own parent",
+    );
     expect(requirePermission).not.toHaveBeenCalled();
   });
 
@@ -72,7 +80,9 @@ describe("departments service", () => {
     wireTenantContext([
       {
         match: (t) => t.includes("select * from departments where id"),
-        respond: () => [{ id: "dept-b", name: "Front Desk", archived_at: null, parent_department_id: null }],
+        respond: () => [
+          { id: "dept-b", name: "Front Desk", archived_at: null, parent_department_id: null },
+        ],
       },
       {
         match: (t) => t.includes("update departments set"),
@@ -82,15 +92,21 @@ describe("departments service", () => {
 
     await updateDepartment("dept-b", { name: "Front Desk" });
 
-    expect(requirePermission).toHaveBeenCalledWith("department.manage", { scope: { departmentId: "dept-b" } });
+    expect(requirePermission).toHaveBeenCalledWith("department.manage", {
+      scope: { departmentId: "dept-b" },
+    });
   });
 
   it("propagates a forbidden error when the caller does not own the target department's scope", async () => {
-    vi.mocked(requirePermission).mockRejectedValue(new AppError("forbidden", "Missing permission: department.manage"));
+    vi.mocked(requirePermission).mockRejectedValue(
+      new AppError("forbidden", "Missing permission: department.manage"),
+    );
     wireTenantContext();
 
     await expect(archiveDepartment("dept-not-owned")).rejects.toThrow("Missing permission");
-    expect(requirePermission).toHaveBeenCalledWith("department.manage", { scope: { departmentId: "dept-not-owned" } });
+    expect(requirePermission).toHaveBeenCalledWith("department.manage", {
+      scope: { departmentId: "dept-not-owned" },
+    });
   });
 
   it("rejects restoring a department whose name collides with an active department", async () => {
@@ -102,7 +118,8 @@ describe("departments service", () => {
         respond: () => [{ id: "dept-1", name: "Kitchen", archived_at: "2026-01-01T00:00:00.000Z" }],
       },
       {
-        match: (t) => t.includes("select id from departments") && t.includes("archived_at is null and id"),
+        match: (t) =>
+          t.includes("select id from departments") && t.includes("archived_at is null and id"),
         respond: () => [{ id: "dept-2" }],
       },
     ]);

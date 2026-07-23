@@ -42,8 +42,8 @@ export default async function OnboardingPage({
           <Stack className="gap-1">
             <Heading as="h1">Welcome to ProcessPilot</Heading>
             <Text className="text-muted">
-              Let&apos;s set up your organization — company profile, locations, departments, teams, and
-              your first invitations.
+              Let&apos;s set up your organization — company profile, locations, departments, teams,
+              and your first invitations.
             </Text>
           </Stack>
           <form action={advanceOnboardingStepAction.bind(null, "company_profile")}>
@@ -61,19 +61,41 @@ export default async function OnboardingPage({
           <form action={saveCompanyProfileAction} className="flex flex-col gap-4">
             <Stack className="gap-1">
               <Label htmlFor="name">Operating name</Label>
-              <Input id="name" name="name" required maxLength={200} defaultValue={state.organization.name} />
+              <Input
+                id="name"
+                name="name"
+                required
+                maxLength={200}
+                defaultValue={state.organization.name}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="legalName">Legal name (optional)</Label>
-              <Input id="legalName" name="legalName" maxLength={200} defaultValue={state.organization.legal_name ?? ""} />
+              <Input
+                id="legalName"
+                name="legalName"
+                maxLength={200}
+                defaultValue={state.organization.legal_name ?? ""}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="slug">Workspace slug</Label>
-              <Input id="slug" name="slug" required maxLength={63} defaultValue={state.organization.slug} />
+              <Input
+                id="slug"
+                name="slug"
+                required
+                maxLength={63}
+                defaultValue={state.organization.slug}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="industry">Industry (optional)</Label>
-              <Input id="industry" name="industry" maxLength={100} defaultValue={state.organization.industry ?? ""} />
+              <Input
+                id="industry"
+                name="industry"
+                maxLength={100}
+                defaultValue={state.organization.industry ?? ""}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="employeeCountRange">Employee count (optional)</Label>
@@ -97,15 +119,32 @@ export default async function OnboardingPage({
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="country">Country (optional)</Label>
-              <Input id="country" name="country" maxLength={100} defaultValue={state.organization.country ?? ""} />
+              <Input
+                id="country"
+                name="country"
+                maxLength={100}
+                defaultValue={state.organization.country ?? ""}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="timezone">Timezone</Label>
-              <Input id="timezone" name="timezone" required maxLength={100} defaultValue={state.settings.timezone} />
+              <Input
+                id="timezone"
+                name="timezone"
+                required
+                maxLength={100}
+                defaultValue={state.settings.timezone}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="dateFormat">Date format</Label>
-              <Input id="dateFormat" name="dateFormat" required maxLength={20} defaultValue={state.settings.date_format} />
+              <Input
+                id="dateFormat"
+                name="dateFormat"
+                required
+                maxLength={20}
+                defaultValue={state.settings.date_format}
+              />
             </Stack>
             <Stack className="gap-1">
               <Label htmlFor="weekStart">Week starts on</Label>
@@ -162,7 +201,9 @@ export default async function OnboardingPage({
         <Stack className="gap-6">
           <Stack className="gap-1">
             <Heading as="h1">Invite your team</Heading>
-            <Text className="text-muted">Invite people one at a time, or import a CSV of employees.</Text>
+            <Text className="text-muted">
+              Invite people one at a time, or import a CSV of employees.
+            </Text>
           </Stack>
           <Cluster className="gap-3">
             <Button href="/app/members/invite" variant="secondary">
@@ -185,9 +226,7 @@ export default async function OnboardingPage({
         </Stack>
       )}
 
-      {step === "review" && (
-        <ReviewStep />
-      )}
+      {step === "review" && <ReviewStep />}
 
       {step === "finished" && (
         <Stack className="gap-6">

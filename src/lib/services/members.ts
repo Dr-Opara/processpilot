@@ -179,7 +179,9 @@ export async function getMemberProfile(memberId: string): Promise<MemberProfile>
       lastName: row.last_name,
       locationName: row.location_name,
       departmentName: row.department_name,
-      managerName: row.manager_first_name ? `${row.manager_first_name} ${row.manager_last_name ?? ""}`.trim() : null,
+      managerName: row.manager_first_name
+        ? `${row.manager_first_name} ${row.manager_last_name ?? ""}`.trim()
+        : null,
       teams,
       roles,
       permissions: permissions.map((p) => p.key),
@@ -207,8 +209,12 @@ export async function updateMemberFields(
   // Scope check is bound to the member's *current* department — a manager
   // can only edit members already in a department they own.
   const preCheck = await getCurrentMembership();
-  const [target] = await withTenantContext(toTenantContext(preCheck), (tx) =>
-    tx<OrganizationMemberRow[]>`select * from organization_members where id = ${memberId} and organization_id = ${preCheck.organization.id}`,
+  const [target] = await withTenantContext(
+    toTenantContext(preCheck),
+    (tx) =>
+      tx<
+        OrganizationMemberRow[]
+      >`select * from organization_members where id = ${memberId} and organization_id = ${preCheck.organization.id}`,
   );
   if (!target) throw new AppError("not_found", "Member not found.");
 
@@ -306,8 +312,12 @@ async function setMemberStatus(
   reason?: string,
 ): Promise<OrganizationMemberRow> {
   const preCheck = await getCurrentMembership();
-  const [target] = await withTenantContext(toTenantContext(preCheck), (tx) =>
-    tx<OrganizationMemberRow[]>`select * from organization_members where id = ${memberId} and organization_id = ${preCheck.organization.id}`,
+  const [target] = await withTenantContext(
+    toTenantContext(preCheck),
+    (tx) =>
+      tx<
+        OrganizationMemberRow[]
+      >`select * from organization_members where id = ${memberId} and organization_id = ${preCheck.organization.id}`,
   );
   if (!target) throw new AppError("not_found", "Member not found.");
 

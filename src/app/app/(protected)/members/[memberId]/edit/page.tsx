@@ -52,11 +52,20 @@ export default async function EditMemberPage({
       <form action={updateAction} className="flex flex-col gap-4">
         <Stack className="gap-1">
           <Label htmlFor="jobTitle">Job title</Label>
-          <Input id="jobTitle" name="jobTitle" maxLength={200} defaultValue={profile.member.job_title ?? ""} />
+          <Input
+            id="jobTitle"
+            name="jobTitle"
+            maxLength={200}
+            defaultValue={profile.member.job_title ?? ""}
+          />
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="departmentId">Department (optional)</Label>
-          <Select id="departmentId" name="departmentId" defaultValue={profile.member.department_id ?? ""}>
+          <Select
+            id="departmentId"
+            name="departmentId"
+            defaultValue={profile.member.department_id ?? ""}
+          >
             <option value="">No specific department</option>
             {departments.map((department) => (
               <option key={department.id} value={department.id}>

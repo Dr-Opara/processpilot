@@ -26,7 +26,10 @@ export async function createDepartmentAction(formData: FormData): Promise<void> 
   });
 }
 
-export async function updateDepartmentAction(departmentId: string, formData: FormData): Promise<void> {
+export async function updateDepartmentAction(
+  departmentId: string,
+  formData: FormData,
+): Promise<void> {
   await runFormAction(`/app/departments/${departmentId}/edit`, async () => {
     await updateDepartment(departmentId, formToInput(formData));
     revalidatePath("/app/departments");

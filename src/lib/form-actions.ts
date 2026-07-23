@@ -26,15 +26,14 @@ export function formErrorMessage(error: unknown): string {
 }
 
 /** Runs a server action's body; on failure (that isn't a redirect), redirects back to `onErrorPath` with ?error=<message>. */
-export async function runFormAction(
-  onErrorPath: string,
-  fn: () => Promise<string>,
-): Promise<void> {
+export async function runFormAction(onErrorPath: string, fn: () => Promise<string>): Promise<void> {
   try {
     const successPath = await fn();
     redirectTyped(successPath);
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    redirectTyped(`${onErrorPath}${onErrorPath.includes("?") ? "&" : "?"}error=${encodeURIComponent(formErrorMessage(error))}`);
+    redirectTyped(
+      `${onErrorPath}${onErrorPath.includes("?") ? "&" : "?"}error=${encodeURIComponent(formErrorMessage(error))}`,
+    );
   }
 }

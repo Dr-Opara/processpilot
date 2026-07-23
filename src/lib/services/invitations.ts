@@ -65,8 +65,14 @@ function toTenantContext(membership: CurrentMembership) {
  * organization_owner role unless they hold organization.manage, which
  * only organization_owner itself grants.
  */
-export async function assertRoleAssignable(membership: CurrentMembership, role: RoleRow): Promise<void> {
-  if (role.key === "organization_owner" && !membership.permissions.includes("organization.manage")) {
+export async function assertRoleAssignable(
+  membership: CurrentMembership,
+  role: RoleRow,
+): Promise<void> {
+  if (
+    role.key === "organization_owner" &&
+    !membership.permissions.includes("organization.manage")
+  ) {
     throw new AppError("forbidden", "Only an organization owner can invite a new owner.");
   }
   if (!membership.permissions.includes("role.manage") && role.key !== "employee") {
@@ -107,7 +113,8 @@ export async function createInvitation(input: InvitationInput): Promise<Organiza
         and lower(email) = ${data.email}
         and status = 'pending'
     `;
-    if (existingInvitation) throw new AppError("conflict", "An active invitation already exists for this email.");
+    if (existingInvitation)
+      throw new AppError("conflict", "An active invitation already exists for this email.");
 
     let clerkInvitationId: string | null = null;
     try {

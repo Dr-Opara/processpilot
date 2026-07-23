@@ -13,7 +13,9 @@ export function memberDisplayName(member: {
   return name.length > 0 ? `${name} (${member.email})` : member.email;
 }
 
-export function memberStatusBadgeStatus(status: string): "success" | "warning" | "danger" | "neutral" {
+export function memberStatusBadgeStatus(
+  status: string,
+): "success" | "warning" | "danger" | "neutral" {
   if (status === "active") return "success";
   if (status === "suspended") return "warning";
   if (status === "removed") return "danger";

@@ -6,11 +6,7 @@ import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { createInvitation } from "@/lib/services/invitations";
 import { parseCsv, writeCsv } from "@/lib/services/csv";
-import type {
-  MemberImportBatchRow,
-  MemberImportRowRow,
-  RoleRow,
-} from "@/lib/db/database.types";
+import type { MemberImportBatchRow, MemberImportRowRow, RoleRow } from "@/lib/db/database.types";
 import type { CurrentMembership } from "@/lib/authz";
 
 export const IMPORT_TEMPLATE_HEADERS = [
@@ -31,9 +27,23 @@ const MAX_ROWS = 1000;
 const BATCH_CHUNK_SIZE = 25;
 
 export function getImportTemplate(): string {
-  return writeCsv([...IMPORT_TEMPLATE_HEADERS], [
-    ["Jordan", "Rivera", "jordan.rivera@example.com", "Maintenance Technician", "employee", "", "", "", "", ""],
-  ]);
+  return writeCsv(
+    [...IMPORT_TEMPLATE_HEADERS],
+    [
+      [
+        "Jordan",
+        "Rivera",
+        "jordan.rivera@example.com",
+        "Maintenance Technician",
+        "employee",
+        "",
+        "",
+        "",
+        "",
+        "",
+      ],
+    ],
+  );
 }
 
 export interface NormalizedImportRow {
@@ -203,19 +213,24 @@ async function validateRows(
         : roleByKey.get("employee");
       if (roleText && !resolvedRole) errors.push(`Role "${roleText}" does not exist.`);
 
-      const resolvedLocationId = locationName ? (locationByName.get(locationName.toLowerCase()) ?? null) : null;
-      if (locationName && !resolvedLocationId) errors.push(`Location "${locationName}" does not exist.`);
+      const resolvedLocationId = locationName
+        ? (locationByName.get(locationName.toLowerCase()) ?? null)
+        : null;
+      if (locationName && !resolvedLocationId)
+        errors.push(`Location "${locationName}" does not exist.`);
 
       const resolvedDepartmentId = departmentName
         ? (departmentByName.get(departmentName.toLowerCase()) ?? null)
         : null;
-      if (departmentName && !resolvedDepartmentId) errors.push(`Department "${departmentName}" does not exist.`);
+      if (departmentName && !resolvedDepartmentId)
+        errors.push(`Department "${departmentName}" does not exist.`);
 
       const resolvedTeamId = teamName ? (teamByName.get(teamName.toLowerCase()) ?? null) : null;
       if (teamName && !resolvedTeamId) errors.push(`Team "${teamName}" does not exist.`);
 
       const resolvedManagerId = managerEmail ? (memberByEmail.get(managerEmail) ?? null) : null;
-      if (managerEmail && !resolvedManagerId) errors.push(`Manager "${managerEmail}" is not an existing member.`);
+      if (managerEmail && !resolvedManagerId)
+        errors.push(`Manager "${managerEmail}" is not an existing member.`);
 
       if (startDate && Number.isNaN(Date.parse(startDate))) {
         errors.push("Start date is not a valid date.");
@@ -362,7 +377,14 @@ export async function confirmImport(
           teamId: row.resolvedTeamId,
         });
         succeeded++;
-        await recordRowResult(membership, batch.id, row.rowNumber, "succeeded", null, invitation.id);
+        await recordRowResult(
+          membership,
+          batch.id,
+          row.rowNumber,
+          "succeeded",
+          null,
+          invitation.id,
+        );
       } catch (error) {
         failed++;
         await recordRowResult(
@@ -393,7 +415,10 @@ export async function confirmImport(
     await recordAuditEvent(tx, {
       organizationId: membership.organization.id,
       actorProfileId: membership.profile.id,
-      action: finalStatus === "completed" ? AuditAction.ImportCompleted : AuditAction.ImportPartiallyFailed,
+      action:
+        finalStatus === "completed"
+          ? AuditAction.ImportCompleted
+          : AuditAction.ImportPartiallyFailed,
       resourceType: AuditResourceType.ImportBatch,
       resourceId: batch.id,
       source: "app",

@@ -16,7 +16,11 @@ vi.mock("@/lib/services/invitations", () => ({
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership, makeOrganizationMember } from "@/lib/db/test-helpers/service-fixtures";
 import {
   changeMemberRole,
@@ -28,7 +32,9 @@ import {
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -52,17 +58,27 @@ describe("members service", () => {
       wireTenantContext([
         {
           match: (t) => t.includes("select * from organization_members where id"),
-          respond: () => [makeOrganizationMember({ id: TARGET_MEMBER_ID, department_id: DEPARTMENT_ID })],
+          respond: () => [
+            makeOrganizationMember({ id: TARGET_MEMBER_ID, department_id: DEPARTMENT_ID }),
+          ],
         },
         {
           match: (t) => t.includes("update organization_members set job_title"),
-          respond: () => [makeOrganizationMember({ id: TARGET_MEMBER_ID, department_id: DEPARTMENT_ID, job_title: "Lead" })],
+          respond: () => [
+            makeOrganizationMember({
+              id: TARGET_MEMBER_ID,
+              department_id: DEPARTMENT_ID,
+              job_title: "Lead",
+            }),
+          ],
         },
       ]);
 
       await updateMemberFields(TARGET_MEMBER_ID, { jobTitle: "Lead" });
 
-      expect(requirePermission).toHaveBeenCalledWith("member.manage", { scope: { departmentId: DEPARTMENT_ID } });
+      expect(requirePermission).toHaveBeenCalledWith("member.manage", {
+        scope: { departmentId: DEPARTMENT_ID },
+      });
     });
 
     it("rejects a member being set as their own manager", async () => {
@@ -74,7 +90,9 @@ describe("members service", () => {
           respond: () => [makeOrganizationMember({ id: TARGET_MEMBER_ID })],
         },
       ]);
-      vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.manage"] }));
+      vi.mocked(requirePermission).mockResolvedValue(
+        makeMembership({ permissions: ["member.manage"] }),
+      );
 
       await expect(
         updateMemberFields(TARGET_MEMBER_ID, { managerId: TARGET_MEMBER_ID }),
@@ -96,13 +114,18 @@ describe("members service", () => {
     it("propagates the role-assignability guard (no self- or caller-driven escalation)", async () => {
       const membership = makeMembership({ permissions: ["role.manage"] });
       vi.mocked(requirePermission).mockResolvedValue(membership);
-      assertRoleAssignable.mockRejectedValue(new Error("You do not have permission to assign this role."));
+      assertRoleAssignable.mockRejectedValue(
+        new Error("You do not have permission to assign this role."),
+      );
       wireTenantContext([
         {
           match: (t) => t.includes("select * from organization_members where id"),
           respond: () => [makeOrganizationMember({ id: TARGET_MEMBER_ID })],
         },
-        { match: (t) => t.includes("select * from roles where id"), respond: () => [{ id: ROLE_ID, key: "manager" }] },
+        {
+          match: (t) => t.includes("select * from roles where id"),
+          respond: () => [{ id: ROLE_ID, key: "manager" }],
+        },
       ]);
 
       await expect(changeMemberRole(TARGET_MEMBER_ID, ROLE_ID)).rejects.toThrow(
@@ -118,7 +141,10 @@ describe("members service", () => {
           match: (t) => t.includes("select * from organization_members where id"),
           respond: () => [makeOrganizationMember({ id: TARGET_MEMBER_ID })],
         },
-        { match: (t) => t.includes("select * from roles where id"), respond: () => [{ id: ROLE_ID, key: "employee" }] },
+        {
+          match: (t) => t.includes("select * from roles where id"),
+          respond: () => [{ id: ROLE_ID, key: "employee" }],
+        },
         {
           match: (t) => t.includes("delete from member_role_assignments"),
           respond: () => {
@@ -127,7 +153,9 @@ describe("members service", () => {
         },
       ]);
 
-      await expect(changeMemberRole(TARGET_MEMBER_ID, ROLE_ID)).rejects.toThrow("This role change is not allowed.");
+      await expect(changeMemberRole(TARGET_MEMBER_ID, ROLE_ID)).rejects.toThrow(
+        "This role change is not allowed.",
+      );
     });
   });
 
@@ -150,7 +178,9 @@ describe("members service", () => {
     it("turns a last-owner trigger failure on removal into a friendly conflict", async () => {
       const preCheck = makeMembership();
       vi.mocked(getCurrentMembership).mockResolvedValue(preCheck);
-      vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.manage"] }));
+      vi.mocked(requirePermission).mockResolvedValue(
+        makeMembership({ permissions: ["member.manage"] }),
+      );
       wireTenantContext([
         {
           match: (t) => t.includes("select * from organization_members where id"),
@@ -175,7 +205,10 @@ describe("members service", () => {
       const membership = makeMembership({ permissions: ["organization.manage"] });
       vi.mocked(requirePermission).mockResolvedValue(membership);
       wireTenantContext([
-        { match: (t) => t.includes("select * from roles where key"), respond: () => [{ id: "role-owner" }] },
+        {
+          match: (t) => t.includes("select * from roles where key"),
+          respond: () => [{ id: "role-owner" }],
+        },
         { match: (t) => t.includes("select exists"), respond: () => [{ exists: false }] },
       ]);
 
@@ -188,18 +221,26 @@ describe("members service", () => {
       const membership = makeMembership({ permissions: ["organization.manage"] });
       vi.mocked(requirePermission).mockResolvedValue(membership);
       wireTenantContext([
-        { match: (t) => t.includes("select * from roles where key"), respond: () => [{ id: "role-owner" }] },
+        {
+          match: (t) => t.includes("select * from roles where key"),
+          respond: () => [{ id: "role-owner" }],
+        },
         { match: (t) => t.includes("select exists"), respond: () => [{ exists: true }] },
       ]);
 
-      await expect(transferOwnership(membership.member.id)).rejects.toThrow("You already own this organization");
+      await expect(transferOwnership(membership.member.id)).rejects.toThrow(
+        "You already own this organization",
+      );
     });
 
     it("grants the new owner before revoking the current owner's role, in one transaction", async () => {
       const membership = makeMembership({ permissions: ["organization.manage"] });
       vi.mocked(requirePermission).mockResolvedValue(membership);
       const fakeSql = wireTenantContext([
-        { match: (t) => t.includes("select * from roles where key"), respond: () => [{ id: "role-owner" }] },
+        {
+          match: (t) => t.includes("select * from roles where key"),
+          respond: () => [{ id: "role-owner" }],
+        },
         { match: (t) => t.includes("select exists"), respond: () => [{ exists: true }] },
         {
           match: (t) => t.includes("select * from organization_members where id"),
@@ -211,8 +252,12 @@ describe("members service", () => {
 
       await transferOwnership(TARGET_MEMBER_ID);
 
-      const insertIndex = fakeSql.calls.findIndex((c) => c.text.includes("insert into member_role_assignments"));
-      const deleteIndex = fakeSql.calls.findIndex((c) => c.text.includes("delete from member_role_assignments"));
+      const insertIndex = fakeSql.calls.findIndex((c) =>
+        c.text.includes("insert into member_role_assignments"),
+      );
+      const deleteIndex = fakeSql.calls.findIndex((c) =>
+        c.text.includes("delete from member_role_assignments"),
+      );
       expect(insertIndex).toBeGreaterThanOrEqual(0);
       expect(deleteIndex).toBeGreaterThan(insertIndex);
     });

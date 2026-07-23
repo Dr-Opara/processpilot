@@ -42,8 +42,11 @@ export default async function MemberDetailPage({
   ]);
 
   const isSelf = currentMembership?.member.id === memberId;
-  const canTransferOwnership = Boolean(currentMembership?.permissions.includes("organization.manage"));
-  const displayName = [profile.firstName, profile.lastName].filter(Boolean).join(" ") || profile.email;
+  const canTransferOwnership = Boolean(
+    currentMembership?.permissions.includes("organization.manage"),
+  );
+  const displayName =
+    [profile.firstName, profile.lastName].filter(Boolean).join(" ") || profile.email;
 
   return (
     <Stack className="mx-auto max-w-2xl gap-8">
@@ -93,7 +96,10 @@ export default async function MemberDetailPage({
 
       <Stack className="gap-3">
         <Heading as="h2">Role</Heading>
-        <form action={changeMemberRoleAction.bind(null, memberId)} className="flex flex-wrap items-end gap-3">
+        <form
+          action={changeMemberRoleAction.bind(null, memberId)}
+          className="flex flex-wrap items-end gap-3"
+        >
           <Stack className="min-w-[240px] gap-1">
             <Label htmlFor="roleId">Assigned role</Label>
             <Select
@@ -142,7 +148,9 @@ export default async function MemberDetailPage({
           )}
         </Cluster>
         {isSelf && (
-          <Text className="text-muted text-xs">You cannot suspend or remove your own membership.</Text>
+          <Text className="text-muted text-xs">
+            You cannot suspend or remove your own membership.
+          </Text>
         )}
       </Stack>
 
@@ -170,7 +178,9 @@ export default async function MemberDetailPage({
             {profile.recentActivity.map((event) => (
               <Cluster key={event.id} className="justify-between border-b border-border/60 pb-2">
                 <Text>{event.action}</Text>
-                <Text className="text-muted text-xs">{new Date(event.created_at).toLocaleString()}</Text>
+                <Text className="text-muted text-xs">
+                  {new Date(event.created_at).toLocaleString()}
+                </Text>
               </Cluster>
             ))}
           </Stack>

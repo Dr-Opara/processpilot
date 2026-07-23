@@ -157,7 +157,9 @@ export async function updateDepartment(
           name = ${data.name ?? existing.name},
           location_id = ${data.locationId === undefined ? existing.location_id : data.locationId},
           parent_department_id = ${
-            data.parentDepartmentId === undefined ? existing.parent_department_id : data.parentDepartmentId
+            data.parentDepartmentId === undefined
+              ? existing.parent_department_id
+              : data.parentDepartmentId
           },
           owner_member_id = ${
             data.ownerMemberId === undefined ? existing.owner_member_id : data.ownerMemberId
@@ -228,7 +230,8 @@ export async function restoreDepartment(departmentId: string): Promise<Departmen
         and archived_at is null
         and id <> ${departmentId}
     `;
-    if (conflict) throw new AppError("conflict", "Another active department already uses this name.");
+    if (conflict)
+      throw new AppError("conflict", "Another active department already uses this name.");
 
     const [department] = await tx<DepartmentRow[]>`
       update departments set archived_at = null where id = ${departmentId} returning *

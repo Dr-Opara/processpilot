@@ -46,7 +46,9 @@ export function makeOrganization(overrides: Partial<OrganizationRow> = {}): Orga
   };
 }
 
-export function makeOrganizationMember(overrides: Partial<OrganizationMemberRow> = {}): OrganizationMemberRow {
+export function makeOrganizationMember(
+  overrides: Partial<OrganizationMemberRow> = {},
+): OrganizationMemberRow {
   return {
     id: "member-1",
     organization_id: "org-1",
@@ -66,13 +68,15 @@ export function makeOrganizationMember(overrides: Partial<OrganizationMemberRow>
   };
 }
 
-export function makeMembership(overrides: {
-  profile?: Partial<ProfileRow>;
-  organization?: Partial<OrganizationRow>;
-  member?: Partial<OrganizationMemberRow>;
-  permissions?: string[];
-  scopedPermissions?: string[];
-} = {}): CurrentMembership {
+export function makeMembership(
+  overrides: {
+    profile?: Partial<ProfileRow>;
+    organization?: Partial<OrganizationRow>;
+    member?: Partial<OrganizationMemberRow>;
+    permissions?: string[];
+    scopedPermissions?: string[];
+  } = {},
+): CurrentMembership {
   return {
     profile: makeProfile(overrides.profile),
     organization: makeOrganization(overrides.organization),

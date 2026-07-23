@@ -48,7 +48,12 @@ export default async function TeamsPage({
       <form className="flex flex-wrap items-end gap-3" method="get">
         <Stack className="gap-1">
           <Label htmlFor="search">Search</Label>
-          <Input id="search" name="search" defaultValue={params.search ?? ""} placeholder="Team name" />
+          <Input
+            id="search"
+            name="search"
+            defaultValue={params.search ?? ""}
+            placeholder="Team name"
+          />
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="status">Status</Label>

@@ -62,7 +62,11 @@ export default async function EditDepartmentPage({
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="parentDepartmentId">Parent department (optional)</Label>
-          <Select id="parentDepartmentId" name="parentDepartmentId" defaultValue={department.parent_department_id ?? ""}>
+          <Select
+            id="parentDepartmentId"
+            name="parentDepartmentId"
+            defaultValue={department.parent_department_id ?? ""}
+          >
             <option value="">No parent</option>
             {otherDepartments.map((candidate) => (
               <option key={candidate.id} value={candidate.id}>

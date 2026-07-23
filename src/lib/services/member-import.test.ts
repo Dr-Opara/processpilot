@@ -15,7 +15,11 @@ vi.mock("@/lib/services/invitations", () => ({
 
 import { requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { AppError } from "@/lib/errors";
 import { confirmImport, parseImportRows, previewImport } from "./member-import";
@@ -32,9 +36,18 @@ interface Directory {
 function wireDirectory(directory: Directory, extra: FakeQueryHandler[] = []) {
   const handlers: FakeQueryHandler[] = [
     { match: (t) => t.includes("select * from roles"), respond: () => directory.roles ?? [] },
-    { match: (t) => t.includes("select id, name from organization_locations"), respond: () => directory.locations ?? [] },
-    { match: (t) => t.includes("select id, name from departments"), respond: () => directory.departments ?? [] },
-    { match: (t) => t.includes("select id, name from teams"), respond: () => directory.teams ?? [] },
+    {
+      match: (t) => t.includes("select id, name from organization_locations"),
+      respond: () => directory.locations ?? [],
+    },
+    {
+      match: (t) => t.includes("select id, name from departments"),
+      respond: () => directory.departments ?? [],
+    },
+    {
+      match: (t) => t.includes("select id, name from teams"),
+      respond: () => directory.teams ?? [],
+    },
     {
       match: (t) => t.includes("select lower(p.email) as email, om.id from organization_members"),
       respond: () => directory.existingMembers ?? [],
@@ -46,24 +59,29 @@ function wireDirectory(directory: Directory, extra: FakeQueryHandler[] = []) {
     ...extra,
   ];
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
 const EMPLOYEE_ROLE = { id: "role-employee", key: "employee", name: "Employee" };
 
-function csvOf(rows: string[][], headers = [
-  "First name",
-  "Last name",
-  "Work email",
-  "Job title",
-  "Role",
-  "Location",
-  "Department",
-  "Team",
-  "Manager email",
-  "Start date",
-]): string {
+function csvOf(
+  rows: string[][],
+  headers = [
+    "First name",
+    "Last name",
+    "Work email",
+    "Job title",
+    "Role",
+    "Location",
+    "Department",
+    "Team",
+    "Manager email",
+    "Start date",
+  ],
+): string {
   return [headers, ...rows].map((row) => row.join(",")).join("\n");
 }
 
@@ -78,11 +96,11 @@ describe("member-import service", () => {
   });
 
   it("flags rows with missing required fields and an invalid email", async () => {
-    vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.invite"] }));
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["member.invite"] }),
+    );
     wireDirectory({ roles: [EMPLOYEE_ROLE] });
-    const csv = csvOf([
-      ["", "Rivera", "not-an-email", "", "", "", "", "", "", ""],
-    ]);
+    const csv = csvOf([["", "Rivera", "not-an-email", "", "", "", "", "", "", ""]]);
 
     const preview = await previewImport(csv, csv.length);
 
@@ -92,7 +110,9 @@ describe("member-import service", () => {
   });
 
   it("flags unresolvable role/location/department/team/manager references", async () => {
-    vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.invite"] }));
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["member.invite"] }),
+    );
     wireDirectory({ roles: [EMPLOYEE_ROLE] });
     const csv = csvOf([
       [
@@ -121,7 +141,9 @@ describe("member-import service", () => {
   });
 
   it("detects all three duplicate reasons", async () => {
-    vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.invite"] }));
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["member.invite"] }),
+    );
     wireDirectory({
       roles: [EMPLOYEE_ROLE],
       existingMembers: [{ email: "existing@example.com", id: "member-existing" }],
@@ -147,24 +169,33 @@ describe("member-import service", () => {
   });
 
   it("confirmImport creates a batch, invites valid rows, and rolls up a partially_failed status", async () => {
-    vi.mocked(requirePermission).mockResolvedValue(makeMembership({ permissions: ["member.invite"] }));
-    createInvitation.mockResolvedValueOnce({ id: "inv-1" }).mockRejectedValueOnce(new AppError("conflict", "boom"));
-    const fakeSql = wireDirectory(
-      { roles: [EMPLOYEE_ROLE] },
-      [
-        {
-          match: (t) => t.includes("insert into member_import_batches"),
-          respond: () => [{ id: "batch-1", status: "processing", total_rows: 2 }],
-        },
-        { match: (t) => t.includes("insert into member_import_rows"), respond: () => [] },
-        { match: (t) => t.includes("update member_import_rows set"), respond: () => [] },
-        {
-          match: (t) => t.includes("update member_import_batches set"),
-          respond: () => [{ id: "batch-1", status: "partially_failed", succeeded_rows: 1, failed_rows: 1, duplicate_rows: 0 }],
-        },
-        { match: (t) => t.includes("select * from member_import_rows"), respond: () => [] },
-      ],
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["member.invite"] }),
     );
+    createInvitation
+      .mockResolvedValueOnce({ id: "inv-1" })
+      .mockRejectedValueOnce(new AppError("conflict", "boom"));
+    const fakeSql = wireDirectory({ roles: [EMPLOYEE_ROLE] }, [
+      {
+        match: (t) => t.includes("insert into member_import_batches"),
+        respond: () => [{ id: "batch-1", status: "processing", total_rows: 2 }],
+      },
+      { match: (t) => t.includes("insert into member_import_rows"), respond: () => [] },
+      { match: (t) => t.includes("update member_import_rows set"), respond: () => [] },
+      {
+        match: (t) => t.includes("update member_import_batches set"),
+        respond: () => [
+          {
+            id: "batch-1",
+            status: "partially_failed",
+            succeeded_rows: 1,
+            failed_rows: 1,
+            duplicate_rows: 0,
+          },
+        ],
+      },
+      { match: (t) => t.includes("select * from member_import_rows"), respond: () => [] },
+    ]);
 
     const csv = csvOf([
       ["Jordan", "Rivera", "jordan@example.com", "", "", "", "", "", "", ""],

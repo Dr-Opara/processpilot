@@ -11,14 +11,20 @@ vi.mock("@/lib/db/tenant-context", () => ({
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { AppError } from "@/lib/errors";
 import { archiveTeam, createTeam, setTeamMembers, updateTeam } from "./teams";
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -66,11 +72,15 @@ describe("teams service", () => {
   });
 
   it("propagates a forbidden error instead of archiving a team the caller does not own", async () => {
-    vi.mocked(requirePermission).mockRejectedValue(new AppError("forbidden", "Missing permission: team.manage"));
+    vi.mocked(requirePermission).mockRejectedValue(
+      new AppError("forbidden", "Missing permission: team.manage"),
+    );
     wireTenantContext();
 
     await expect(archiveTeam("team-not-owned")).rejects.toThrow("Missing permission");
-    expect(requirePermission).toHaveBeenCalledWith("team.manage", { scope: { teamId: "team-not-owned" } });
+    expect(requirePermission).toHaveBeenCalledWith("team.manage", {
+      scope: { teamId: "team-not-owned" },
+    });
   });
 
   it("replaces a team's full membership list in setTeamMembers", async () => {
@@ -87,16 +97,22 @@ describe("teams service", () => {
 
     await setTeamMembers("team-1", ["member-a", "member-b"]);
 
-    expect(fakeSql.calls.filter((c) => c.text.includes("insert into team_members"))).toHaveLength(2);
+    expect(fakeSql.calls.filter((c) => c.text.includes("insert into team_members"))).toHaveLength(
+      2,
+    );
     expect(
       fakeSql.calls.find((c) => c.text.includes("insert into audit_events"))?.values,
     ).toBeDefined();
   });
 
   it("rejects setTeamMembers for a team the caller does not manage", async () => {
-    vi.mocked(requirePermission).mockRejectedValue(new AppError("forbidden", "Missing permission: team.manage"));
+    vi.mocked(requirePermission).mockRejectedValue(
+      new AppError("forbidden", "Missing permission: team.manage"),
+    );
     wireTenantContext();
 
-    await expect(setTeamMembers("team-not-owned", ["member-a"])).rejects.toThrow("Missing permission");
+    await expect(setTeamMembers("team-not-owned", ["member-a"])).rejects.toThrow(
+      "Missing permission",
+    );
   });
 });

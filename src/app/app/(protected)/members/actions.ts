@@ -12,7 +12,10 @@ import {
 import { createInvitation } from "@/lib/services/invitations";
 import { runFormAction } from "@/lib/form-actions";
 
-export async function updateMemberFieldsAction(memberId: string, formData: FormData): Promise<void> {
+export async function updateMemberFieldsAction(
+  memberId: string,
+  formData: FormData,
+): Promise<void> {
   await runFormAction(`/app/members/${memberId}/edit`, async () => {
     await updateMemberFields(memberId, {
       jobTitle: String(formData.get("jobTitle") ?? "") || null,

@@ -53,7 +53,8 @@ export default async function TeamDetailPage({ params }: { params: Promise<{ tea
             </StatusBadge>
           </Cluster>
           <Text className="text-muted">
-            {[departmentName, locationName].filter(Boolean).join(" · ") || "No department or location assigned"}
+            {[departmentName, locationName].filter(Boolean).join(" · ") ||
+              "No department or location assigned"}
           </Text>
           {manager && <Text className="text-muted">Manager: {memberDisplayName(manager)}</Text>}
         </Stack>
@@ -80,7 +81,10 @@ export default async function TeamDetailPage({ params }: { params: Promise<{ tea
       <Stack className="gap-3">
         <Heading as="h2">Members</Heading>
         {activeMembers.members.length === 0 ? (
-          <Alert title="No active members" description="Invite members to this organization before assigning a team." />
+          <Alert
+            title="No active members"
+            description="Invite members to this organization before assigning a team."
+          />
         ) : (
           <form action={setTeamMembersAction.bind(null, team.id)} className="flex flex-col gap-4">
             <Stack className="max-h-80 gap-2 overflow-y-auto rounded-md border border-border p-3">

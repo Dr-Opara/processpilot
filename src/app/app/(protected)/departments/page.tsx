@@ -37,7 +37,12 @@ export default async function DepartmentsPage({
       <form className="flex flex-wrap items-end gap-3" method="get">
         <Stack className="gap-1">
           <Label htmlFor="search">Search</Label>
-          <Input id="search" name="search" defaultValue={params.search ?? ""} placeholder="Department name" />
+          <Input
+            id="search"
+            name="search"
+            defaultValue={params.search ?? ""}
+            placeholder="Department name"
+          />
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="status">Status</Label>
@@ -70,7 +75,10 @@ export default async function DepartmentsPage({
               {departments.map((department) => (
                 <tr key={department.id} className="border-b border-border/60">
                   <td className="py-3 pr-4">
-                    <a href={`/app/departments/${department.id}`} className="font-medium text-cobalt">
+                    <a
+                      href={`/app/departments/${department.id}`}
+                      className="font-medium text-cobalt"
+                    >
                       {department.name}
                     </a>
                   </td>

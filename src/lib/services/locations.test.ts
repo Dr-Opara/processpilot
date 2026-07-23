@@ -10,14 +10,20 @@ vi.mock("@/lib/db/tenant-context", () => ({
 
 import { requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { AppError } from "@/lib/errors";
 import { archiveLocation, createLocation, restoreLocation } from "./locations";
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -45,7 +51,9 @@ describe("locations service", () => {
   });
 
   it("rejects creation when the caller lacks location.manage", async () => {
-    vi.mocked(requirePermission).mockRejectedValue(new AppError("forbidden", "Missing permission: location.manage"));
+    vi.mocked(requirePermission).mockRejectedValue(
+      new AppError("forbidden", "Missing permission: location.manage"),
+    );
     wireTenantContext();
 
     await expect(createLocation({ name: "Downtown Store" })).rejects.toThrow("Missing permission");
@@ -67,7 +75,12 @@ describe("locations service", () => {
   it("rejects archiving a location that does not exist in this organization", async () => {
     const membership = makeMembership({ permissions: ["location.manage"] });
     vi.mocked(requirePermission).mockResolvedValue(membership);
-    wireTenantContext([{ match: (t) => t.includes("update organization_locations set archived_at = now()"), respond: () => [] }]);
+    wireTenantContext([
+      {
+        match: (t) => t.includes("update organization_locations set archived_at = now()"),
+        respond: () => [],
+      },
+    ]);
 
     await expect(archiveLocation("loc-missing")).rejects.toThrow("not found or already archived");
   });
@@ -78,7 +91,9 @@ describe("locations service", () => {
     wireTenantContext([
       {
         match: (t) => t.includes("select * from organization_locations where id"),
-        respond: () => [{ id: "loc-1", name: "Downtown Store", archived_at: "2026-01-01T00:00:00.000Z" }],
+        respond: () => [
+          { id: "loc-1", name: "Downtown Store", archived_at: "2026-01-01T00:00:00.000Z" },
+        ],
       },
       {
         match: (t) => t.includes("select id from organization_locations") && t.includes("id <>"),

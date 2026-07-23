@@ -18,14 +18,20 @@ vi.mock("@clerk/nextjs/server", () => ({
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { assertRoleAssignable, createInvitation } from "./invitations";
 import type { RoleRow } from "@/lib/db/database.types";
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -42,7 +48,12 @@ const employeeRole: RoleRow = {
   archived_at: null,
 };
 
-const ownerRole: RoleRow = { ...employeeRole, id: "role-owner", key: "organization_owner", name: "Owner" };
+const ownerRole: RoleRow = {
+  ...employeeRole,
+  id: "role-owner",
+  key: "organization_owner",
+  name: "Owner",
+};
 
 const ROLE_ID = "22222222-2222-2222-2222-222222222222";
 const DEPARTMENT_ID = "33333333-3333-3333-3333-333333333333";
@@ -75,7 +86,9 @@ describe("invitations service", () => {
     });
 
     expect(invitation).toEqual({ id: "inv-1", email: "new.hire@example.com" });
-    expect(requirePermission).toHaveBeenCalledWith("member.invite", { scope: { departmentId: DEPARTMENT_ID } });
+    expect(requirePermission).toHaveBeenCalledWith("member.invite", {
+      scope: { departmentId: DEPARTMENT_ID },
+    });
     expect(createOrganizationInvitation).toHaveBeenCalled();
     expect(fakeSql.calls.some((c) => c.text.includes("insert into audit_events"))).toBe(true);
   });
@@ -95,7 +108,10 @@ describe("invitations service", () => {
     vi.mocked(requirePermission).mockResolvedValue(membership);
     wireTenantContext([
       { match: (t) => t.includes("select * from roles"), respond: () => [employeeRole] },
-      { match: (t) => t.includes("select om.id from organization_members"), respond: () => [{ id: "existing-member" }] },
+      {
+        match: (t) => t.includes("select om.id from organization_members"),
+        respond: () => [{ id: "existing-member" }],
+      },
     ]);
 
     await expect(
@@ -105,9 +121,9 @@ describe("invitations service", () => {
 
   it("blocks a caller without role.manage from assigning anything above the baseline employee role", async () => {
     const membership = makeMembership({ permissions: ["member.invite"] });
-    await expect(assertRoleAssignable(membership, { ...employeeRole, key: "manager" })).rejects.toThrow(
-      "You do not have permission to assign this role",
-    );
+    await expect(
+      assertRoleAssignable(membership, { ...employeeRole, key: "manager" }),
+    ).rejects.toThrow("You do not have permission to assign this role");
   });
 
   it("blocks assigning organization_owner without organization.manage, even for a role.manage holder", async () => {
@@ -119,6 +135,8 @@ describe("invitations service", () => {
 
   it("allows a role.manage holder to assign any non-owner role", async () => {
     const membership = makeMembership({ permissions: ["member.invite", "role.manage"] });
-    await expect(assertRoleAssignable(membership, { ...employeeRole, key: "manager" })).resolves.toBeUndefined();
+    await expect(
+      assertRoleAssignable(membership, { ...employeeRole, key: "manager" }),
+    ).resolves.toBeUndefined();
   });
 });

@@ -59,7 +59,9 @@ export default async function ImportHistoryPage() {
                   <td className="py-2 pr-4">{batch.original_filename ?? "—"}</td>
                   <td className="py-2 pr-4">{new Date(batch.created_at).toLocaleString()}</td>
                   <td className="py-2 pr-4">
-                    <StatusBadge status={statusBadgeStatus(batch.status)}>{batch.status}</StatusBadge>
+                    <StatusBadge status={statusBadgeStatus(batch.status)}>
+                      {batch.status}
+                    </StatusBadge>
                   </td>
                   <td className="py-2 pr-4">{batch.succeeded_rows}</td>
                   <td className="py-2 pr-4">{batch.duplicate_rows}</td>

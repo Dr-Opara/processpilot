@@ -33,7 +33,8 @@ export default async function LocationDetailPage({
             </StatusBadge>
           </Cluster>
           <Text className="text-muted">
-            {[location.city, location.region, location.country].filter(Boolean).join(", ") || "No address on file"}
+            {[location.city, location.region, location.country].filter(Boolean).join(", ") ||
+              "No address on file"}
           </Text>
         </Stack>
         <Cluster className="gap-2">

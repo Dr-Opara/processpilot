@@ -165,7 +165,8 @@ export async function restoreTeam(teamId: string): Promise<TeamRow> {
     const [target] = await tx<TeamRow[]>`
       select * from teams where id = ${teamId} and organization_id = ${membership.organization.id}
     `;
-    if (!target || !target.archived_at) throw new AppError("not_found", "Team not found or not archived.");
+    if (!target || !target.archived_at)
+      throw new AppError("not_found", "Team not found or not archived.");
 
     const [conflict] = await tx<{ id: string }[]>`
       select id from teams

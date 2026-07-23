@@ -379,7 +379,8 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
         const rows = await tx`select id from teams where id = ${teamB.id}`;
         expect(rows).toHaveLength(0);
 
-        const updated = await tx`update teams set name = 'hijacked' where id = ${teamB.id} returning id`;
+        const updated =
+          await tx`update teams set name = 'hijacked' where id = ${teamB.id} returning id`;
         expect(updated).toHaveLength(0);
       },
     );
@@ -427,7 +428,8 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
       db,
       { clerkUserId: "user_auditor_a", organizationId: orgA.id, memberId: memberAuditorA.id },
       async (tx) => {
-        const ownOrgRows = await tx`select id from member_import_batches where id = ${importBatchA.id}`;
+        const ownOrgRows =
+          await tx`select id from member_import_batches where id = ${importBatchA.id}`;
         expect(ownOrgRows).toHaveLength(0);
       },
     );
@@ -439,7 +441,8 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
       db,
       { clerkUserId: "user_owner_a", organizationId: orgB.id, memberId: memberOwnerA.id },
       async (tx) => {
-        const crossOrgRows = await tx`select id from member_import_batches where id = ${importBatchA.id}`;
+        const crossOrgRows =
+          await tx`select id from member_import_batches where id = ${importBatchA.id}`;
         expect(crossOrgRows).toHaveLength(0);
       },
     );

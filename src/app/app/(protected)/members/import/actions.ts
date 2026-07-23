@@ -5,8 +5,12 @@ import { confirmImport, previewImport } from "@/lib/services/member-import";
 import type { ImportOutcome, ImportPreview } from "@/lib/services/member-import";
 import { formErrorMessage } from "@/lib/form-actions";
 
-export type PreviewImportResult = { ok: true; preview: ImportPreview } | { ok: false; error: string };
-export type ConfirmImportResult = { ok: true; outcome: ImportOutcome } | { ok: false; error: string };
+export type PreviewImportResult =
+  | { ok: true; preview: ImportPreview }
+  | { ok: false; error: string };
+export type ConfirmImportResult =
+  | { ok: true; outcome: ImportOutcome }
+  | { ok: false; error: string };
 
 export async function previewImportAction(csvText: string): Promise<PreviewImportResult> {
   try {
@@ -22,7 +26,11 @@ export async function confirmImportAction(
   originalFilename: string,
 ): Promise<ConfirmImportResult> {
   try {
-    const outcome = await confirmImport(csvText, new TextEncoder().encode(csvText).length, originalFilename);
+    const outcome = await confirmImport(
+      csvText,
+      new TextEncoder().encode(csvText).length,
+      originalFilename,
+    );
     revalidatePath("/app/members");
     revalidatePath("/app/members/import/history");
     return { ok: true, outcome };

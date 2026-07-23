@@ -44,11 +44,21 @@ export default async function EditLocationPage({
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="addressLine1">Address line 1</Label>
-          <Input id="addressLine1" name="addressLine1" maxLength={200} defaultValue={location.address_line1 ?? ""} />
+          <Input
+            id="addressLine1"
+            name="addressLine1"
+            maxLength={200}
+            defaultValue={location.address_line1 ?? ""}
+          />
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="addressLine2">Address line 2</Label>
-          <Input id="addressLine2" name="addressLine2" maxLength={200} defaultValue={location.address_line2 ?? ""} />
+          <Input
+            id="addressLine2"
+            name="addressLine2"
+            maxLength={200}
+            defaultValue={location.address_line2 ?? ""}
+          />
         </Stack>
         <Cluster className="gap-4">
           <Stack className="min-w-40 flex-1 gap-1">
@@ -63,16 +73,31 @@ export default async function EditLocationPage({
         <Cluster className="gap-4">
           <Stack className="min-w-40 flex-1 gap-1">
             <Label htmlFor="postalCode">Postal code</Label>
-            <Input id="postalCode" name="postalCode" maxLength={30} defaultValue={location.postal_code ?? ""} />
+            <Input
+              id="postalCode"
+              name="postalCode"
+              maxLength={30}
+              defaultValue={location.postal_code ?? ""}
+            />
           </Stack>
           <Stack className="min-w-40 flex-1 gap-1">
             <Label htmlFor="country">Country</Label>
-            <Input id="country" name="country" maxLength={100} defaultValue={location.country ?? ""} />
+            <Input
+              id="country"
+              name="country"
+              maxLength={100}
+              defaultValue={location.country ?? ""}
+            />
           </Stack>
         </Cluster>
         <Stack className="gap-1">
           <Label htmlFor="timezone">Time zone</Label>
-          <Input id="timezone" name="timezone" maxLength={100} defaultValue={location.timezone ?? ""} />
+          <Input
+            id="timezone"
+            name="timezone"
+            maxLength={100}
+            defaultValue={location.timezone ?? ""}
+          />
         </Stack>
         <Cluster className="justify-end gap-3">
           <Button href={`/app/locations/${location.id}`} variant="secondary">

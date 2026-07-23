@@ -43,12 +43,19 @@ export default async function MembersPage({
         </Cluster>
       </Cluster>
 
-      {params.invited && <Alert title="Invitation sent" description="The invitation email is on its way." />}
+      {params.invited && (
+        <Alert title="Invitation sent" description="The invitation email is on its way." />
+      )}
 
       <form className="flex flex-wrap items-end gap-3" method="get">
         <Stack className="gap-1">
           <Label htmlFor="search">Search</Label>
-          <Input id="search" name="search" defaultValue={params.search ?? ""} placeholder="Name or email" />
+          <Input
+            id="search"
+            name="search"
+            defaultValue={params.search ?? ""}
+            placeholder="Name or email"
+          />
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="status">Status</Label>
@@ -95,7 +102,9 @@ export default async function MembersPage({
                   <td className="py-3 pr-4">{member.location_name ?? "—"}</td>
                   <td className="py-3 pr-4">{member.role_names.join(", ") || "—"}</td>
                   <td className="py-3 pr-4">
-                    <StatusBadge status={memberStatusBadgeStatus(member.status)}>{member.status}</StatusBadge>
+                    <StatusBadge status={memberStatusBadgeStatus(member.status)}>
+                      {member.status}
+                    </StatusBadge>
                   </td>
                 </tr>
               ))}
@@ -103,7 +112,8 @@ export default async function MembersPage({
           </table>
           {total > members.length && (
             <Text className="text-muted mt-2 text-xs">
-              Showing {members.length} of {total} members. Narrow your search to see more specific results.
+              Showing {members.length} of {total} members. Narrow your search to see more specific
+              results.
             </Text>
           )}
         </ScrollArea>

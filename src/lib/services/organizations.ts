@@ -63,7 +63,14 @@ export const companyProfileInputSchema = z.object({
   slug: slugSchema,
   industry: z.string().trim().max(100).optional().nullable(),
   employeeCountRange: z.string().trim().max(50).optional().nullable(),
-  websiteUrl: z.string().trim().url("Enter a valid URL.").max(300).optional().nullable().or(z.literal("")),
+  websiteUrl: z
+    .string()
+    .trim()
+    .url("Enter a valid URL.")
+    .max(300)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   country: z.string().trim().max(100).optional().nullable(),
   timezone: z.string().trim().max(100),
   dateFormat: z.string().trim().max(20),
@@ -101,9 +108,7 @@ export async function getOnboardingState(): Promise<OnboardingState> {
   });
 }
 
-export async function updateCompanyProfile(
-  input: CompanyProfileInput,
-): Promise<OnboardingState> {
+export async function updateCompanyProfile(input: CompanyProfileInput): Promise<OnboardingState> {
   const data = companyProfileInputSchema.parse(input);
   const membership = await requirePermission("organization.settings");
 
@@ -188,7 +193,8 @@ export async function advanceOnboardingStep(
     await recordAuditEvent(tx, {
       organizationId: membership.organization.id,
       actorProfileId: membership.profile.id,
-      action: step === "finished" ? AuditAction.OnboardingCompleted : AuditAction.OnboardingStepAdvanced,
+      action:
+        step === "finished" ? AuditAction.OnboardingCompleted : AuditAction.OnboardingStepAdvanced,
       resourceType: AuditResourceType.Organization,
       resourceId: membership.organization.id,
       source: "app",

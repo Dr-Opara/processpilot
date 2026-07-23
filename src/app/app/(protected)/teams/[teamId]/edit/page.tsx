@@ -76,7 +76,11 @@ export default async function EditTeamPage({
         </Stack>
         <Stack className="gap-1">
           <Label htmlFor="managerMemberId">Manager (optional)</Label>
-          <Select id="managerMemberId" name="managerMemberId" defaultValue={team.manager_member_id ?? ""}>
+          <Select
+            id="managerMemberId"
+            name="managerMemberId"
+            defaultValue={team.manager_member_id ?? ""}
+          >
             <option value="">No manager assigned</option>
             {membersResult.members.map((member) => (
               <option key={member.id} value={member.id}>

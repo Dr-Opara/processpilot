@@ -10,7 +10,11 @@ vi.mock("@/lib/db/tenant-context", () => ({
 
 import { requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
-import { createFakeSql, asTransactionSql, type FakeQueryHandler } from "@/lib/db/test-helpers/fake-sql";
+import {
+  createFakeSql,
+  asTransactionSql,
+  type FakeQueryHandler,
+} from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
 import { AppError } from "@/lib/errors";
 import type { OnboardingStep } from "@/lib/db/database.types";
@@ -18,7 +22,9 @@ import { advanceOnboardingStep, updateCompanyProfile } from "./organizations";
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
-  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) => fn(asTransactionSql(fakeSql)));
+  vi.mocked(withTenantContext).mockImplementation(async (_ctx, fn) =>
+    fn(asTransactionSql(fakeSql)),
+  );
   return fakeSql;
 }
 
@@ -45,7 +51,10 @@ describe("organizations service", () => {
     const membership = makeMembership({ permissions: ["organization.settings"] });
     vi.mocked(requirePermission).mockResolvedValue(membership);
     wireTenantContext([
-      { match: (t) => t.includes("select id from organizations where lower(slug)"), respond: () => [{ id: "other-org" }] },
+      {
+        match: (t) => t.includes("select id from organizations where lower(slug)"),
+        respond: () => [{ id: "other-org" }],
+      },
     ]);
 
     await expect(updateCompanyProfile(validProfileInput)).rejects.toThrow("already in use");
@@ -55,7 +64,10 @@ describe("organizations service", () => {
     const membership = makeMembership({ permissions: ["organization.settings"] });
     vi.mocked(requirePermission).mockResolvedValue(membership);
     const fakeSql = wireTenantContext([
-      { match: (t) => t.includes("select id from organizations where lower(slug)"), respond: () => [] },
+      {
+        match: (t) => t.includes("select id from organizations where lower(slug)"),
+        respond: () => [],
+      },
       {
         match: (t) => t.includes("update organizations set"),
         respond: () => [{ id: "org-1", name: "Acme Co", slug: "acme-co" }],
@@ -99,7 +111,9 @@ describe("organizations service", () => {
 
     await advanceOnboardingStep("finished");
 
-    const updateCall = fakeSql.calls.find((c) => c.text.includes("update organization_settings set"));
+    const updateCall = fakeSql.calls.find((c) =>
+      c.text.includes("update organization_settings set"),
+    );
     expect(updateCall?.text).toContain("onboarding_completed_at");
   });
 });
