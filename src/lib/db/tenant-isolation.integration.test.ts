@@ -54,6 +54,8 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
   let knowledgeDocumentB: { id: string };
   let knowledgeDocumentOwnedByProcessOwnerA: { id: string };
   let knowledgeDocumentNotOwnedA: { id: string };
+  let processOwnedByProcessOwnerA: { id: string };
+  let processNotOwnedA: { id: string };
 
   const suffix = `test_${Date.now()}`;
   const NONEXISTENT_MEMBER_ID = "00000000-0000-0000-0000-000000000000";
@@ -183,6 +185,17 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     [knowledgeDocumentNotOwnedA] = await db<{ id: string }[]>`
       insert into knowledge_documents (organization_id, title, department_id)
       values (${orgA.id}, ${`Not Owned A ${suffix}`}, ${departmentNotOwnedA.id})
+      returning id
+    `;
+
+    [processOwnedByProcessOwnerA] = await db<{ id: string }[]>`
+      insert into processes (organization_id, title, department_id)
+      values (${orgA.id}, ${`Process Owned By Process Owner A ${suffix}`}, ${departmentOwnedByProcessOwnerA.id})
+      returning id
+    `;
+    [processNotOwnedA] = await db<{ id: string }[]>`
+      insert into processes (organization_id, title, department_id)
+      values (${orgA.id}, ${`Process Not Owned A ${suffix}`}, ${departmentNotOwnedA.id})
       returning id
     `;
   });
@@ -543,6 +556,54 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     // content — still succeeds.
     const superseded = await db`
       update document_versions set status = 'superseded' where id = ${version.id} returning status
+    `;
+    expect(superseded[0]?.status).toBe("superseded");
+  });
+
+  it("test 18: a process_owner's scoped process.edit lets them update a process in a department they own, but not a sibling department in the same org", async () => {
+    await withTestClaims(
+      db,
+      {
+        clerkUserId: "user_process_owner_a",
+        organizationId: orgA.id,
+        memberId: memberProcessOwnerA.id,
+      },
+      async (tx) => {
+        const ownUpdate = await tx`
+          update processes set title = 'Renamed By Owning Process Owner'
+          where id = ${processOwnedByProcessOwnerA.id} returning id
+        `;
+        expect(ownUpdate).toHaveLength(1);
+
+        // Same statement shape, different process's department — proves
+        // has_scoped_permission() re-checks ownership per-row rather than
+        // caching a yes from the update above.
+        const siblingUpdate = await tx`
+          update processes set title = 'hijacked' where id = ${processNotOwnedA.id} returning id
+        `;
+        expect(siblingUpdate).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 19: a published process_version's definition can never be modified — the immutability trigger rejects it regardless of caller", async () => {
+    const [version] = await db<{ id: string }[]>`
+      insert into process_versions (organization_id, process_id, version_number, title, definition, status)
+      values (
+        ${orgA.id}, ${processNotOwnedA.id}, 1, 'Published title', ${db.json([{ id: "step-1", name: "Step 1" }])}, 'published'
+      )
+      returning id
+    `;
+
+    await expect(
+      db`update process_versions set definition = ${db.json([{ id: "step-1", name: "Tampered" }])} where id = ${version.id}`,
+    ).rejects.toThrow(/published process version cannot be modified/);
+
+    // The one transition the trigger does allow — publishing a
+    // *replacement* version supersedes this one without touching its
+    // definition — still succeeds.
+    const superseded = await db`
+      update process_versions set status = 'superseded' where id = ${version.id} returning status
     `;
     expect(superseded[0]?.status).toBe("superseded");
   });

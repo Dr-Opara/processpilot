@@ -276,7 +276,14 @@ phases from this tracker and does not close until those phases are
   an immutable `ProcessVersion`; AI-assisted draft extraction (manual
   trigger only — full AI copilot lands in Phase 13) is stubbed or deferred
   explicitly if not ready.
-- **Status:** Not Started.
+- **Status:** Complete. `npm run phase:commit`'s checks (format, lint,
+  typecheck, unit tests, build) and `npm audit` are green in CI on
+  `feature/phase-7-visual-process-builder`; the immutable-version exit
+  criterion is enforced by a DB trigger and proven by a live-RLS
+  integration test, same pattern as Phase 6. AI-assisted draft
+  extraction is fully deferred — no UI affordance exists for it in this
+  phase; it requires the provider-neutral AI adapter from ADR-0008,
+  which Phase 13 builds.
 - **Risks:** Scope creep into full AI drafting before Phase 13 — this
   phase should ship manual authoring first and treat AI extraction as an
   explicit, separately-scoped addition.

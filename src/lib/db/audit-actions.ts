@@ -6,7 +6,8 @@
  * resource-type convention this extends (see src/lib/db/audit.ts).
  * Started in Phase 5 (business onboarding and employee management);
  * extended in Phase 6 (knowledge management) for the document
- * import/authoring/governance loop.
+ * import/authoring/governance loop, and in Phase 7 (process builder)
+ * for the analogous process authoring/review/publish loop.
  */
 export const AuditAction = {
   CompanyProfileChanged: "organization.profile_changed",
@@ -55,6 +56,17 @@ export const AuditAction = {
   DocumentVersionRejected: "document_version.rejected",
   DocumentVersionPublished: "document_version.published",
   DocumentVersionSuperseded: "document_version.superseded",
+
+  ProcessCreated: "process.created",
+  ProcessArchived: "process.archived",
+  ProcessRestored: "process.restored",
+
+  ProcessVersionCreated: "process_version.created",
+  ProcessVersionUpdated: "process_version.updated",
+  ProcessVersionSubmittedForReview: "process_version.submitted_for_review",
+  ProcessVersionRejected: "process_version.rejected",
+  ProcessVersionPublished: "process_version.published",
+  ProcessVersionSuperseded: "process_version.superseded",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -69,6 +81,8 @@ export const AuditResourceType = {
   ImportBatch: "member_import_batch",
   KnowledgeDocument: "knowledge_document",
   DocumentVersion: "document_version",
+  Process: "process",
+  ProcessVersion: "process_version",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];
