@@ -8,7 +8,7 @@ vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
 
-const mockCreateInvitation = vi.fn();
+const { mockCreateInvitation } = vi.hoisted(() => ({ mockCreateInvitation: vi.fn() }));
 vi.mock("@/lib/services/invitations", () => ({
   createInvitation: mockCreateInvitation,
 }));

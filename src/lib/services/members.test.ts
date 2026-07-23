@@ -9,7 +9,7 @@ vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
 
-const mockAssertRoleAssignable = vi.fn();
+const { mockAssertRoleAssignable } = vi.hoisted(() => ({ mockAssertRoleAssignable: vi.fn() }));
 vi.mock("@/lib/services/invitations", () => ({
   assertRoleAssignable: mockAssertRoleAssignable,
 }));
