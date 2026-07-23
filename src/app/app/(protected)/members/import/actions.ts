@@ -6,11 +6,9 @@ import type { ImportOutcome, ImportPreview } from "@/lib/services/member-import"
 import { formErrorMessage } from "@/lib/form-actions";
 
 export type PreviewImportResult =
-  | { ok: true; preview: ImportPreview }
-  | { ok: false; error: string };
+  { ok: true; preview: ImportPreview } | { ok: false; error: string };
 export type ConfirmImportResult =
-  | { ok: true; outcome: ImportOutcome }
-  | { ok: false; error: string };
+  { ok: true; outcome: ImportOutcome } | { ok: false; error: string };
 
 export async function previewImportAction(csvText: string): Promise<PreviewImportResult> {
   try {

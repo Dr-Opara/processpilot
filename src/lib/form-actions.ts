@@ -8,10 +8,10 @@ import { AppError } from "@/lib/errors";
 export function isRedirectError(error: unknown): boolean {
   return Boolean(
     error &&
-      typeof error === "object" &&
-      "digest" in error &&
-      typeof (error as { digest?: unknown }).digest === "string" &&
-      (error as { digest: string }).digest.startsWith("NEXT_REDIRECT"),
+    typeof error === "object" &&
+    "digest" in error &&
+    typeof (error as { digest?: unknown }).digest === "string" &&
+    (error as { digest: string }).digest.startsWith("NEXT_REDIRECT"),
   );
 }
 
