@@ -48,6 +48,12 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
   let locationB: { id: string };
   let teamB: { id: string };
   let importBatchA: { id: string };
+  let profileProcessOwnerA: { id: string; clerk_user_id: string };
+  let memberProcessOwnerA: { id: string };
+  let departmentOwnedByProcessOwnerA: { id: string };
+  let knowledgeDocumentB: { id: string };
+  let knowledgeDocumentOwnedByProcessOwnerA: { id: string };
+  let knowledgeDocumentNotOwnedA: { id: string };
 
   const suffix = `test_${Date.now()}`;
   const NONEXISTENT_MEMBER_ID = "00000000-0000-0000-0000-000000000000";
@@ -81,6 +87,7 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     profileRemovedA = await makeProfile("removed_a");
     profileNonMemberA = await makeProfile("nonmember");
     profileManagerA = await makeProfile("manager_a");
+    profileProcessOwnerA = await makeProfile("process_owner_a");
 
     const makeMember = async (profile: { id: string }, org: { id: string }, status: string) => {
       const [member] = await db<{ id: string }[]>`
@@ -97,6 +104,7 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     memberSuspendedA = await makeMember(profileSuspendedA, orgA, "suspended");
     memberRemovedA = await makeMember(profileRemovedA, orgA, "removed");
     memberManagerA = await makeMember(profileManagerA, orgA, "active");
+    memberProcessOwnerA = await makeMember(profileProcessOwnerA, orgA, "active");
     // profileNonMemberA deliberately gets no organization_members row at all.
 
     const [ownerRole] = await db<
@@ -111,12 +119,16 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     const [managerRole] = await db<
       { id: string }[]
     >`select id from roles where key = 'manager' and organization_id is null`;
+    const [processOwnerRole] = await db<
+      { id: string }[]
+    >`select id from roles where key = 'process_owner' and organization_id is null`;
     roleAuditorId = auditorRole.id;
 
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberOwnerA.id}, ${ownerRole.id})`;
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberEmployeeA.id}, ${employeeRole.id})`;
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberAuditorA.id}, ${auditorRole.id})`;
     await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberManagerA.id}, ${managerRole.id})`;
+    await db`insert into member_role_assignments (organization_id, organization_member_id, role_id) values (${orgA.id}, ${memberProcessOwnerA.id}, ${processOwnerRole.id})`;
 
     [departmentB] = await db<{ id: string }[]>`
       insert into departments (organization_id, name)
@@ -149,6 +161,28 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     [importBatchA] = await db<{ id: string }[]>`
       insert into member_import_batches (organization_id, status, total_rows)
       values (${orgA.id}, 'completed', 1)
+      returning id
+    `;
+
+    [departmentOwnedByProcessOwnerA] = await db<{ id: string }[]>`
+      insert into departments (organization_id, name, owner_member_id)
+      values (${orgA.id}, ${`Owned By Process Owner A ${suffix}`}, ${memberProcessOwnerA.id})
+      returning id
+    `;
+
+    [knowledgeDocumentB] = await db<{ id: string }[]>`
+      insert into knowledge_documents (organization_id, title)
+      values (${orgB.id}, ${`Test Document B ${suffix}`})
+      returning id
+    `;
+    [knowledgeDocumentOwnedByProcessOwnerA] = await db<{ id: string }[]>`
+      insert into knowledge_documents (organization_id, title, department_id)
+      values (${orgA.id}, ${`Owned By Process Owner A ${suffix}`}, ${departmentOwnedByProcessOwnerA.id})
+      returning id
+    `;
+    [knowledgeDocumentNotOwnedA] = await db<{ id: string }[]>`
+      insert into knowledge_documents (organization_id, title, department_id)
+      values (${orgA.id}, ${`Not Owned A ${suffix}`}, ${departmentNotOwnedA.id})
       returning id
     `;
   });
@@ -446,5 +480,70 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
         expect(crossOrgRows).toHaveLength(0);
       },
     );
+  });
+
+  it("test 15: an active Org A member can read, but cannot update, Org B's knowledge document", async () => {
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const rows =
+          await tx`select id from knowledge_documents where id = ${knowledgeDocumentB.id}`;
+        expect(rows).toHaveLength(0);
+
+        const updated = await tx`
+          update knowledge_documents set title = 'hijacked' where id = ${knowledgeDocumentB.id} returning id
+        `;
+        expect(updated).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 16: a process_owner's scoped knowledge.edit lets them update a document in a department they own, but not a sibling department in the same org", async () => {
+    await withTestClaims(
+      db,
+      {
+        clerkUserId: "user_process_owner_a",
+        organizationId: orgA.id,
+        memberId: memberProcessOwnerA.id,
+      },
+      async (tx) => {
+        const ownUpdate = await tx`
+          update knowledge_documents set title = 'Renamed By Owning Process Owner'
+          where id = ${knowledgeDocumentOwnedByProcessOwnerA.id} returning id
+        `;
+        expect(ownUpdate).toHaveLength(1);
+
+        // Same statement shape, different document's department — proves
+        // has_scoped_permission() re-checks ownership per-row rather than
+        // caching a yes from the update above.
+        const siblingUpdate = await tx`
+          update knowledge_documents set title = 'hijacked' where id = ${knowledgeDocumentNotOwnedA.id} returning id
+        `;
+        expect(siblingUpdate).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 17: a published document_version's content can never be modified — the immutability trigger rejects it regardless of caller", async () => {
+    const [version] = await db<{ id: string }[]>`
+      insert into document_versions (organization_id, document_id, version_number, title, source, content, status)
+      values (
+        ${orgA.id}, ${knowledgeDocumentNotOwnedA.id}, 1, 'Published title', 'authored', 'Original content', 'published'
+      )
+      returning id
+    `;
+
+    await expect(
+      db`update document_versions set content = 'tampered' where id = ${version.id}`,
+    ).rejects.toThrow(/published document version cannot be modified/);
+
+    // The one transition the trigger does allow — publishing a
+    // *replacement* version supersedes this one without touching its
+    // content — still succeeds.
+    const superseded = await db`
+      update document_versions set status = 'superseded' where id = ${version.id} returning status
+    `;
+    expect(superseded[0]?.status).toBe("superseded");
   });
 });

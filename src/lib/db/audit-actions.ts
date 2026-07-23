@@ -1,11 +1,12 @@
 /**
- * Canonical action/resourceType strings for every Phase 5 (Business
- * onboarding and employee management) audit event, so every service
- * module calling recordAuditEvent() uses the same spelling. Phase 4's
+ * Canonical action/resourceType strings for every user-initiated
+ * (source: "app") audit event, so every service module calling
+ * recordAuditEvent() uses the same spelling. Phase 4's
  * identity-sync.ts established the "resource.verb" / snake_case-singular-
- * resource-type convention this extends (see src/lib/db/audit.ts) — there
- * was no shared constants module yet because no user-initiated (source:
- * "app") audit event existed before this phase.
+ * resource-type convention this extends (see src/lib/db/audit.ts).
+ * Started in Phase 5 (business onboarding and employee management);
+ * extended in Phase 6 (knowledge management) for the document
+ * import/authoring/governance loop.
  */
 export const AuditAction = {
   CompanyProfileChanged: "organization.profile_changed",
@@ -42,6 +43,18 @@ export const AuditAction = {
   ImportStarted: "member_import.started",
   ImportCompleted: "member_import.completed",
   ImportPartiallyFailed: "member_import.partially_failed",
+
+  KnowledgeDocumentCreated: "knowledge_document.created",
+  KnowledgeDocumentArchived: "knowledge_document.archived",
+  KnowledgeDocumentRestored: "knowledge_document.restored",
+
+  DocumentVersionCreated: "document_version.created",
+  DocumentVersionUpdated: "document_version.updated",
+  DocumentVersionSubmittedForReview: "document_version.submitted_for_review",
+  DocumentVersionApproved: "document_version.approved",
+  DocumentVersionRejected: "document_version.rejected",
+  DocumentVersionPublished: "document_version.published",
+  DocumentVersionSuperseded: "document_version.superseded",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -54,6 +67,8 @@ export const AuditResourceType = {
   Invitation: "organization_invitation",
   Member: "organization_member",
   ImportBatch: "member_import_batch",
+  KnowledgeDocument: "knowledge_document",
+  DocumentVersion: "document_version",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];
