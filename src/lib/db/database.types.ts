@@ -261,6 +261,55 @@ export interface IdempotencyKeyRow {
   expires_at: string | null;
 }
 
+export type KnowledgeDocumentStatus = "draft" | "in_review" | "published" | "archived";
+
+export interface KnowledgeDocumentRow {
+  id: string;
+  organization_id: string;
+  title: string;
+  category: string | null;
+  tags: string[];
+  owner_member_id: string | null;
+  department_id: string | null;
+  status: KnowledgeDocumentStatus;
+  current_version_id: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export type DocumentVersionSource = "authored" | "uploaded";
+export type DocumentVersionScanStatus = "pending_scan" | "clean" | "flagged";
+export type DocumentVersionStatus = "draft" | "in_review" | "published" | "superseded" | "rejected";
+
+export interface DocumentVersionRow {
+  id: string;
+  organization_id: string;
+  document_id: string;
+  department_id: string | null;
+  version_number: number;
+  title: string;
+  source: DocumentVersionSource;
+  content: string | null;
+  storage_path: string | null;
+  original_filename: string | null;
+  mime_type: string | null;
+  file_size_bytes: number | null;
+  extracted_text: string | null;
+  scan_status: DocumentVersionScanStatus;
+  status: DocumentVersionStatus;
+  review_notes: string | null;
+  submitted_by: string | null;
+  submitted_at: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  published_by: string | null;
+  published_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
 export type WebhookEventStatus = "processed" | "rejected" | "failed";
 
 export interface WebhookEventRow {
