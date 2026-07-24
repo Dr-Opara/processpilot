@@ -58,12 +58,14 @@ export const AuditAction = {
   DocumentVersionSuperseded: "document_version.superseded",
 
   ProcessCreated: "process.created",
+  ProcessUpdated: "process.updated",
   ProcessArchived: "process.archived",
   ProcessRestored: "process.restored",
 
   ProcessVersionCreated: "process_version.created",
   ProcessVersionUpdated: "process_version.updated",
   ProcessVersionSubmittedForReview: "process_version.submitted_for_review",
+  ProcessVersionApproved: "process_version.approved",
   ProcessVersionRejected: "process_version.rejected",
   ProcessVersionPublished: "process_version.published",
   ProcessVersionSuperseded: "process_version.superseded",

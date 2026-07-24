@@ -10,7 +10,7 @@ import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import { updateDraftVersionAction } from "../../actions";
-import { ProcessBuilderForm } from "../../new/ProcessBuilderForm";
+import { ProcessGraphForm } from "../../ProcessGraphForm";
 
 export default async function EditProcessPage({
   params,
@@ -54,11 +54,11 @@ export default async function EditProcessPage({
 
       {error && <Alert title="Could not save changes" description={error} />}
 
-      <ProcessBuilderForm
+      <ProcessGraphForm
         action={action}
         mode="edit"
         initialTitle={draft.title}
-        initialSteps={draft.definition}
+        initialGraph={draft.definition}
         departments={departments}
         members={members}
         roles={roles}

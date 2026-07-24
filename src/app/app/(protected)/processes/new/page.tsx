@@ -7,7 +7,7 @@ import { listRoles } from "@/lib/services/roles";
 import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { createProcessAction } from "../actions";
-import { ProcessBuilderForm } from "./ProcessBuilderForm";
+import { ProcessGraphForm } from "../ProcessGraphForm";
 
 export default async function NewProcessPage({
   searchParams,
@@ -38,7 +38,7 @@ export default async function NewProcessPage({
 
       {error && <Alert title="Could not create process" description={error} />}
 
-      <ProcessBuilderForm
+      <ProcessGraphForm
         action={createProcessAction}
         mode="create"
         departments={departments}

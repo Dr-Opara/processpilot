@@ -10,7 +10,7 @@ import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import { createNewVersionAction } from "../../actions";
-import { ProcessBuilderForm } from "../../new/ProcessBuilderForm";
+import { ProcessGraphForm } from "../../ProcessGraphForm";
 
 export default async function NewProcessVersionPage({
   params,
@@ -52,11 +52,11 @@ export default async function NewProcessVersionPage({
 
       {error && <Alert title="Could not create version" description={error} />}
 
-      <ProcessBuilderForm
+      <ProcessGraphForm
         action={action}
         mode="new-version"
         initialTitle={detail.process.title}
-        initialSteps={detail.currentVersion?.definition}
+        initialGraph={detail.currentVersion?.definition}
         departments={departments}
         members={members}
         roles={roles}

@@ -8,11 +8,11 @@ import { getProcess } from "@/lib/services/processes";
 import { listRoles } from "@/lib/services/roles";
 import { listTeams } from "@/lib/services/teams";
 import { AppError } from "@/lib/errors";
-import { StepList } from "../../../StepList";
+import { ProcessGraphViewer } from "../../../ProcessGraphViewer";
 
 function statusBadgeStatus(status: string): "success" | "warning" | "danger" | "neutral" {
   if (status === "published") return "success";
-  if (status === "in_review") return "warning";
+  if (status === "in_review" || status === "approved") return "warning";
   if (status === "archived" || status === "rejected") return "danger";
   return "neutral";
 }
@@ -80,7 +80,7 @@ export default async function ProcessVersionPage({
         </Cluster>
       </Stack>
 
-      <StepList steps={version.definition} roleNames={roleNames} teamNames={teamNames} />
+      <ProcessGraphViewer graph={version.definition} roleNames={roleNames} teamNames={teamNames} />
     </Stack>
   );
 }

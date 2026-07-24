@@ -6,96 +6,65 @@ import { AppError } from "@/lib/errors";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
-import type { ProcessRow, ProcessVersionRow } from "@/lib/db/database.types";
+import { validateProcessGraph } from "@/lib/services/process-graph-validation";
+import type {
+  ProcessGraphDefinition,
+  ProcessRow,
+  ProcessVersionRow,
+} from "@/lib/db/database.types";
 
 const formFieldSchema = z.object({
   label: z.string().trim().min(1, "Field label is required").max(100),
   type: z.enum(["text", "number", "checkbox"]),
 });
 
-export const processStepSchema = z
-  .object({
-    id: z.string().trim().min(1),
-    name: z.string().trim().min(1, "Step name is required").max(200),
-    sequencing: z.enum(["linear", "parallel", "conditional"]),
-    parallelGroup: z.string().trim().max(100).optional().nullable(),
-    branchOnStepId: z.string().trim().optional().nullable(),
-    branchCondition: z.string().trim().max(200).optional().nullable(),
-    assigneeType: z.enum(["role", "team"]),
+export const processNodeSchema = z.object({
+  id: z.string().trim().min(1),
+  type: z.enum([
+    "start",
+    "end",
+    "human_task",
+    "approval",
+    "decision",
+    "parallel_split",
+    "parallel_join",
+    "timer",
+    "notification",
+    "subprocess",
+    "form",
+    "evidence",
+    "system_action",
+  ]),
+  position: z.object({ x: z.number(), y: z.number() }),
+  data: z.object({
+    label: z.string().trim().max(200),
+    assigneeType: z.enum(["role", "team"]).optional().nullable(),
     assigneeRoleId: z.string().uuid().optional().nullable(),
     assigneeTeamId: z.string().uuid().optional().nullable(),
-    required: z.boolean(),
-    requiresForm: z.boolean(),
-    formFields: z.array(formFieldSchema).max(20),
-    requiresApproval: z.boolean(),
-    approverRoleId: z.string().uuid().optional().nullable(),
-    requiresEvidence: z.boolean(),
+    required: z.boolean().optional(),
+    formFields: z.array(formFieldSchema).max(30).optional(),
     evidenceDescription: z.string().trim().max(500).optional().nullable(),
-  })
-  .superRefine((step, ctx) => {
-    if (step.assigneeType === "role" && !step.assigneeRoleId) {
-      ctx.addIssue({
-        code: "custom",
-        message: `Step "${step.name}" needs an assigned role.`,
-        path: ["assigneeRoleId"],
-      });
-    }
-    if (step.assigneeType === "team" && !step.assigneeTeamId) {
-      ctx.addIssue({
-        code: "custom",
-        message: `Step "${step.name}" needs an assigned team.`,
-        path: ["assigneeTeamId"],
-      });
-    }
-    if (step.sequencing === "conditional" && !step.branchOnStepId) {
-      ctx.addIssue({
-        code: "custom",
-        message: `Step "${step.name}" is conditional but has no branch-on step.`,
-        path: ["branchOnStepId"],
-      });
-    }
-    if (step.requiresApproval && !step.approverRoleId) {
-      ctx.addIssue({
-        code: "custom",
-        message: `Step "${step.name}" requires approval but has no approver role.`,
-        path: ["approverRoleId"],
-      });
-    }
-  });
+    timerDurationMinutes: z.number().int().positive().optional().nullable(),
+    notificationMessage: z.string().trim().max(500).optional().nullable(),
+    subprocessId: z.string().uuid().optional().nullable(),
+    systemActionType: z.string().trim().max(100).optional().nullable(),
+  }),
+});
 
-export const processDefinitionSchema = z
-  .array(processStepSchema)
-  .min(1, "At least one step is required.")
-  .superRefine((steps, ctx) => {
-    const seenIds = new Set<string>();
-    steps.forEach((step, index) => {
-      if (seenIds.has(step.id)) {
-        ctx.addIssue({
-          code: "custom",
-          message: `Duplicate step id "${step.id}".`,
-          path: [index, "id"],
-        });
-      }
-      seenIds.add(step.id);
+export const processEdgeSchema = z.object({
+  id: z.string().trim().min(1),
+  source: z.string().trim().min(1),
+  target: z.string().trim().min(1),
+  label: z.string().trim().max(200).optional().nullable(),
+  condition: z.string().trim().max(200).optional().nullable(),
+});
 
-      if (
-        step.sequencing === "conditional" &&
-        step.branchOnStepId &&
-        !steps.some(
-          (candidate, candidateIndex) =>
-            candidate.id === step.branchOnStepId && candidateIndex < index,
-        )
-      ) {
-        ctx.addIssue({
-          code: "custom",
-          message: `Step "${step.name}" branches on an unknown or later step.`,
-          path: [index, "branchOnStepId"],
-        });
-      }
-    });
-  });
+export const processGraphSchema = z.object({
+  nodes: z.array(processNodeSchema).min(1, "At least one node is required."),
+  edges: z.array(processEdgeSchema),
+});
 
-export type ProcessDefinitionInput = z.infer<typeof processDefinitionSchema>;
+export type ProcessGraphInput = z.infer<typeof processGraphSchema>;
 
 function toTenantContext(membership: {
   organization: { id: string };
@@ -139,20 +108,23 @@ async function assertNoVersionInProgress(
 ): Promise<void> {
   const [inProgress] = await tx<{ id: string }[]>`
     select id from process_versions
-    where process_id = ${processId} and status in ('draft', 'in_review')
+    where process_id = ${processId} and status in ('draft', 'in_review', 'approved')
   `;
   if (inProgress) {
-    throw new AppError("conflict", "A draft or in-review version already exists for this process.");
+    throw new AppError(
+      "conflict",
+      "A draft, in-review, or approved version already exists for this process.",
+    );
   }
 }
 
-/** Creates a new draft version — a process's first version comes from createProcess() + this; every later revision (after publish or rejection) goes through this same path. */
+/** Creates a new draft version — a process's first version comes from createProcess() + this; every later revision (after publish or rejection) goes through this same path. Saving a draft never requires the graph to be valid yet (see getGraphValidationErrors) — only submitting it for review does. */
 export async function createVersion(
   processId: string,
   title: string,
-  steps: ProcessDefinitionInput,
+  graph: ProcessGraphInput,
 ): Promise<ProcessVersionRow> {
-  const definition = processDefinitionSchema.parse(steps);
+  const definition = processGraphSchema.parse(graph);
   const trimmedTitle = title.trim();
   if (!trimmedTitle) throw new AppError("conflict", "Title is required.");
 
@@ -175,7 +147,7 @@ export async function createVersion(
       insert into process_versions (organization_id, process_id, version_number, title, definition, created_by)
       values (
         ${membership.organization.id}, ${processId}, ${max_version + 1}, ${trimmedTitle},
-        ${tx.json(definition)}, ${membership.profile.id}
+        ${tx.json(definition as unknown as postgres.JSONValue)}, ${membership.profile.id}
       )
       returning *
     `;
@@ -195,9 +167,9 @@ export async function createVersion(
 
 export async function updateDraftVersion(
   versionId: string,
-  input: { title: string; steps: ProcessDefinitionInput },
+  input: { title: string; graph: ProcessGraphInput },
 ): Promise<ProcessVersionRow> {
-  const definition = processDefinitionSchema.parse(input.steps);
+  const definition = processGraphSchema.parse(input.graph);
   const title = input.title.trim();
   if (!title) throw new AppError("conflict", "Title is required.");
 
@@ -215,7 +187,7 @@ export async function updateDraftVersion(
 
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [updated] = await tx<ProcessVersionRow[]>`
-      update process_versions set title = ${title}, definition = ${tx.json(definition)}
+      update process_versions set title = ${title}, definition = ${tx.json(definition as unknown as postgres.JSONValue)}
       where id = ${versionId}
       returning *
     `;
@@ -233,6 +205,15 @@ export async function updateDraftVersion(
   });
 }
 
+/** Returns validation errors for a version's current graph without changing anything — used by the editor's validation panel and to block submitForReview. */
+export async function getGraphValidationErrors(versionId: string) {
+  const membership = await requirePermission("process.view");
+  const version = await withTenantContext(toTenantContext(membership), (tx) =>
+    getOwnVersion(tx, membership.organization.id, versionId),
+  );
+  return validateProcessGraph(version.definition as ProcessGraphDefinition);
+}
+
 export async function submitForReview(versionId: string): Promise<ProcessVersionRow> {
   const preCheck = await requirePermission("process.view");
   const version = await withTenantContext(toTenantContext(preCheck), (tx) =>
@@ -241,6 +222,11 @@ export async function submitForReview(versionId: string): Promise<ProcessVersion
   if (version.status !== "draft") {
     throw new AppError("conflict", "Only a draft version can be submitted for review.");
   }
+  const errors = validateProcessGraph(version.definition as ProcessGraphDefinition);
+  if (errors.length > 0) {
+    throw new AppError("conflict", `The process graph has validation errors: ${errors[0].message}`);
+  }
+
   const membership = await requirePermission("process.edit", {
     scope: { departmentId: version.department_id ?? undefined },
   });
@@ -304,14 +290,48 @@ export async function rejectReview(
   });
 }
 
-/** Publishes an in-review version: supersedes the process's previously-published version (if any) and points the process at this one — matches document-versions.ts's approveAndPublish transaction shape exactly. Requires process.publish, which — unlike knowledge.publish — has no unscoped grantee at all (only process_owner, scoped) per product/permissions-matrix.md. */
-export async function approveAndPublish(versionId: string): Promise<ProcessVersionRow> {
+/** in_review -> approved. A distinct step from publishing (process.review, not process.publish) — an approved version can wait (e.g. for its effective date) before someone with process.publish actually publishes it. */
+export async function approveVersion(versionId: string): Promise<ProcessVersionRow> {
   const preCheck = await requirePermission("process.view");
   const version = await withTenantContext(toTenantContext(preCheck), (tx) =>
     getOwnVersion(tx, preCheck.organization.id, versionId),
   );
   if (version.status !== "in_review") {
-    throw new AppError("conflict", "Only an in-review version can be published.");
+    throw new AppError("conflict", "Only an in-review version can be approved.");
+  }
+  const membership = await requirePermission("process.review", {
+    scope: { departmentId: version.department_id ?? undefined },
+  });
+
+  return withTenantContext(toTenantContext(membership), async (tx) => {
+    const [updated] = await tx<ProcessVersionRow[]>`
+      update process_versions set
+        status = 'approved', reviewed_by = ${membership.member.id}, reviewed_at = now()
+      where id = ${versionId}
+      returning *
+    `;
+
+    await recordAuditEvent(tx, {
+      organizationId: membership.organization.id,
+      actorProfileId: membership.profile.id,
+      action: AuditAction.ProcessVersionApproved,
+      resourceType: AuditResourceType.ProcessVersion,
+      resourceId: versionId,
+      source: "app",
+    });
+
+    return updated;
+  });
+}
+
+/** Publishes an approved version: supersedes the process's previously-published version (if any) and points the process at this one — same "insert/activate new before retiring old" transaction shape as members.ts's transferOwnership. Requires process.publish, which — unlike knowledge.publish — has no unscoped grantee at all (only process_owner, scoped) per product/permissions-matrix.md. */
+export async function publishVersion(versionId: string): Promise<ProcessVersionRow> {
+  const preCheck = await requirePermission("process.view");
+  const version = await withTenantContext(toTenantContext(preCheck), (tx) =>
+    getOwnVersion(tx, preCheck.organization.id, versionId),
+  );
+  if (version.status !== "approved") {
+    throw new AppError("conflict", "Only an approved version can be published.");
   }
   const membership = await requirePermission("process.publish", {
     scope: { departmentId: version.department_id ?? undefined },
@@ -322,8 +342,7 @@ export async function approveAndPublish(versionId: string): Promise<ProcessVersi
 
     const [published] = await tx<ProcessVersionRow[]>`
       update process_versions set
-        status = 'published', reviewed_by = ${membership.member.id}, reviewed_at = now(),
-        published_by = ${membership.member.id}, published_at = now()
+        status = 'published', published_by = ${membership.member.id}, published_at = now()
       where id = ${versionId}
       returning *
     `;
