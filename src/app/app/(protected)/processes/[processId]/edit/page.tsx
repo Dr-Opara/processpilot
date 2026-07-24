@@ -10,7 +10,7 @@ import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import { updateDraftVersionAction } from "../../actions";
-import { ProcessGraphForm } from "../../ProcessGraphForm";
+import { ProcessCanvasForm } from "../../ProcessCanvasForm";
 
 export default async function EditProcessPage({
   params,
@@ -46,7 +46,7 @@ export default async function EditProcessPage({
   const action = updateDraftVersionAction.bind(null, processId, draft.id);
 
   return (
-    <Stack className="mx-auto max-w-3xl gap-6">
+    <Stack className="mx-auto max-w-6xl gap-6">
       <Stack className="gap-1">
         <Heading as="h1">Edit draft</Heading>
         <Text className="text-muted">{detail.process.title}</Text>
@@ -54,7 +54,7 @@ export default async function EditProcessPage({
 
       {error && <Alert title="Could not save changes" description={error} />}
 
-      <ProcessGraphForm
+      <ProcessCanvasForm
         action={action}
         mode="edit"
         initialTitle={draft.title}
@@ -64,6 +64,7 @@ export default async function EditProcessPage({
         roles={roles}
         teams={teams}
         cancelHref={`/app/processes/${processId}`}
+        draftKey={`process-canvas-draft:${processId}:${draft.id}`}
       />
     </Stack>
   );

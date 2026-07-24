@@ -6,8 +6,8 @@ import { NODE_TYPE_META } from "./[processId]/editor/nodePalette";
 
 /**
  * Read-only rendering of a process graph as a node list and an edge
- * list, standing in for a real graph view until the visual canvas
- * (see ProcessGraphForm) is built.
+ * list — used for viewing published/in-review/historical versions,
+ * where the interactive canvas (ProcessCanvasForm) doesn't apply.
  */
 export function ProcessGraphViewer({
   graph,

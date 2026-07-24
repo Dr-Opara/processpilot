@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getCurrentMembership } from "@/lib/authz";
 import { archiveProcess, createProcess, restoreProcess } from "@/lib/services/processes";
 import {
   approveVersion,
@@ -10,12 +11,26 @@ import {
   rejectReview,
   submitForReview,
   updateDraftVersion,
+  type ProcessGraphInput,
 } from "@/lib/services/process-versions";
+import {
+  validateProcessGraph,
+  type GraphValidationError,
+} from "@/lib/services/process-graph-validation";
 import { runFormAction } from "@/lib/form-actions";
 
 function parseGraph(formData: FormData) {
   const raw = String(formData.get("definition") ?? "{}");
   return processGraphSchema.parse(JSON.parse(raw));
+}
+
+/** Live validation for the canvas editor — the same rules submitForReview enforces, run against in-progress client state rather than a saved version. */
+export async function validateGraphAction(
+  graph: ProcessGraphInput,
+): Promise<GraphValidationError[]> {
+  await getCurrentMembership();
+  const parsed = processGraphSchema.parse(graph);
+  return validateProcessGraph(parsed);
 }
 
 export async function createProcessAction(formData: FormData): Promise<void> {
