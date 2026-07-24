@@ -5,24 +5,24 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-24.
+**Last updated:** 2026-07-25.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress.
-- **Current phase:** Phase 8 — Workflow execution engine, In Progress
-  (branch `feature/phase-8-workflow-execution`, not yet merged).
+- **Current phase:** Phase 9 — Forms and evidence management, In Progress
+  (branch `feature/phase-9-forms-evidence`, not yet merged).
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, and 7** (business onboarding/employee management,
-  knowledge management, process builder) are `Complete` per the phase
-  tracker. Phase 4 (database and tenant isolation) remains recorded as
-  `In Progress` in the tracker; this document does not re-audit that
-  status.
+- **Phases 5, 6, 7, and 8** (business onboarding/employee management,
+  knowledge management, process builder, workflow execution engine) are
+  `Complete` per the phase tracker. Phase 4 (database and tenant
+  isolation) remains recorded as `In Progress` in the tracker; this
+  document does not re-audit that status.
 
 ## What's built
 
@@ -30,7 +30,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   [product/information-architecture.md](../../product/information-architecture.md).
 - Authentication: Clerk sign-up/sign-in, organization creation and
   invitation at `/app/*`, server-side session gating via `requireAuth()`.
-- Database schema: 28 tables in
+- Database schema: 33 tables in
   [docs/architecture/database-schema.md](../architecture/database-schema.md),
   committed as SQL migrations with Row-Level Security enabled and at
   least one policy on every table — statically enforced by
@@ -50,8 +50,8 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Process builder: visual drag-and-drop process editor over a graph
   definition, three-stage review pipeline, server-side graph validation,
   immutable published versions (`/app/processes/*`).
-- Workflow execution engine (Phase 8, in progress): token-based
-  execution over a published process version's graph
+- Workflow execution engine (Phase 8, complete): token-based execution
+  over a published process version's graph
   (`src/lib/services/workflow-engine.ts`), the workflow/task service
   layer (`src/lib/services/workflows.ts`), two background jobs (timer
   advance, deadline breach detection —
@@ -61,8 +61,22 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   node-type/state-machine detail and known gaps (manual start only;
   `system_action` nodes unsupported; deadline breach is detection-only,
   not full escalation).
+- Forms and evidence (Phase 9, in progress): governed, versioned form
+  authoring with an 8-type field/validation/conditional-visibility
+  engine (`src/lib/services/form-schema.ts`), structured submissions
+  with draft save, final submit, and immutable amendments
+  (`src/lib/services/form-submissions.ts`), and private evidence upload
+  with sha256 integrity hashing, review, replacement, expiration, and
+  full chain-of-custody logging (`src/lib/services/evidence.ts`).
+  `workflow-engine.ts`'s `form` node type now snapshots a linked
+  published form version at task-creation time. Routes:
+  `/app/forms/*`, the task-detail form renderer/evidence panel,
+  `/app/evidence/upload`, `/app/evidence/[evidenceId]/download`. See
+  [forms-and-evidence.md](../architecture/forms-and-evidence.md) for the
+  full model and known gaps (no malware scanning; evidence acceptance
+  doesn't gate workflow advancement).
 - Audit foundation: `recordAuditEvent()`, called from every mutating
-  service-layer action, including the workflow engine's.
+  service-layer action, including the workflow engine's and Phase 9's.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -80,8 +94,9 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
 - Scheduled/event-triggered workflow starts (Phase 8 supports manual
   start only) and `system_action` node execution.
-- Structured form field capture and evidence upload (Phase 9) — Phase 8's
-  `form`/`evidence` nodes execute as generic tasks in the meantime.
+- Malware/virus scanning for evidence uploads (deferred since Phase 6,
+  same posture); an `evidence` node's task completion isn't gated on
+  evidence acceptance.
 - Configurable multi-step approval chains, SLA reminders/escalation
   (Phase 10) — Phase 8 has a single-assignee approval decision and
   deadline-breach _detection_ only.
@@ -95,9 +110,9 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    see [supabase-setup.md](../development/supabase-setup.md). Blocks
    applying the committed migrations, regenerating real database types,
    and running the live-DB tenant-isolation tests for real.
-2. Merge `feature/phase-8-workflow-execution` into `develop` once
-   reviewed, and mark Phase 8 `Complete` in the phase tracker.
-3. Phase 9: forms and evidence management, once Phase 8 is merged.
+2. Merge `feature/phase-9-forms-evidence` into `develop` once reviewed,
+   and mark Phase 9 `Complete` in the phase tracker.
+3. Phase 10: approvals, SLAs, and escalations, once Phase 9 is merged.
 
 ## Known risks carried forward
 

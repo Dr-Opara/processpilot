@@ -6,6 +6,23 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-25 — Phase 9 documentation and status update
+
+Added [forms-and-evidence.md](../architecture/forms-and-evidence.md)
+documenting the form authoring/versioning model, the field-type/
+validation/conditional-visibility engine, structured submissions
+(draft/submit/amend), and the evidence upload/review/chain-of-custody
+model, per `feature/phase-9-forms-evidence`. Updated
+[workflow-engine.md](../architecture/workflow-engine.md)'s node-type
+table for the `form` node's new form-linkage behavior. Updated
+[file-storage.md](../architecture/file-storage.md) to describe the
+`evidence` bucket alongside `knowledge-documents` rather than saying
+storage was unimplemented. Updated [phase-tracker.md](phase-tracker.md):
+Phase 8 marked `Complete` (merged via PR #10), Phase 9 moved to
+`In Progress` with implementation/testing detail and known gaps.
+Rewrote [current-project-status.md](current-project-status.md)'s
+snapshot accordingly.
+
 ## 2026-07-24 — Phase 8 documentation and status update
 
 Rewrote [workflow-engine.md](../architecture/workflow-engine.md) to

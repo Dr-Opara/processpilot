@@ -607,4 +607,151 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
     `;
     expect(superseded[0]?.status).toBe("superseded");
   });
+
+  it("test 20: an active Org A member can read, but cannot update, Org B's form; a process_owner's scoped form.edit reaches only the department they own", async () => {
+    const [formB] = await db<{ id: string }[]>`
+      insert into forms (organization_id, title) values (${orgB.id}, ${`Test Form B ${suffix}`}) returning id
+    `;
+    const [formOwnedByProcessOwnerA] = await db<{ id: string }[]>`
+      insert into forms (organization_id, title, department_id)
+      values (${orgA.id}, ${`Form Owned By Process Owner A ${suffix}`}, ${departmentOwnedByProcessOwnerA.id})
+      returning id
+    `;
+    const [formNotOwnedA] = await db<{ id: string }[]>`
+      insert into forms (organization_id, title, department_id)
+      values (${orgA.id}, ${`Form Not Owned A ${suffix}`}, ${departmentNotOwnedA.id})
+      returning id
+    `;
+
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const rows = await tx`select id from forms where id = ${formB.id}`;
+        expect(rows).toHaveLength(0);
+
+        const updated =
+          await tx`update forms set title = 'hijacked' where id = ${formB.id} returning id`;
+        expect(updated).toHaveLength(0);
+      },
+    );
+
+    await withTestClaims(
+      db,
+      {
+        clerkUserId: "user_process_owner_a",
+        organizationId: orgA.id,
+        memberId: memberProcessOwnerA.id,
+      },
+      async (tx) => {
+        const ownUpdate = await tx`
+          update forms set title = 'Renamed By Owning Process Owner' where id = ${formOwnedByProcessOwnerA.id} returning id
+        `;
+        expect(ownUpdate).toHaveLength(1);
+
+        // Same statement shape, different form's department — proves
+        // has_scoped_permission() re-checks ownership per-row rather than
+        // caching a yes from the update above.
+        const siblingUpdate = await tx`
+          update forms set title = 'hijacked' where id = ${formNotOwnedA.id} returning id
+        `;
+        expect(siblingUpdate).toHaveLength(0);
+      },
+    );
+  });
+
+  it("test 21: a published form_version's definition can never be modified — the immutability trigger rejects it regardless of caller", async () => {
+    const [form] = await db<{ id: string }[]>`
+      insert into forms (organization_id, title) values (${orgA.id}, ${`Immutability Test Form ${suffix}`}) returning id
+    `;
+    const [version] = await db<{ id: string }[]>`
+      insert into form_versions (organization_id, form_id, version_number, title, definition, status)
+      values (
+        ${orgA.id}, ${form.id}, 1, 'Published title',
+        ${db.json({ fields: [{ key: "notes", label: "Notes", type: "text" }] })}, 'published'
+      )
+      returning id
+    `;
+
+    await expect(
+      db`update form_versions set definition = ${db.json({ fields: [] })} where id = ${version.id}`,
+    ).rejects.toThrow(/published form version cannot be modified/);
+
+    // The one transition the trigger does allow — publishing a
+    // *replacement* version supersedes this one without touching its
+    // definition — still succeeds.
+    const superseded = await db`
+      update form_versions set status = 'superseded' where id = ${version.id} returning status
+    `;
+    expect(superseded[0]?.status).toBe("superseded");
+  });
+
+  /** Evidence must be attached to a task (evidence_attached_to_something) — builds the minimal process/process_version/workflow/task chain a task needs, in whichever org is asked for. Neither Phase 8 nor this file had any workflow/task fixtures yet (a gap carried forward from Phase 8, noted in the phase tracker) — built inline here rather than added to the shared beforeAll, since evidence is the only Phase 9 table that needs one. */
+  async function makeEvidenceTask(org: { id: string }, label: string): Promise<{ id: string }> {
+    const [process] = await db<{ id: string }[]>`
+      insert into processes (organization_id, title) values (${org.id}, ${`Evidence test process ${label} ${suffix}`}) returning id
+    `;
+    const [processVersion] = await db<{ id: string }[]>`
+      insert into process_versions (organization_id, process_id, version_number, title, definition, status)
+      values (${org.id}, ${process.id}, 1, 'v1', ${db.json({ nodes: [], edges: [] })}, 'draft')
+      returning id
+    `;
+    const [workflow] = await db<{ id: string }[]>`
+      insert into workflows (organization_id, process_id, process_version_id, title)
+      values (${org.id}, ${process.id}, ${processVersion.id}, ${`Evidence test workflow ${label} ${suffix}`})
+      returning id
+    `;
+    const [task] = await db<{ id: string }[]>`
+      insert into tasks (organization_id, workflow_id, node_id, node_type, label)
+      values (${org.id}, ${workflow.id}, 'evidence-1', 'evidence', 'Upload evidence')
+      returning id
+    `;
+    return task;
+  }
+
+  it("test 22: an evidence file's bytes/hash/name are immutable once uploaded, but its review lifecycle (status) can still change", async () => {
+    const taskA = await makeEvidenceTask(orgA, "A");
+    const [evidenceA] = await db<{ id: string }[]>`
+      insert into evidence (
+        organization_id, task_id, original_filename, mime_type, file_size_bytes, storage_path, sha256_hash
+      ) values (
+        ${orgA.id}, ${taskA.id}, 'photo.jpg', 'image/jpeg', 1024, ${`${orgA.id}/ev/photo.jpg`}, ${"a".repeat(64)}
+      )
+      returning id
+    `;
+
+    await expect(
+      db`update evidence set storage_path = 'tampered' where id = ${evidenceA.id}`,
+    ).rejects.toThrow(/evidence file cannot be modified/);
+
+    const reviewed = await db`
+      update evidence set status = 'accepted', reviewed_at = now() where id = ${evidenceA.id} returning status
+    `;
+    expect(reviewed[0]?.status).toBe("accepted");
+  });
+
+  it("test 23: an active Org A member can read, but cannot update, Org B's evidence", async () => {
+    const taskB = await makeEvidenceTask(orgB, "B");
+    const [evidenceB] = await db<{ id: string }[]>`
+      insert into evidence (
+        organization_id, task_id, original_filename, mime_type, file_size_bytes, storage_path, sha256_hash
+      ) values (
+        ${orgB.id}, ${taskB.id}, 'photo.jpg', 'image/jpeg', 1024, ${`${orgB.id}/ev/photo.jpg`}, ${"b".repeat(64)}
+      )
+      returning id
+    `;
+
+    await withTestClaims(
+      db,
+      { clerkUserId: "user_owner_a", organizationId: orgA.id, memberId: memberOwnerA.id },
+      async (tx) => {
+        const rows = await tx`select id from evidence where id = ${evidenceB.id}`;
+        expect(rows).toHaveLength(0);
+
+        const updated =
+          await tx`update evidence set status = 'accepted' where id = ${evidenceB.id} returning id`;
+        expect(updated).toHaveLength(0);
+      },
+    );
+  });
 });

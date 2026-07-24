@@ -21,7 +21,7 @@ import type {
   WorkflowRow,
 } from "@/lib/db/database.types";
 
-function toTenantContext(membership: {
+export function toTenantContext(membership: {
   organization: { id: string };
   member: { id: string };
   profile: { clerk_user_id: string };
@@ -33,7 +33,7 @@ function toTenantContext(membership: {
   };
 }
 
-async function getOwnWorkflow(
+export async function getOwnWorkflow(
   membership: CurrentMembership,
   workflowId: string,
 ): Promise<WorkflowRow> {
@@ -46,7 +46,7 @@ async function getOwnWorkflow(
   });
 }
 
-async function getOwnTask(membership: CurrentMembership, taskId: string): Promise<TaskRow> {
+export async function getOwnTask(membership: CurrentMembership, taskId: string): Promise<TaskRow> {
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [task] = await tx<TaskRow[]>`
       select * from tasks where id = ${taskId} and organization_id = ${membership.organization.id}
@@ -57,7 +57,10 @@ async function getOwnTask(membership: CurrentMembership, taskId: string): Promis
 }
 
 /** True for the specific assignee, or for a member eligible to claim/act on a not-yet-claimed pooled (team/role) task. */
-async function isEligibleForTask(membership: CurrentMembership, task: TaskRow): Promise<boolean> {
+export async function isEligibleForTask(
+  membership: CurrentMembership,
+  task: TaskRow,
+): Promise<boolean> {
   if (task.assignee_member_id) return task.assignee_member_id === membership.member.id;
   if (!task.assignee_team_id && !task.assignee_role_id) return false;
 

@@ -90,6 +90,28 @@ export const AuditAction = {
   TaskCompleted: "task.completed",
   TaskApprovalDecided: "task.approval_decided",
   TaskReassigned: "task.reassigned",
+
+  // Phase 9 (Forms and evidence management).
+  FormCreated: "form.created",
+  FormArchived: "form.archived",
+  FormRestored: "form.restored",
+
+  FormVersionCreated: "form_version.created",
+  FormVersionUpdated: "form_version.updated",
+  FormVersionPublished: "form_version.published",
+  FormVersionSuperseded: "form_version.superseded",
+
+  FormSubmissionSaved: "form_submission.saved",
+  FormSubmissionSubmitted: "form_submission.submitted",
+  FormSubmissionAmended: "form_submission.amended",
+
+  EvidenceUploaded: "evidence.uploaded",
+  EvidenceDownloaded: "evidence.downloaded",
+  EvidenceAccepted: "evidence.accepted",
+  EvidenceRejected: "evidence.rejected",
+  EvidenceReplaced: "evidence.replaced",
+  // source: "system" — recorded by the evidence-expiration background job.
+  EvidenceExpired: "evidence.expired",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -109,6 +131,10 @@ export const AuditResourceType = {
   BackgroundJob: "background_job",
   Workflow: "workflow",
   Task: "task",
+  Form: "form",
+  FormVersion: "form_version",
+  FormSubmission: "form_submission",
+  Evidence: "evidence",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

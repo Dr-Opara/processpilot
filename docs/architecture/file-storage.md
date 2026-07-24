@@ -1,15 +1,18 @@
 # File Storage
 
-Supabase private storage is the planned object-storage layer (see
-[system overview](system-overview.md)), used primarily for:
+Supabase private storage is the object-storage layer (see
+[system overview](system-overview.md)), used for:
 
-- Uploaded source knowledge documents.
+- Uploaded source knowledge documents (`knowledge-documents` bucket,
+  Phase 6 — [storage.ts](../../src/lib/services/storage.ts)).
 - Task evidence (photos, files, signatures — see
-  [terminology](../../product/terminology.md)).
-- Generated exports (e.g. audit export files).
+  [terminology](../../product/terminology.md)) in its own `evidence`
+  bucket (Phase 9 —
+  [evidence-storage.ts](../../src/lib/services/evidence-storage.ts), see
+  [forms-and-evidence.md](forms-and-evidence.md)).
+- Generated exports (e.g. audit export files) — not yet implemented.
 
-Not implemented as of Phase 0; this document defines the constraints that
-apply once it is.
+This document defines the constraints every bucket above follows.
 
 ## Principles
 
