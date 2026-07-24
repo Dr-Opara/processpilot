@@ -14,17 +14,18 @@ import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import {
-  approveAndPublishAction,
+  approveVersionAction,
   archiveProcessAction,
+  publishVersionAction,
   rejectReviewAction,
   restoreProcessAction,
   submitForReviewAction,
 } from "../actions";
-import { StepList } from "../StepList";
+import { ProcessGraphViewer } from "../ProcessGraphViewer";
 
 function statusBadgeStatus(status: string): "success" | "warning" | "danger" | "neutral" {
   if (status === "published") return "success";
-  if (status === "in_review") return "warning";
+  if (status === "in_review" || status === "approved") return "warning";
   if (status === "archived" || status === "rejected") return "danger";
   if (status === "superseded") return "neutral";
   return "neutral";
@@ -68,6 +69,7 @@ export default async function ProcessDetailPage({
 
   const draftVersion = versions.find((v) => v.status === "draft");
   const inReviewVersion = versions.find((v) => v.status === "in_review");
+  const approvedVersion = versions.find((v) => v.status === "approved");
   const canReview = Boolean(
     currentMembership?.permissions.includes("process.review") ||
     currentMembership?.scopedPermissions.includes("process.review"),
@@ -112,8 +114,8 @@ export default async function ProcessDetailPage({
         {currentVersion ? (
           <Stack className="gap-3">
             <Text>Version {currentVersion.version_number}</Text>
-            <StepList
-              steps={currentVersion.definition}
+            <ProcessGraphViewer
+              graph={currentVersion.definition}
               roleNames={roleNames}
               teamNames={teamNames}
             />
@@ -140,15 +142,15 @@ export default async function ProcessDetailPage({
       {inReviewVersion && (
         <Stack className="gap-3 rounded-md border border-border p-4">
           <Heading as="h2">In review — version {inReviewVersion.version_number}</Heading>
-          <StepList
-            steps={inReviewVersion.definition}
+          <ProcessGraphViewer
+            graph={inReviewVersion.definition}
             roleNames={roleNames}
             teamNames={teamNames}
           />
           <Cluster className="gap-3">
-            {canPublish && (
-              <form action={approveAndPublishAction.bind(null, process.id, inReviewVersion.id)}>
-                <Button type="submit">Approve &amp; publish</Button>
+            {canReview && (
+              <form action={approveVersionAction.bind(null, process.id, inReviewVersion.id)}>
+                <Button type="submit">Approve</Button>
               </form>
             )}
           </Cluster>
@@ -169,7 +171,25 @@ export default async function ProcessDetailPage({
         </Stack>
       )}
 
-      {!draftVersion && !inReviewVersion && (
+      {approvedVersion && (
+        <Stack className="gap-3 rounded-md border border-border p-4">
+          <Heading as="h2">Approved — version {approvedVersion.version_number}</Heading>
+          <ProcessGraphViewer
+            graph={approvedVersion.definition}
+            roleNames={roleNames}
+            teamNames={teamNames}
+          />
+          {canPublish && (
+            <Cluster className="gap-3">
+              <form action={publishVersionAction.bind(null, process.id, approvedVersion.id)}>
+                <Button type="submit">Publish</Button>
+              </form>
+            </Cluster>
+          )}
+        </Stack>
+      )}
+
+      {!draftVersion && !inReviewVersion && !approvedVersion && (
         <Cluster>
           <Button href={`/app/processes/${process.id}/new-version`} variant="secondary">
             Create a new version

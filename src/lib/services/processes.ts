@@ -9,16 +9,27 @@ import type { ProcessRow, ProcessVersionRow } from "@/lib/db/database.types";
 
 export const processInputSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(300),
+  description: z.string().trim().max(2000).optional().nullable(),
+  category: z.string().trim().max(100).optional().nullable(),
+  tags: z.array(z.string().trim().min(1).max(50)).max(20).optional(),
   ownerMemberId: z.string().uuid().optional().nullable(),
   departmentId: z.string().uuid().optional().nullable(),
+  locationId: z.string().uuid().optional().nullable(),
+  teamId: z.string().uuid().optional().nullable(),
+  slaHours: z.number().int().positive().max(100_000).optional().nullable(),
+  effectiveFrom: z.string().date().optional().nullable(),
+  effectiveUntil: z.string().date().optional().nullable(),
+  sourceDocumentIds: z.array(z.string().uuid()).max(50).optional(),
 });
 
 export type ProcessInput = z.infer<typeof processInputSchema>;
 
 export interface ListProcessesFilters {
   search?: string;
-  status?: "draft" | "in_review" | "published" | "archived" | "all";
+  status?: "draft" | "in_review" | "approved" | "published" | "archived" | "all";
   departmentId?: string;
+  category?: string;
+  tag?: string;
 }
 
 export interface ProcessSummary extends ProcessRow {
@@ -59,7 +70,9 @@ export async function listProcesses(filters: ListProcessesFilters = {}): Promise
       where p.organization_id = ${membership.organization.id}
         and (${status === "all"} or p.status = ${status})
         and (${filters.departmentId ?? null} is null or p.department_id = ${filters.departmentId ?? null})
-        and (${search === null} or p.title ilike ${search})
+        and (${filters.category ?? null} is null or p.category = ${filters.category ?? null})
+        and (${filters.tag ?? null} is null or ${filters.tag ?? null} = any(p.tags))
+        and (${search === null} or p.title ilike ${search} or p.description ilike ${search})
       order by p.title asc
     `;
   });
@@ -103,10 +116,15 @@ export async function createProcess(input: ProcessInput): Promise<ProcessRow> {
 
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [process] = await tx<ProcessRow[]>`
-      insert into processes (organization_id, title, owner_member_id, department_id, created_by)
-      values (
-        ${membership.organization.id}, ${data.title}, ${data.ownerMemberId ?? null},
-        ${data.departmentId ?? null}, ${membership.profile.id}
+      insert into processes (
+        organization_id, title, description, category, tags, owner_member_id, department_id,
+        location_id, team_id, sla_hours, effective_from, effective_until, source_document_ids, created_by
+      ) values (
+        ${membership.organization.id}, ${data.title}, ${data.description ?? null}, ${data.category ?? null},
+        ${data.tags ?? []}, ${data.ownerMemberId ?? null}, ${data.departmentId ?? null},
+        ${data.locationId ?? null}, ${data.teamId ?? null}, ${data.slaHours ?? null},
+        ${data.effectiveFrom ?? null}, ${data.effectiveUntil ?? null}, ${data.sourceDocumentIds ?? []},
+        ${membership.profile.id}
       )
       returning *
     `;
@@ -115,6 +133,52 @@ export async function createProcess(input: ProcessInput): Promise<ProcessRow> {
       organizationId: membership.organization.id,
       actorProfileId: membership.profile.id,
       action: AuditAction.ProcessCreated,
+      resourceType: AuditResourceType.Process,
+      resourceId: process.id,
+      source: "app",
+    });
+
+    return process;
+  });
+}
+
+/** Edits process-level metadata (not the version's graph content, which goes through process-versions.ts) — requires process.manage, distinct from process.edit. */
+export async function updateProcessMetadata(
+  processId: string,
+  input: ProcessInput,
+): Promise<ProcessRow> {
+  const data = processInputSchema.parse(input);
+  const preCheck = await getCurrentMembership();
+  const [target] = await withTenantContext(
+    toTenantContext(preCheck),
+    (tx) =>
+      tx<
+        ProcessRow[]
+      >`select * from processes where id = ${processId} and organization_id = ${preCheck.organization.id}`,
+  );
+  if (!target) throw new AppError("not_found", "Process not found.");
+
+  const membership = await requirePermission("process.manage", {
+    scope: { departmentId: target.department_id ?? undefined },
+  });
+
+  return withTenantContext(toTenantContext(membership), async (tx) => {
+    const [process] = await tx<ProcessRow[]>`
+      update processes set
+        title = ${data.title}, description = ${data.description ?? null}, category = ${data.category ?? null},
+        tags = ${data.tags ?? []}, owner_member_id = ${data.ownerMemberId ?? null},
+        department_id = ${data.departmentId ?? null}, location_id = ${data.locationId ?? null},
+        team_id = ${data.teamId ?? null}, sla_hours = ${data.slaHours ?? null},
+        effective_from = ${data.effectiveFrom ?? null}, effective_until = ${data.effectiveUntil ?? null},
+        source_document_ids = ${data.sourceDocumentIds ?? []}
+      where id = ${processId}
+      returning *
+    `;
+
+    await recordAuditEvent(tx, {
+      organizationId: membership.organization.id,
+      actorProfileId: membership.profile.id,
+      action: AuditAction.ProcessUpdated,
       resourceType: AuditResourceType.Process,
       resourceId: process.id,
       source: "app",
@@ -135,7 +199,7 @@ export async function archiveProcess(processId: string): Promise<ProcessRow> {
   );
   if (!target) throw new AppError("not_found", "Process not found.");
 
-  const membership = await requirePermission("process.edit", {
+  const membership = await requirePermission("process.manage", {
     scope: { departmentId: target.department_id ?? undefined },
   });
 
@@ -173,7 +237,7 @@ export async function restoreProcess(processId: string): Promise<ProcessRow> {
     throw new AppError("not_found", "Process not found or not archived.");
   }
 
-  const membership = await requirePermission("process.edit", {
+  const membership = await requirePermission("process.manage", {
     scope: { departmentId: target.department_id ?? undefined },
   });
 

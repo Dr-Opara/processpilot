@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container, Section, Stack } from "@/components/ui/Layout";
 import { Heading, Text, Eyebrow, Label, CodeText } from "@/components/ui/Typography";
@@ -38,11 +39,27 @@ export default function DesignSystemPage() {
               <Heading as="h2">Brand assets</Heading>
               <div className="flex flex-wrap gap-3">
                 <Badge>ProcessPilot</Badge>
-                <StatusBadge status="warning">No approved logo yet</StatusBadge>
+                <StatusBadge status="success">Approved</StatusBadge>
+              </div>
+              <div className="flex flex-wrap items-center gap-6">
+                <Image
+                  src="/brand/branding/processpilot-logo.png"
+                  alt="ProcessPilot logo"
+                  width={166}
+                  height={32}
+                  className="h-8 w-auto"
+                />
+                <Image
+                  src="/brand/branding/processpilot-icon.png"
+                  alt="ProcessPilot icon"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10"
+                />
               </div>
               <Text className="text-sm text-muted">
-                No approved logo or icon has been supplied — the wordmark is text-only until{" "}
-                <CodeText>design/logo/</CodeText> is populated. See{" "}
+                Approved logo and icon assets live in <CodeText>public/brand/</CodeText>. See{" "}
+                <CodeText>public/brand/README.md</CodeText> and{" "}
                 <CodeText>design/branding.md</CodeText>.
               </Text>
             </Stack>

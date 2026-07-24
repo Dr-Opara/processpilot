@@ -310,14 +310,23 @@ export interface DocumentVersionRow {
   created_by: string | null;
 }
 
-export type ProcessStatus = "draft" | "in_review" | "published" | "archived";
+export type ProcessStatus = "draft" | "in_review" | "approved" | "published" | "archived";
 
 export interface ProcessRow {
   id: string;
   organization_id: string;
   title: string;
+  description: string | null;
+  category: string | null;
+  tags: string[];
   owner_member_id: string | null;
   department_id: string | null;
+  location_id: string | null;
+  team_id: string | null;
+  sla_hours: number | null;
+  effective_from: string | null;
+  effective_until: string | null;
+  source_document_ids: string[];
   status: ProcessStatus;
   current_version_id: string | null;
   created_at: string;
@@ -326,41 +335,95 @@ export interface ProcessRow {
   archived_at: string | null;
 }
 
-export type ProcessVersionStatus = "draft" | "in_review" | "published" | "superseded" | "rejected";
-export type ProcessStepSequencing = "linear" | "parallel" | "conditional";
-export type ProcessStepAssigneeType = "role" | "team";
+/**
+ * The version review pipeline separates "a reviewer approved this"
+ * from "someone published it" — `in_review` -> `approved` (process.review)
+ * -> `published` (process.publish) — rather than combining both into
+ * one action, so an approved version can be held back from publishing
+ * (e.g. pending an effective date) without re-running review.
+ */
+export type ProcessVersionStatus =
+  "draft" | "in_review" | "approved" | "published" | "superseded" | "rejected";
 
-export interface ProcessStepFormField {
+export type ProcessNodeType =
+  | "start"
+  | "end"
+  | "human_task"
+  | "approval"
+  | "decision"
+  | "parallel_split"
+  | "parallel_join"
+  | "timer"
+  | "notification"
+  | "subprocess"
+  | "form"
+  | "evidence"
+  | "system_action";
+
+export type ProcessNodeAssigneeType = "role" | "team";
+
+export interface ProcessNodeFormField {
   label: string;
   type: "text" | "number" | "checkbox";
 }
 
 /**
- * A single step's definition within a ProcessVersion — everything
- * Phase 8's workflow engine will need to instantiate a Task from this
- * step (sequencing relationship, role-or-team assignment rule,
- * required flag) plus the minimal form/approval/evidence
- * *requirement* flags Phase 7 authors; the real field-type system
- * (Phase 9) and approval-chain execution (Phase 10) build on top of
- * these later without needing this shape to change.
+ * Per-node configuration — which fields are meaningful depends on
+ * `ProcessNode.type` (e.g. only human_task/approval read
+ * assigneeType/assigneeRoleId/assigneeTeamId; only form reads
+ * formFields; only timer reads timerDurationMinutes). Kept as one
+ * flexible shape rather than a discriminated union so the canvas
+ * editor can change a node's type in place without discarding
+ * unrelated config the author already entered.
  */
-export interface ProcessStep {
+export interface ProcessNodeData {
+  label: string;
+  /** Read for human_task/approval nodes — the approver on an "approval" node is simply its assignee. */
+  assigneeType?: ProcessNodeAssigneeType | null;
+  assigneeRoleId?: string | null;
+  assigneeTeamId?: string | null;
+  required?: boolean;
+  /** Read for "form" nodes. */
+  formFields?: ProcessNodeFormField[];
+  /** Read for "evidence" nodes. */
+  evidenceDescription?: string | null;
+  /** Read for "timer" nodes. */
+  timerDurationMinutes?: number | null;
+  /** Read for "notification" nodes. */
+  notificationMessage?: string | null;
+  /** Read for "subprocess" nodes — the referenced process's id. */
+  subprocessId?: string | null;
+  /** Read for "system_action" nodes. */
+  systemActionType?: string | null;
+}
+
+export interface ProcessNode {
   id: string;
-  name: string;
-  sequencing: ProcessStepSequencing;
-  parallelGroup: string | null;
-  branchOnStepId: string | null;
-  branchCondition: string | null;
-  assigneeType: ProcessStepAssigneeType;
-  assigneeRoleId: string | null;
-  assigneeTeamId: string | null;
-  required: boolean;
-  requiresForm: boolean;
-  formFields: ProcessStepFormField[];
-  requiresApproval: boolean;
-  approverRoleId: string | null;
-  requiresEvidence: boolean;
-  evidenceDescription: string | null;
+  type: ProcessNodeType;
+  position: { x: number; y: number };
+  data: ProcessNodeData;
+}
+
+export interface ProcessEdge {
+  id: string;
+  source: string;
+  target: string;
+  label?: string | null;
+  /** Free-text branch condition — read by Phase 8 off a decision node's outgoing edges. */
+  condition?: string | null;
+}
+
+/**
+ * The graph Phase 8's workflow engine reads to instantiate a running
+ * Workflow: nodes carry type/position/config, edges carry the
+ * sequencing (including decision branch conditions). Server-side
+ * validation (process-graph-validation.ts) enforces reachability, a
+ * single start, at least one reachable end, no cycles, and
+ * type-specific required config before a version can be reviewed.
+ */
+export interface ProcessGraphDefinition {
+  nodes: ProcessNode[];
+  edges: ProcessEdge[];
 }
 
 export interface ProcessVersionRow {
@@ -370,7 +433,7 @@ export interface ProcessVersionRow {
   department_id: string | null;
   version_number: number;
   title: string;
-  definition: ProcessStep[];
+  definition: ProcessGraphDefinition;
   status: ProcessVersionStatus;
   review_notes: string | null;
   submitted_by: string | null;

@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
 import { requireAuth } from "@/lib/auth";
 import { DASHBOARD_PATH } from "@/lib/app-host";
@@ -10,7 +12,15 @@ export default async function ProtectedAppLayout({ children }: { children: React
   return (
     <div className="min-h-screen bg-paper text-ink">
       <header className="flex items-center justify-between border-b border-border/70 bg-surface px-4 py-3 sm:px-6">
-        <span className="text-sm font-semibold text-ink">ProcessPilot</span>
+        <Link href={DASHBOARD_PATH} aria-label="ProcessPilot">
+          <Image
+            src="/brand/branding/processpilot-icon.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7"
+          />
+        </Link>
         <div className="flex items-center gap-3">
           <OrganizationSwitcher hidePersonal afterCreateOrganizationUrl={DASHBOARD_PATH} />
           <UserButton />

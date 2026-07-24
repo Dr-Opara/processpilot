@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container, Stack } from "@/components/ui/Layout";
 import { Text } from "@/components/ui/Typography";
@@ -10,7 +11,13 @@ export function MarketingFooter() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <Stack className="gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-base font-semibold text-ink">ProcessPilot</span>
+              <Image
+                src="/brand/branding/processpilot-logo.png"
+                alt="ProcessPilot"
+                width={146}
+                height={28}
+                className="h-7 w-auto"
+              />
             </Link>
             <Text className="max-w-xs text-sm text-muted">
               The operating system for repeatable work: knowledge, workflows, training, and evidence

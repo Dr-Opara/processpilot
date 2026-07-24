@@ -8,6 +8,10 @@
  * this SDK version).
  */
 export const clerkAppearance = {
+  layout: {
+    logoImageUrl: "/brand/branding/processpilot-logo.png",
+    logoPlacement: "inside" as const,
+  },
   variables: {
     colorPrimary: "var(--color-signal)",
     colorText: "var(--color-ink)",

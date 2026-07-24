@@ -1,33 +1,49 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getCurrentMembership } from "@/lib/authz";
 import { archiveProcess, createProcess, restoreProcess } from "@/lib/services/processes";
 import {
-  approveAndPublish,
+  approveVersion,
   createVersion,
-  processDefinitionSchema,
+  processGraphSchema,
+  publishVersion,
   rejectReview,
   submitForReview,
   updateDraftVersion,
+  type ProcessGraphInput,
 } from "@/lib/services/process-versions";
+import {
+  validateProcessGraph,
+  type GraphValidationError,
+} from "@/lib/services/process-graph-validation";
 import { runFormAction } from "@/lib/form-actions";
 
-function parseDefinition(formData: FormData) {
-  const raw = String(formData.get("definition") ?? "[]");
-  return processDefinitionSchema.parse(JSON.parse(raw));
+function parseGraph(formData: FormData) {
+  const raw = String(formData.get("definition") ?? "{}");
+  return processGraphSchema.parse(JSON.parse(raw));
+}
+
+/** Live validation for the canvas editor — the same rules submitForReview enforces, run against in-progress client state rather than a saved version. */
+export async function validateGraphAction(
+  graph: ProcessGraphInput,
+): Promise<GraphValidationError[]> {
+  await getCurrentMembership();
+  const parsed = processGraphSchema.parse(graph);
+  return validateProcessGraph(parsed);
 }
 
 export async function createProcessAction(formData: FormData): Promise<void> {
   await runFormAction("/app/processes/new", async () => {
     const title = String(formData.get("title") ?? "");
-    const steps = parseDefinition(formData);
+    const graph = parseGraph(formData);
 
     const process = await createProcess({
       title,
       ownerMemberId: String(formData.get("ownerMemberId") ?? "") || null,
       departmentId: String(formData.get("departmentId") ?? "") || null,
     });
-    await createVersion(process.id, title, steps);
+    await createVersion(process.id, title, graph);
 
     revalidatePath("/app/processes");
     return `/app/processes/${process.id}`;
@@ -54,7 +70,7 @@ export async function updateDraftVersionAction(
   await runFormAction(`/app/processes/${processId}/edit`, async () => {
     await updateDraftVersion(versionId, {
       title: String(formData.get("title") ?? ""),
-      steps: parseDefinition(formData),
+      graph: parseGraph(formData),
     });
     revalidatePath(`/app/processes/${processId}`);
     return `/app/processes/${processId}`;
@@ -64,8 +80,8 @@ export async function updateDraftVersionAction(
 export async function createNewVersionAction(processId: string, formData: FormData): Promise<void> {
   await runFormAction(`/app/processes/${processId}/new-version`, async () => {
     const title = String(formData.get("title") ?? "");
-    const steps = parseDefinition(formData);
-    await createVersion(processId, title, steps);
+    const graph = parseGraph(formData);
+    await createVersion(processId, title, graph);
     revalidatePath(`/app/processes/${processId}`);
     return `/app/processes/${processId}`;
   });
@@ -79,9 +95,17 @@ export async function submitForReviewAction(processId: string, versionId: string
   });
 }
 
-export async function approveAndPublishAction(processId: string, versionId: string): Promise<void> {
+export async function approveVersionAction(processId: string, versionId: string): Promise<void> {
   await runFormAction(`/app/processes/${processId}`, async () => {
-    await approveAndPublish(versionId);
+    await approveVersion(versionId);
+    revalidatePath(`/app/processes/${processId}`);
+    return `/app/processes/${processId}`;
+  });
+}
+
+export async function publishVersionAction(processId: string, versionId: string): Promise<void> {
+  await runFormAction(`/app/processes/${processId}`, async () => {
+    await publishVersion(versionId);
     revalidatePath("/app/processes");
     revalidatePath(`/app/processes/${processId}`);
     return `/app/processes/${processId}`;

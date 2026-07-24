@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container, Stack } from "@/components/ui/Layout";
-import { Heading } from "@/components/ui/Typography";
 import { primaryNav, resourcesNav, pricingNav, type NavGroup } from "@/content/site";
 
 function NavDropdown({ group }: { group: NavGroup }) {
@@ -84,9 +84,14 @@ export function MarketingHeader() {
     <header className="sticky top-0 z-sticky border-b border-border/70 bg-surface/90 backdrop-blur">
       <Container className="flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3">
-          <Heading as="h2" className="text-lg">
-            ProcessPilot
-          </Heading>
+          <Image
+            src="/brand/branding/processpilot-logo.png"
+            alt="ProcessPilot"
+            width={166}
+            height={32}
+            priority
+            className="h-8 w-auto"
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">

@@ -10,7 +10,7 @@ import { listTeams } from "@/lib/services/teams";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import { createNewVersionAction } from "../../actions";
-import { ProcessBuilderForm } from "../../new/ProcessBuilderForm";
+import { ProcessCanvasForm } from "../../ProcessCanvasForm";
 
 export default async function NewProcessVersionPage({
   params,
@@ -44,7 +44,7 @@ export default async function NewProcessVersionPage({
   const action = createNewVersionAction.bind(null, processId);
 
   return (
-    <Stack className="mx-auto max-w-3xl gap-6">
+    <Stack className="mx-auto max-w-6xl gap-6">
       <Stack className="gap-1">
         <Heading as="h1">Create a new version</Heading>
         <Text className="text-muted">{detail.process.title}</Text>
@@ -52,16 +52,17 @@ export default async function NewProcessVersionPage({
 
       {error && <Alert title="Could not create version" description={error} />}
 
-      <ProcessBuilderForm
+      <ProcessCanvasForm
         action={action}
         mode="new-version"
         initialTitle={detail.process.title}
-        initialSteps={detail.currentVersion?.definition}
+        initialGraph={detail.currentVersion?.definition}
         departments={departments}
         members={members}
         roles={roles}
         teams={teams}
         cancelHref={`/app/processes/${processId}`}
+        draftKey={`process-canvas-draft:${processId}:new-version`}
       />
     </Stack>
   );
