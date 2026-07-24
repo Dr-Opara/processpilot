@@ -6,16 +6,21 @@ import { clerk } from "@clerk/testing/playwright";
  * docs/development/environment-variables.md and e2e/global-setup.ts,
  * which skips Clerk setup entirely if CLERK_SECRET_KEY or
  * NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY isn't set) and one pre-existing test
- * user. Create it once in the Clerk dashboard using a "+clerk_test@"
- * email (e.g. e2e+clerk_test@processpilot.dev) — Clerk's test mode
- * accepts the fixed code 424242 for any such address, so no real inbox
- * is needed. The sign-in test below skips itself when those two
- * environment variables aren't both present, instead of failing the
- * workflow.
+ * user in that same Clerk instance, identified by E2E_CLERK_USER_EMAIL.
+ * Signs in via clerk.signIn's server-side ticket flow (Clerk looks the
+ * user up by email and issues a sign-in token via the Backend API) rather
+ * than the client-side password/email_code flow: this Clerk instance
+ * requires client-trust verification on fresh sign-in attempts
+ * ("needs_client_trust"), which the client-side signInParams flow can't
+ * satisfy — @clerk/testing's own docs note that path only handles first-
+ * factor verification. The ticket flow bypasses verification entirely,
+ * so no password is needed. The sign-in test below skips itself when any
+ * of those three environment variables aren't present, instead of
+ * failing the workflow.
  */
-const TEST_USER_EMAIL = "e2e+clerk_test@processpilot.dev";
+const TEST_USER_EMAIL = process.env.E2E_CLERK_USER_EMAIL;
 const CLERK_TEST_ENV_AVAILABLE = Boolean(
-  process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && TEST_USER_EMAIL,
 );
 
 test("an unauthenticated request to the app is redirected to sign-in", async ({ page }) => {
@@ -26,13 +31,13 @@ test("an unauthenticated request to the app is redirected to sign-in", async ({ 
 test("a signed-in user can reach the dashboard", async ({ page }) => {
   test.skip(
     !CLERK_TEST_ENV_AVAILABLE,
-    "Requires CLERK_SECRET_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY test-mode credentials",
+    "Requires CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, and E2E_CLERK_USER_EMAIL",
   );
 
   await page.goto("/app/sign-in");
   await clerk.signIn({
     page,
-    signInParams: { strategy: "email_code", identifier: TEST_USER_EMAIL },
+    emailAddress: TEST_USER_EMAIL as string,
   });
 
   await page.goto("/app");
