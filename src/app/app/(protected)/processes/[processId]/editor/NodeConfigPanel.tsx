@@ -20,6 +20,7 @@ export function NodeConfigPanel({
   selection,
   roles,
   teams,
+  forms,
   onChangeNode,
   onChangeEdge,
   onDelete,
@@ -28,6 +29,7 @@ export function NodeConfigPanel({
   selection: { kind: "node"; node: CanvasNode } | { kind: "edge"; edge: CanvasEdge } | null;
   roles: Option[];
   teams: Option[];
+  forms: Option[];
   onChangeNode: (id: string, data: Partial<CanvasNodeData>) => void;
   onChangeEdge: (id: string, data: Partial<CanvasEdgeData> & { label?: string }) => void;
   onDelete: () => void;
@@ -182,8 +184,32 @@ export function NodeConfigPanel({
       )}
 
       {data.nodeType === "form" && (
+        <Stack className="gap-1">
+          <Label htmlFor="node-form-id">Linked form (optional)</Label>
+          <Select
+            id="node-form-id"
+            value={data.formId ?? ""}
+            onChange={(e) => update({ formId: e.target.value || null })}
+          >
+            <option value="">Generic capture (no linked form)</option>
+            {forms.map((form) => (
+              <option key={form.id} value={form.id}>
+                {form.name}
+              </option>
+            ))}
+          </Select>
+          <Text className="text-xs text-muted">
+            When set, this step renders the linked published form (Forms) instead of the generic
+            fields below.
+          </Text>
+        </Stack>
+      )}
+
+      {data.nodeType === "form" && (
         <Stack className="gap-2 rounded-md border border-border p-3">
-          <Text className="text-xs font-semibold text-muted">Fields</Text>
+          <Text className="text-xs font-semibold text-muted">
+            Generic fields (used only when no form is linked above)
+          </Text>
           {(data.formFields ?? []).map((field, index) => (
             <Cluster key={index} className="gap-2">
               <Input

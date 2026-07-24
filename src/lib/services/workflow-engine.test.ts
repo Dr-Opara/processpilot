@@ -118,6 +118,42 @@ describe("hasUnsupportedNodeType", () => {
   });
 });
 
+describe("activateNode — form node (Phase 9 linkage)", () => {
+  it("snapshots the form's current published version onto the task when ProcessNodeData.formId is configured", async () => {
+    const graph = buildGraphIndex({
+      nodes: [node("form-1", "form", { formId: "form-abc" })],
+      edges: [],
+    });
+    const { sql, fake } = fakeSql([
+      {
+        match: (t) => t.includes("select current_version_id from forms"),
+        respond: () => [{ current_version_id: "fv-1" }],
+      },
+      {
+        match: (t) => t.includes("select * from form_versions where id"),
+        respond: () => [{ id: "fv-1", status: "published" }],
+      },
+      taskInsertHandler,
+      ...historyHandlers,
+    ]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "form-1" });
+
+    const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
+    expect(insertedTask?.values.at(-1)).toBe("fv-1");
+  });
+
+  it("leaves form_version_id null when the node has no formId configured (Phase 8's generic behavior)", async () => {
+    const graph = buildGraphIndex({ nodes: [node("form-1", "form")], edges: [] });
+    const { sql, fake } = fakeSql([taskInsertHandler, ...historyHandlers]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "form-1" });
+
+    const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
+    expect(insertedTask?.values.at(-1)).toBeNull();
+  });
+});
+
 describe("instantiateWorkflow — happy path", () => {
   it("creates the workflow, activates the start node, and leaves the workflow running with an open human task", async () => {
     const definition: ProcessGraphDefinition = {

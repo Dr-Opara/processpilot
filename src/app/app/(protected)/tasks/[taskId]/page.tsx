@@ -8,23 +8,36 @@ import { Alert } from "@/components/ui/Alert";
 import { Textarea } from "@/components/ui/Textarea";
 import { getCurrentMembership } from "@/lib/authz";
 import { getTaskDetail } from "@/lib/services/workflows";
+import { getFormSubmissionForTask } from "@/lib/services/form-submissions";
+import { listEvidenceForTask } from "@/lib/services/evidence";
 import { listMembers } from "@/lib/services/members";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
-import type { TaskStatus } from "@/lib/db/database.types";
+import type { EvidenceStatus, TaskStatus } from "@/lib/db/database.types";
 import {
   claimTaskAction,
   completeTaskAction,
   decideApprovalAction,
   reassignTaskAction,
+  reviewEvidenceAction,
+  saveFormDraftAction,
   skipTaskAction,
+  submitFormAction,
 } from "../actions";
+import { DynamicFormRenderer } from "./DynamicFormRenderer";
+import { EvidenceFileField } from "./EvidenceFileField";
 
 function taskBadgeStatus(status: TaskStatus): "success" | "warning" | "danger" | "neutral" {
   if (status === "completed") return "success";
   if (status === "assigned" || status === "in_progress") return "warning";
   if (status === "rejected" || status === "cancelled" || status === "failed") return "danger";
   return "neutral";
+}
+
+function evidenceBadgeStatus(status: EvidenceStatus): "success" | "warning" | "danger" | "neutral" {
+  if (status === "accepted") return "success";
+  if (status === "pending_review") return "warning";
+  return "danger";
 }
 
 export default async function TaskDetailPage({
@@ -55,16 +68,27 @@ export default async function TaskDetailPage({
     currentMembership?.permissions.includes("workflow.manage") ||
     currentMembership?.scopedPermissions.includes("workflow.manage"),
   );
+  const canReviewEvidence = Boolean(
+    currentMembership?.permissions.includes("evidence.review") ||
+    currentMembership?.scopedPermissions.includes("evidence.review"),
+  );
 
   const isOpen = task.status === "assigned" || task.status === "in_progress";
   const isUnclaimed = isOpen && !task.assignee_member_id;
   const isApproval = task.node_type === "approval";
+  const isLinkedForm = task.node_type === "form" && Boolean(task.form_version_id);
+  const isEvidenceNode = task.node_type === "evidence";
   const membersResult = canAssign
     ? await listMembers({ status: "active", pageSize: 100 }).catch(() => ({
         members: [],
         total: 0,
       }))
     : { members: [], total: 0 };
+
+  const formSubmission = isLinkedForm
+    ? await getFormSubmissionForTask(taskId).catch(() => null)
+    : null;
+  const evidenceList = isEvidenceNode ? await listEvidenceForTask(taskId).catch(() => []) : [];
 
   return (
     <Stack className="mx-auto max-w-2xl gap-8">
@@ -101,7 +125,15 @@ export default async function TaskDetailPage({
             </form>
           )}
 
-          {isApproval ? (
+          {isLinkedForm && formSubmission ? (
+            <DynamicFormRenderer
+              taskId={task.id}
+              fields={formSubmission.version.definition.fields}
+              initialAnswers={(formSubmission.draft ?? formSubmission.current)?.answers ?? {}}
+              submitAction={submitFormAction.bind(null, task.id)}
+              saveDraftAction={saveFormDraftAction.bind(null, task.id)}
+            />
+          ) : isApproval ? (
             <Stack className="gap-3">
               <form
                 action={decideApprovalAction.bind(null, task.id, "approved")}
@@ -170,7 +202,59 @@ export default async function TaskDetailPage({
         </Stack>
       )}
 
-      {Object.keys(task.output ?? {}).length > 0 && (
+      {isEvidenceNode && (
+        <Stack className="gap-3">
+          <Heading as="h2">Evidence</Heading>
+          {isOpen && workflow.status === "running" && (
+            <Stack className="gap-2 rounded-md border border-border p-4">
+              <Text className="text-sm">Upload a file to attach as evidence for this step.</Text>
+              <EvidenceFileField taskId={task.id} onUploaded={() => {}} />
+            </Stack>
+          )}
+          {evidenceList.length === 0 ? (
+            <Text className="text-muted">No evidence uploaded yet.</Text>
+          ) : (
+            <Stack className="gap-3">
+              {evidenceList.map((item) => (
+                <Stack key={item.id} className="gap-2 rounded-md border border-border p-3">
+                  <Cluster className="justify-between">
+                    <a
+                      href={`/app/evidence/${item.id}/download`}
+                      className="font-medium text-cobalt"
+                    >
+                      {item.original_filename}
+                    </a>
+                    <StatusBadge status={evidenceBadgeStatus(item.status)}>
+                      {item.status}
+                    </StatusBadge>
+                  </Cluster>
+                  <Text className="text-xs text-muted">
+                    {new Date(item.created_at).toLocaleString()} · sha256:
+                    {item.sha256_hash.slice(0, 12)}…
+                  </Text>
+                  {item.review_notes && <Text className="text-sm">{item.review_notes}</Text>}
+                  {canReviewEvidence && item.status === "pending_review" && (
+                    <Cluster className="gap-2">
+                      <form action={reviewEvidenceAction.bind(null, task.id, item.id, "accepted")}>
+                        <Button type="submit" variant="secondary">
+                          Accept
+                        </Button>
+                      </form>
+                      <form action={reviewEvidenceAction.bind(null, task.id, item.id, "rejected")}>
+                        <Button type="submit" variant="secondary">
+                          Reject
+                        </Button>
+                      </form>
+                    </Cluster>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+          )}
+        </Stack>
+      )}
+
+      {!isLinkedForm && Object.keys(task.output ?? {}).length > 0 && (
         <Stack className="gap-2">
           <Heading as="h2">Output</Heading>
           <pre className="overflow-x-auto rounded-md border border-border bg-paper p-3 text-sm">

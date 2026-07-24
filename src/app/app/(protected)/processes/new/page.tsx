@@ -5,6 +5,7 @@ import { listDepartments } from "@/lib/services/departments";
 import { listMembers } from "@/lib/services/members";
 import { listRoles } from "@/lib/services/roles";
 import { listTeams } from "@/lib/services/teams";
+import { listForms } from "@/lib/services/forms";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { createProcessAction } from "../actions";
 import { ProcessCanvasForm } from "../ProcessCanvasForm";
@@ -15,17 +16,19 @@ export default async function NewProcessPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
-  const [departments, membersResult, roleRows, teams] = await Promise.all([
+  const [departments, membersResult, roleRows, teams, formRows] = await Promise.all([
     listDepartments({ status: "active" }).catch(() => []),
     listMembers({ status: "active", pageSize: 100 }).catch(() => ({ members: [], total: 0 })),
     listRoles().catch(() => []),
     listTeams({ status: "active" }).catch(() => []),
+    listForms({ status: "published" }).catch(() => []),
   ]);
   const members = membersResult.members.map((member) => ({
     id: member.id,
     label: memberDisplayName(member),
   }));
   const roles = roleRows.map(({ role }) => ({ id: role.id, name: role.name }));
+  const forms = formRows.map((form) => ({ id: form.id, name: form.title }));
 
   return (
     <Stack className="mx-auto max-w-6xl gap-6">
@@ -45,6 +48,7 @@ export default async function NewProcessPage({
         members={members}
         roles={roles}
         teams={teams}
+        forms={forms}
         cancelHref="/app/processes"
         draftKey="process-canvas-draft:new"
       />

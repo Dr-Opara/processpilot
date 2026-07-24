@@ -4,6 +4,7 @@ import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { enqueueJob } from "@/lib/jobs/enqueue";
 import { evaluateCondition, type WorkflowInstanceContext } from "@/lib/services/workflow-condition";
+import { getPublishedFormVersion } from "@/lib/services/forms";
 import type {
   ProcessEdge,
   ProcessGraphDefinition,
@@ -25,13 +26,19 @@ import type {
  * see ADR-0010's security note on handlers running outside a user
  * session).
  *
- * Node-type scope decisions (see docs/project/phase-tracker.md — Forms
- * and evidence is Phase 9, Approvals and escalations is Phase 10,
- * Exception management is Phase 11; none of those are built yet):
- * - `form`/`evidence` execute exactly like `human_task` this phase — a
- *   generic completion with a free-form `output` blob. Structured,
- *   validated form-field capture and evidence file upload are Phase 9's
- *   job, layered on top of this same `tasks.output` column later.
+ * Node-type scope decisions (see docs/project/phase-tracker.md —
+ * Approvals and escalations is Phase 10, Exception management is Phase
+ * 11; neither is built yet):
+ * - `form` snapshots the exact published FormVersion its ProcessNodeData.formId
+ *   resolves to at task-creation time (tasks.form_version_id) when one is
+ *   configured; the task otherwise completes exactly like `human_task` —
+ *   a generic completion with a free-form `output` blob — unchanged from
+ *   Phase 8. Structured field validation and the immutable
+ *   form_submissions record are form-submissions.ts's job (Phase 9),
+ *   layered on top via completeTask()'s same advanceFrom() call.
+ * - `evidence` still executes exactly like `human_task` this phase — its
+ *   task is completed the same generic way, independent of however many
+ *   evidence files (evidence.ts) end up attached to it.
  * - `approval` is a single assignee decision (approve/reject), not the
  *   configurable multi-step approval chain Phase 10 adds. A rejected
  *   *required* approval fails the whole workflow rather than routing
@@ -179,6 +186,11 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
   const assignment = HUMAN_NODE_TYPES.has(node.type) ? resolveAssignment(node) : null;
   const isSystemExecuted =
     !HUMAN_NODE_TYPES.has(node.type) && node.type !== "timer" && node.type !== "subprocess";
+  const formVersionId =
+    node.type === "form" && node.data.formId
+      ? ((await getPublishedFormVersion(sql, workflow.organization_id, node.data.formId))?.id ??
+        null)
+      : null;
 
   let task: TaskRow;
   try {
@@ -186,13 +198,13 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
       insert into tasks (
         organization_id, workflow_id, node_id, node_type, label, required, status,
         assignee_member_id, assignee_team_id, assignee_role_id,
-        completed_at, completed_by
+        completed_at, completed_by, form_version_id
       ) values (
         ${workflow.organization_id}, ${workflow.id}, ${node.id}, ${node.type}, ${node.data.label || node.id},
         ${node.data.required ?? true},
         ${isSystemExecuted ? "completed" : node.type === "timer" || node.type === "subprocess" ? "in_progress" : "assigned"},
         ${assignment?.assigneeMemberId ?? null}, ${assignment?.assigneeTeamId ?? null}, ${assignment?.assigneeRoleId ?? null},
-        ${isSystemExecuted ? new Date() : null}, null
+        ${isSystemExecuted ? new Date() : null}, null, ${formVersionId}
       )
       returning *
     `;

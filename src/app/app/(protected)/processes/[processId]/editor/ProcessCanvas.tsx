@@ -77,12 +77,14 @@ function CanvasInner({
   initialGraph,
   roles,
   teams,
+  forms,
   onGraphChange,
 }: {
   draftKey: string;
   initialGraph: ProcessGraphDefinition;
   roles: Option[];
   teams: Option[];
+  forms: Option[];
   onGraphChange: (graph: ProcessGraphDefinition) => void;
 }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<CanvasNode>(
@@ -392,6 +394,7 @@ function CanvasInner({
             selection={currentSelection}
             roles={roles}
             teams={teams}
+            forms={forms}
             onChangeNode={updateNodeData}
             onChangeEdge={updateEdgeData}
             onDelete={deleteSelected}
@@ -415,12 +418,14 @@ export function ProcessCanvas({
   initialGraph,
   roles,
   teams,
+  forms,
   onGraphChange,
 }: {
   draftKey: string;
   initialGraph?: ProcessGraphDefinition;
   roles: Option[];
   teams: Option[];
+  forms: Option[];
   onGraphChange: (graph: ProcessGraphDefinition) => void;
 }) {
   return (
@@ -430,6 +435,7 @@ export function ProcessCanvas({
         initialGraph={initialGraph ?? buildTemplateGraph("blank")}
         roles={roles}
         teams={teams}
+        forms={forms}
         onGraphChange={onGraphChange}
       />
     </ReactFlowProvider>

@@ -385,6 +385,8 @@ export interface ProcessNodeData {
   required?: boolean;
   /** Read for "form" nodes. */
   formFields?: ProcessNodeFormField[];
+  /** Read for "form" nodes — links this step to a specific, real Form (Phase 9). Falls back to the generic formFields/output capture when unset, per workflow-engine.ts. */
+  formId?: string | null;
   /** Read for "evidence" nodes. */
   evidenceDescription?: string | null;
   /** Read for "timer" nodes. */
@@ -528,6 +530,8 @@ export interface TaskRow {
   completed_at: string | null;
   completed_by: string | null;
   created_at: string;
+  /** Set at task-creation time for a 'form' node whose ProcessNodeData.formId resolved to a published form — see workflow-engine.ts. */
+  form_version_id: string | null;
 }
 
 export interface WorkflowHistoryRow {
@@ -548,6 +552,143 @@ export interface TaskHistoryRow {
   workflow_id: string;
   task_id: string;
   event_type: string;
+  actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export type FormStatus = "draft" | "published" | "archived";
+
+export interface FormRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  title: string;
+  description: string | null;
+  category: string | null;
+  status: FormStatus;
+  current_version_id: string | null;
+  owner_member_id: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export type FormFieldType =
+  "text" | "number" | "date" | "select" | "checkbox" | "file" | "table" | "signature";
+
+export interface FormFieldOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * One field in a form_version's `definition` (see
+ * [form-schema.ts](../services/form-schema.ts) for the zod schema that
+ * validates this shape and the validation/conditional-visibility
+ * engine that reads it). A `table` field's `columns` are the only
+ * nesting allowed — a column may not itself be `table`/`file`/`signature`.
+ */
+export interface FormFieldDefinition {
+  key: string;
+  label: string;
+  type: FormFieldType;
+  required?: boolean;
+  helpText?: string | null;
+  visibleWhen?: string | null;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  min?: number;
+  max?: number;
+  minDate?: string;
+  maxDate?: string;
+  options?: FormFieldOption[];
+  maxFileSizeBytes?: number;
+  allowedMimeTypes?: string[];
+  columns?: FormFieldDefinition[];
+  minRows?: number;
+  maxRows?: number;
+}
+
+export interface FormDefinition {
+  fields: FormFieldDefinition[];
+}
+
+export type FormVersionStatus = "draft" | "published" | "superseded";
+
+export interface FormVersionRow {
+  id: string;
+  organization_id: string;
+  form_id: string;
+  department_id: string | null;
+  version_number: number;
+  title: string;
+  definition: FormDefinition;
+  status: FormVersionStatus;
+  published_by: string | null;
+  published_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export type FormSubmissionStatus = "draft" | "submitted";
+
+export interface FormSubmissionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  workflow_id: string;
+  task_id: string;
+  process_version_id: string;
+  form_version_id: string;
+  member_id: string;
+  status: FormSubmissionStatus;
+  answers: Record<string, unknown>;
+  amendment_reason: string | null;
+  amends_submission_id: string | null;
+  superseded_by_submission_id: string | null;
+  submitted_at: string | null;
+  created_at: string;
+}
+
+export type EvidenceScanStatus = "pending_scan" | "clean" | "flagged";
+export type EvidenceStatus = "pending_review" | "accepted" | "rejected" | "expired" | "replaced";
+
+export interface EvidenceRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  workflow_id: string | null;
+  task_id: string | null;
+  form_submission_id: string | null;
+  field_key: string | null;
+  uploaded_by: string | null;
+  original_filename: string;
+  mime_type: string;
+  file_size_bytes: number;
+  storage_path: string;
+  sha256_hash: string;
+  scan_status: EvidenceScanStatus;
+  status: EvidenceStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_notes: string | null;
+  expires_at: string | null;
+  replaces_evidence_id: string | null;
+  created_at: string;
+}
+
+export type EvidenceEventType =
+  "uploaded" | "downloaded" | "accepted" | "rejected" | "replaced" | "expired";
+
+export interface EvidenceEventRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  evidence_id: string;
+  event_type: EvidenceEventType;
   actor_member_id: string | null;
   metadata: Record<string, unknown>;
   created_at: string;

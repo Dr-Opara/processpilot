@@ -32,6 +32,10 @@ touches a protected resource — never through UI visibility alone. See
 | `workflow.assign`       | Assign a workflow or its tasks to members, teams, or external users.      |
 | `workflow.complete`     | Complete tasks within an assigned workflow.                               |
 | `workflow.manage`       | Cancel, reassign, or administratively modify a running workflow.          |
+| `form.view`             | View forms within scope.                                                  |
+| `form.create`           | Create new draft forms.                                                   |
+| `form.edit`             | Edit a draft form version.                                                |
+| `form.publish`          | Publish a new version of a form.                                          |
 | `form.submit`           | Submit a form as part of a task.                                          |
 | `evidence.upload`       | Upload evidence files against a task or approval.                         |
 | `evidence.review`       | Review uploaded evidence for adequacy.                                    |
@@ -79,6 +83,10 @@ via a custom role if `role.manage` is used to do so.
 | workflow.assign       |                    | ✓                  | Scoped        | Scoped  |               |         |               |
 | workflow.complete     |                    |                    |               | Scoped  | ✓             |         | Scoped        |
 | workflow.manage       |                    | ✓                  | Scoped        | Scoped  |               |         |               |
+| form.view             | ✓                  | ✓                  | Scoped        | Scoped  | Scoped        | Scoped  |               |
+| form.create           |                    | ✓                  | ✓             |         |               |         |               |
+| form.edit             |                    | ✓                  | Scoped        |         |               |         |               |
+| form.publish          |                    |                    | Scoped        |         |               |         |               |
 | form.submit           |                    |                    |               | Scoped  | ✓             |         | Scoped        |
 | evidence.upload       |                    |                    |               | Scoped  | ✓             |         | Scoped        |
 | evidence.review       |                    |                    | Scoped        | Scoped  |               | Scoped  |               |

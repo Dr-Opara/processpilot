@@ -25,9 +25,9 @@ phases from this tracker and does not close until those phases are
 | 5     | Business onboarding and employee management | Complete    |
 | 6     | Knowledge management                        | Complete    |
 | 7     | Process builder                             | Complete    |
-| 8     | Workflow execution engine                   | In Progress |
+| 8     | Workflow execution engine                   | Complete    |
 | 8.5   | MVP staging and design-partner validation   | Not Started |
-| 9     | Forms and evidence                          | Not Started |
+| 9     | Forms and evidence                          | In Progress |
 | 10    | Approvals and escalations                   | Not Started |
 | 11    | Exception management                        | Not Started |
 | 12    | Training and certifications                 | Not Started |
@@ -312,8 +312,8 @@ phases from this tracker and does not close until those phases are
 - **Exit criteria:** A workflow can be started (manual/scheduled),
   progress through tasks, and reach completion, with escalation on
   deadline breach; idempotent event handling verified by tests.
-- **Status:** In Progress, on `feature/phase-8-workflow-execution` — not
-  yet merged. Implementation complete: token-based execution over the
+- **Status:** Complete. Merged into `develop` via PR #10. Implementation
+  complete: token-based execution over the
   validated process graph (`workflow-engine.ts`), the workflow/task
   service layer (`workflows.ts`) covering start, complete, decide
   approval, claim/reassign/skip, suspend/resume/cancel/restart, the two
@@ -377,10 +377,50 @@ phases from this tracker and does not close until those phases are
 - **Entry criteria:** Tasks exist to attach forms/evidence to.
 - **Exit criteria:** Form submissions and evidence are immutable once
   recorded, tenant-isolated, and linked to the originating task/workflow.
-- **Status:** Not Started.
-- **Risks:** Untrusted file upload handling — malware/virus scanning
-  requirement from [file-storage.md](../architecture/file-storage.md)
-  must be resolved before this phase closes.
+- **Status:** In Progress, on `feature/phase-9-forms-evidence` — not yet
+  merged. Implementation complete: the form authoring/versioning service
+  layer (`forms.ts`), the field-type/validation/conditional-visibility
+  engine (`form-schema.ts` — text, number, date, select, checkbox, file,
+  table, signature), structured submission handling with draft save,
+  final submit, and immutable amendments (`form-submissions.ts`),
+  private evidence upload with server-side sha256 hashing, review
+  (accept/reject), replacement, expiration, and full chain-of-custody
+  logging (`evidence.ts`), the `evidence-expiration-check` background
+  job, workflow-engine.ts's form-node → published-form-version snapshot
+  linkage, a process-builder "Linked form" selector, and routes
+  (`/app/forms/*`, the task-detail form renderer/evidence panel,
+  `/app/evidence/upload`, `/app/evidence/[evidenceId]/download`). See
+  [forms-and-evidence.md](../architecture/forms-and-evidence.md).
+  `npm run phase:commit` is green locally, including unit coverage of
+  field validation (every type, conditional visibility, formula-
+  injection rejection), form versioning/immutability, draft/submit/amend
+  flows, evidence upload/review/replace/expire/download, unauthorized
+  actions, and tenant-scoped query construction; live-RLS integration
+  tests (forms/form_versions cross-tenant and scoped-ownership,
+  published-form-version immutability, evidence file immutability,
+  evidence cross-tenant) were written following the same
+  `describe.skipIf` pattern the rest of that suite uses, but — like
+  Phases 4/7/8 before it — could not be executed against a real
+  Postgres instance in this environment.
+- **Known gaps carried forward:** No malware/virus scanning is wired up
+  for evidence uploads, same deferred posture
+  [file-storage.md](../architecture/file-storage.md) already documents
+  for knowledge documents. An `evidence` node's task still completes
+  generically; the workflow does not block advancement pending evidence
+  acceptance. The process builder's field-settings editor
+  (options/min/max/columns/...) is a JSON textarea, not a fully visual
+  sub-editor. No Playwright coverage was added for the `/app/forms/*` or
+  form-fill flows — the existing signed-in Playwright smoke test has
+  been failing in CI since Phase 7 for unrelated Clerk-test-user reasons
+  (noted there and in Phase 8), so this phase did not attempt to add to
+  it.
+- **Risks:** Untrusted file upload handling — mitigated by server-side
+  byte-signature validation and sha256 hashing on every evidence upload
+  ([evidence-upload-validation.ts](../../src/lib/services/evidence-upload-validation.ts)),
+  same posture Phase 6 already established for knowledge documents; real
+  malware/virus scanning remains deferred (no vendor chosen), consistent
+  with [file-storage.md](../architecture/file-storage.md) principle 4 and
+  Phase 6's own precedent for closing without one.
 
 ## Phase 10: Approvals and escalations
 
