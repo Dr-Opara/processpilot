@@ -458,3 +458,26 @@ export interface WebhookEventRow {
   processed_at: string | null;
   error_message: string | null;
 }
+
+export type BackgroundJobStatus = "pending" | "processing" | "succeeded" | "failed" | "dead_letter";
+
+export interface BackgroundJobRow {
+  id: string;
+  organization_id: string;
+  job_type: string;
+  payload: Record<string, unknown>;
+  idempotency_key: string;
+  status: BackgroundJobStatus;
+  priority: number;
+  scheduled_at: string;
+  attempts: number;
+  max_attempts: number;
+  locked_at: string | null;
+  locked_by: string | null;
+  last_error: string | null;
+  last_error_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}

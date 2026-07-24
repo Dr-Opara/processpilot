@@ -27,6 +27,7 @@ const REQUIRED_VARS = [
   "CLERK_SECRET_KEY",
   "CLERK_WEBHOOK_SIGNING_SECRET",
   "SUPABASE_DB_URL",
+  "CRON_SECRET",
 ];
 
 const documented = new Set(

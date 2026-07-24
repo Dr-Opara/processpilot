@@ -6,15 +6,17 @@ import postgres from "postgres";
  * as Supabase's `postgres` superuser, so every query through this client
  * bypasses Row-Level Security entirely — used only by code that must run
  * outside any single organization's context (Clerk webhook identity
- * sync, the dev seed script) and that enforces its own, narrow
- * organization scoping in application code, per
+ * sync, the dev seed script, the background-job worker in
+ * src/lib/jobs/worker.ts — see ADR-0009's security note) and that
+ * enforces its own, narrow organization scoping in application code, per
  * docs/architecture/multi-tenancy.md principle 5.
  *
  * Never import this from a "use client" component or anything reachable
  * from the browser — there is no build-time enforcement beyond this
  * comment plus the schema-coverage test's client-boundary check
  * (src/lib/db/schema-coverage.test.ts), so treat any import of this file
- * outside src/app/api/webhooks/ or scripts/ as a review flag.
+ * outside src/app/api/webhooks/, src/lib/jobs/, or scripts/ as a review
+ * flag.
  */
 let adminSql: postgres.Sql | undefined;
 

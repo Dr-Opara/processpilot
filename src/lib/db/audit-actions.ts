@@ -69,6 +69,10 @@ export const AuditAction = {
   ProcessVersionRejected: "process_version.rejected",
   ProcessVersionPublished: "process_version.published",
   ProcessVersionSuperseded: "process_version.superseded",
+
+  // source: "system" — recorded by the background-job worker
+  // (src/lib/jobs/worker.ts), not a user action.
+  BackgroundJobDeadLettered: "background_job.dead_lettered",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -85,6 +89,7 @@ export const AuditResourceType = {
   DocumentVersion: "document_version",
   Process: "process",
   ProcessVersion: "process_version",
+  BackgroundJob: "background_job",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];
