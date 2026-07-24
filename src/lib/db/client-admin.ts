@@ -22,7 +22,8 @@ let adminSql: postgres.Sql | undefined;
 
 export function getAdminSql(): postgres.Sql {
   if (!adminSql) {
-    adminSql = postgres(requireDbUrl(), { max: 5 });
+    // prepare: false — see tenant-context.ts's getPool() for why.
+    adminSql = postgres(requireDbUrl(), { max: 5, prepare: false });
   }
   return adminSql;
 }

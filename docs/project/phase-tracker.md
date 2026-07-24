@@ -22,10 +22,10 @@ phases from this tracker and does not close until those phases are
 | 2     | Marketing website                           | In Progress |
 | 3     | Authentication and organizations            | In Progress |
 | 4     | Database and tenant isolation               | In Progress |
-| 5     | Business onboarding and employee management | Not Started |
-| 6     | Knowledge management                        | Not Started |
-| 7     | Process builder                             | Not Started |
-| 8     | Workflow execution engine                   | Not Started |
+| 5     | Business onboarding and employee management | Complete    |
+| 6     | Knowledge management                        | Complete    |
+| 7     | Process builder                             | Complete    |
+| 8     | Workflow execution engine                   | In Progress |
 | 8.5   | MVP staging and design-partner validation   | Not Started |
 | 9     | Forms and evidence                          | Not Started |
 | 10    | Approvals and escalations                   | Not Started |
@@ -312,9 +312,37 @@ phases from this tracker and does not close until those phases are
 - **Exit criteria:** A workflow can be started (manual/scheduled),
   progress through tasks, and reach completion, with escalation on
   deadline breach; idempotent event handling verified by tests.
-- **Status:** Not Started.
+- **Status:** In Progress, on `feature/phase-8-workflow-execution` — not
+  yet merged. Implementation complete: token-based execution over the
+  validated process graph (`workflow-engine.ts`), the workflow/task
+  service layer (`workflows.ts`) covering start, complete, decide
+  approval, claim/reassign/skip, suspend/resume/cancel/restart, the two
+  background jobs (`workflow-timer-advance`, `workflow-deadline-check`),
+  and routes (`/app/workflows`, `/app/workflows/[workflowId]`,
+  `/app/tasks`, `/app/tasks/[taskId]`). `npm run phase:commit` (format,
+  lint, typecheck, unit tests, production build) is green locally,
+  including new unit-test coverage of happy-path execution, decision
+  routing (match and no-match), parallel split/join (including the
+  join's unique-violation race and non-unique-violation re-throw),
+  timers, background-job idempotency/crash-recovery (a stale re-run of
+  an already-advanced timer job is a no-op), workflow lifecycle
+  transitions, task assignment/eligibility, unauthorized actions, and
+  tenant-scoped query construction.
+- **Known gaps carried forward:** Manual start only — scheduled and
+  event-triggered workflow starts (mentioned as a future option in
+  workflow-engine.md's start-triggers table) are not implemented this
+  phase. `system_action` nodes have no execution handler; a process
+  version containing one is rejected at start time rather than run.
+  Deadline breach only records a `workflow.deadline_breached` event —
+  reminders, escalation, and reassignment on breach are Phase 10's job.
+  Same carried-forward live-RLS integration-suite gap as Phases 4/7 (not
+  verified against a real Supabase project in this environment); Vercel
+  preview visual review outstanding, same platform-configuration blocker
+  noted since Phase 1.
 - **Risks:** Highest architectural complexity phase to date — event
   idempotency bugs would silently corrupt operational data if untested.
+  Mitigated by explicit idempotency/crash-recovery test coverage on both
+  background jobs and the `parallel_join` race path.
 
 ## Phase 8.5: MVP staging and design-partner validation
 

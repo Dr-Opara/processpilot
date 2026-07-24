@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { processDueJobs } from "@/lib/jobs/worker";
+import "@/lib/jobs/workflow-handlers";
 
 /**
  * The Vercel Cron-triggered worker tick (see vercel.json's `crons`

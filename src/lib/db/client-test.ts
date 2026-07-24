@@ -14,7 +14,8 @@ import postgres from "postgres";
 export function getTestSql(): postgres.Sql | null {
   const url = process.env.SUPABASE_DB_URL;
   if (!url) return null;
-  return postgres(url, { max: 5 });
+  // prepare: false — see tenant-context.ts's getPool() for why.
+  return postgres(url, { max: 5, prepare: false });
 }
 
 export interface TestClaims {

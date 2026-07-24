@@ -6,6 +6,18 @@ Backed by a `background_jobs` table in Postgres + Vercel Cron for now —
 no external queue vendor or credentials required, so this is fully
 testable locally and in CI.
 
+Vercel's Hobby plan allows cron jobs no more frequent than once a day
+(see [Vercel's cron usage limits](https://vercel.com/docs/cron-jobs/usage-and-pricing)),
+so `vercel.json` ticks the worker once daily rather than every few
+minutes. The worker and its callers are unaffected by tick frequency —
+`processDueJobs()` claims anything with `scheduled_at <= now()`, so a
+coarser tick delays processing rather than breaking correctness — but a
+daily tick means workflow deadline checks and retries are only as timely
+as the last tick. Moving to a paid Vercel plan (or an external scheduler
+that calls `/api/jobs/process` more often, e.g. a provider swap per the
+section below) would tighten that latency; that's a plan/cost decision,
+not a code change.
+
 ## What's provider-neutral
 
 Workflow domain logic (and anything else that schedules work) only ever

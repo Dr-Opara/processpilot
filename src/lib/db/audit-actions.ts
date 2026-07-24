@@ -73,6 +73,23 @@ export const AuditAction = {
   // source: "system" — recorded by the background-job worker
   // (src/lib/jobs/worker.ts), not a user action.
   BackgroundJobDeadLettered: "background_job.dead_lettered",
+
+  // Phase 8 (Workflow execution engine). Only the governance-relevant
+  // subset of workflow_history/task_history events per event-model.md —
+  // the full instance timeline (including system-executed node visits)
+  // lives in those two append-only tables, not audit_events.
+  WorkflowStarted: "workflow.started",
+  WorkflowCompleted: "workflow.completed",
+  WorkflowFailed: "workflow.failed",
+  WorkflowSuspended: "workflow.suspended",
+  WorkflowResumed: "workflow.resumed",
+  WorkflowCancelled: "workflow.cancelled",
+  WorkflowRestarted: "workflow.restarted",
+  // source: "system" — recorded by the deadline-check background job.
+  WorkflowDeadlineBreached: "workflow.deadline_breached",
+  TaskCompleted: "task.completed",
+  TaskApprovalDecided: "task.approval_decided",
+  TaskReassigned: "task.reassigned",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -90,6 +107,8 @@ export const AuditResourceType = {
   Process: "process",
   ProcessVersion: "process_version",
   BackgroundJob: "background_job",
+  Workflow: "workflow",
+  Task: "task",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];
