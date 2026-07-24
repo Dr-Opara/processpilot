@@ -268,22 +268,34 @@ phases from this tracker and does not close until those phases are
 ## Phase 7: Process builder
 
 - **Goal:** Implement process authoring, review, and publishing.
-- **Deliverables:** Process editor (steps, roles, forms, approvals,
-  evidence requirements), review/publish workflow, process templates.
+- **Deliverables:** Visual drag-and-drop process editor (`@xyflow/react`)
+  over a graph process definition (`ProcessNode`/`ProcessEdge`), a
+  three-stage review pipeline (`in_review` -> `approved` -> `published`,
+  approval and publishing as distinct permissioned actions), server-side
+  graph validation (reachability, single start, ≥1 reachable end, no
+  cycles, per-node-type required config), and process templates.
 - **Dependencies:** Phase 6.
 - **Entry criteria:** Knowledge governance available as a process input.
-- **Exit criteria:** A process can be authored, reviewed, and published as
-  an immutable `ProcessVersion`; AI-assisted draft extraction (manual
-  trigger only — full AI copilot lands in Phase 13) is stubbed or deferred
-  explicitly if not ready.
-- **Status:** Complete. `npm run phase:commit`'s checks (format, lint,
-  typecheck, unit tests, build) and `npm audit` are green in CI on
-  `feature/phase-7-visual-process-builder`; the immutable-version exit
-  criterion is enforced by a DB trigger and proven by a live-RLS
-  integration test, same pattern as Phase 6. AI-assisted draft
-  extraction is fully deferred — no UI affordance exists for it in this
-  phase; it requires the provider-neutral AI adapter from ADR-0008,
-  which Phase 13 builds.
+- **Exit criteria:** A process can be authored on the visual canvas,
+  reviewed, approved, and published as an immutable `ProcessVersion`;
+  AI-assisted draft extraction (manual trigger only — full AI copilot
+  lands in Phase 13) is stubbed or deferred explicitly if not ready.
+- **Status:** Complete. `npm run format:check`, `lint`, `typecheck`,
+  `test`, and `build` are green in CI on PR #9 (merged into `develop` as
+  `e8a3505`); the immutable-version exit criterion is enforced by a DB
+  trigger, same pattern as Phase 6. AI-assisted draft extraction is fully
+  deferred — no UI affordance exists for it in this phase; it requires
+  the provider-neutral AI adapter from ADR-0008, which Phase 13 builds.
+- **Known gaps carried forward:** The live-RLS tenant-isolation
+  integration suite (`npm run test:integration`) could not be verified
+  against the linked dev Supabase project — its schema predates several
+  migrations, including this phase's, and the Supabase CLI isn't linked
+  in the environment this phase was built in. `e2e/app-auth.spec.ts`'s
+  signed-in smoke test still fails in CI ("Couldn't find your account")
+  because the Clerk test user is missing/misplaced in whatever instance
+  the CI secrets point to. Neither blocked merge (`develop` has no branch
+  protection); both need follow-up before Phase 7 is treated as fully
+  proven in CI, not just locally.
 - **Risks:** Scope creep into full AI drafting before Phase 13 — this
   phase should ship manual authoring first and treat AI extraction as an
   explicit, separately-scoped addition.
