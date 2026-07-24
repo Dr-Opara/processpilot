@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Heading, Text, Label } from "@/components/ui/Typography";
 import { Stack, Cluster } from "@/components/ui/Layout";
 import { Button } from "@/components/ui/Button";
@@ -35,6 +36,13 @@ export default async function OnboardingPage({
 
   return (
     <Stack className="mx-auto max-w-xl gap-6">
+      <Image
+        src="/brand/branding/processpilot-logo.png"
+        alt="ProcessPilot"
+        width={166}
+        height={32}
+        className="h-8 w-auto"
+      />
       {error && <Alert title="Something went wrong" description={error} />}
 
       {step === "welcome" && (

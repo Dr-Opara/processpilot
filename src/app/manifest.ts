@@ -9,6 +9,16 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#f7f5f0",
     theme_color: "#111318",
-    icons: [{ src: "/favicon.ico", sizes: "any", type: "image/x-icon" }],
+    icons: [
+      { src: "/brand/icons/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { src: "/brand/icons/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { src: "/brand/icons/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+      {
+        src: "/brand/icons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
+    ],
   };
 }

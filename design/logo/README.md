@@ -1,16 +1,18 @@
 # Logo
 
-No approved ProcessPilot logo has been supplied to the project as of
-Phase 0. This directory is a placeholder.
+Approved ProcessPilot logo and icon assets are supplied and live in
+[public/brand/](../../public/brand/README.md), not in this directory.
+This directory remains a placeholder for a future vector master.
 
-When a logo is supplied:
+The approved raster assets in `public/brand/` are production-ready and
+are used across the marketing site, application shell, favicon, and PWA
+icons — see [design/branding.md](../branding.md) for the asset-status
+summary.
 
-1. Add source/vector format (SVG preferred) and exported raster sizes
-   needed for the marketing site, application shell, and favicon.
-2. Update [design/branding.md](../branding.md) to remove this notice.
-3. Replace [src/app/favicon.ico](../../src/app/favicon.ico), which is
-   currently the unmodified Next.js default, not an approved brand asset.
+When a true vector master (SVG) is commissioned:
 
-Do not fabricate or AI-generate a placeholder logo in the meantime — ship
-with a plain wordmark ("ProcessPilot" in the [typography](../typography.md)
-system) rather than an unapproved mark.
+1. Add it here, alongside the raster exports it supersedes.
+2. Update [design/branding.md](../branding.md) and
+   [public/brand/README.md](../../public/brand/README.md) accordingly.
+
+Do not fabricate or AI-generate a replacement mark in the meantime.

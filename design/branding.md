@@ -21,13 +21,14 @@ written-language expression of the same personality.
 
 ## Asset status
 
-No approved ProcessPilot logo or icon asset has been supplied to the
-project as of Phase 0. `design/logo/` and `design/icons/` are placeholder
-directories (see their `README.md` files) until real assets are
-provided. Do not fabricate a logo or icon in the meantime — the
-[application favicon](../src/app/favicon.ico) currently in the
-repository is the unmodified Next.js default and must be replaced with an
-approved asset before any public-facing release, not treated as final.
+Approved ProcessPilot logo and icon assets are in
+[public/brand/](../public/brand/README.md) — the wordmark, icon,
+platform icons (favicon, Apple Touch, Android/PWA), and social cards.
+These are production-ready raster exports, not a vector master; see the
+limitation noted in `public/brand/README.md`. Do not recolor, stretch,
+rotate, redraw, or substitute the approved marks. `design/logo/` remains
+a placeholder directory (see its `README.md`) pending a commissioned
+vector master.
 
 ## Core colors
 
