@@ -21,6 +21,7 @@ import {
   restoreProcessAction,
   submitForReviewAction,
 } from "../actions";
+import { startWorkflowAction } from "../../workflows/actions";
 import { ProcessGraphViewer } from "../ProcessGraphViewer";
 
 function statusBadgeStatus(status: string): "success" | "warning" | "danger" | "neutral" {
@@ -78,6 +79,10 @@ export default async function ProcessDetailPage({
     currentMembership?.permissions.includes("process.publish") ||
     currentMembership?.scopedPermissions.includes("process.publish"),
   );
+  const canStartWorkflow = Boolean(
+    currentMembership?.permissions.includes("workflow.start") ||
+    currentMembership?.scopedPermissions.includes("workflow.start"),
+  );
 
   return (
     <Stack className="mx-auto max-w-3xl gap-8">
@@ -91,6 +96,11 @@ export default async function ProcessDetailPage({
           {owner && <Text className="text-muted">Owner: {memberDisplayName(owner)}</Text>}
         </Stack>
         <Cluster className="gap-2">
+          {process.status === "published" && canStartWorkflow && (
+            <form action={startWorkflowAction.bind(null, process.id)}>
+              <Button type="submit">Start workflow</Button>
+            </form>
+          )}
           {process.archived_at ? (
             <form action={restoreProcessAction.bind(null, process.id)}>
               <Button type="submit" variant="secondary">

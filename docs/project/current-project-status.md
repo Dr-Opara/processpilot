@@ -5,19 +5,24 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-19.
+**Last updated:** 2026-07-24.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress.
-- **Current phase:** Phase 4 — Database and tenant isolation, In Progress
-  (branch `feature/phase-4-database-tenancy`).
+- **Current phase:** Phase 8 — Workflow execution engine, In Progress
+  (branch `feature/phase-8-workflow-execution`, not yet merged).
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
+- **Phases 5, 6, and 7** (business onboarding/employee management,
+  knowledge management, process builder) are `Complete` per the phase
+  tracker. Phase 4 (database and tenant isolation) remains recorded as
+  `In Progress` in the tracker; this document does not re-audit that
+  status.
 
 ## What's built
 
@@ -25,43 +30,64 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   [product/information-architecture.md](../../product/information-architecture.md).
 - Authentication: Clerk sign-up/sign-in, organization creation and
   invitation at `/app/*`, server-side session gating via `requireAuth()`.
-- Database schema: all 17 tables in
+- Database schema: 28 tables in
   [docs/architecture/database-schema.md](../architecture/database-schema.md),
   committed as SQL migrations with Row-Level Security enabled and at
   least one policy on every table — statically enforced by
   `src/lib/db/schema-coverage.test.ts` on every change.
 - Clerk↔Supabase identity sync: `/api/webhooks/clerk` persists
   user/organization/membership events idempotently (see
-  [clerk-supabase-identity-sync.md](../architecture/clerk-supabase-identity-sync.md)),
-  replacing Phase 3's log-only handler. Role assignment now resolves
-  against real `roles`/`role_permissions`/`member_role_assignments`
-  tables instead of Clerk's built-in `org:admin`/`org:member` roles.
+  [clerk-supabase-identity-sync.md](../architecture/clerk-supabase-identity-sync.md)).
+  Role assignment resolves against real
+  `roles`/`role_permissions`/`member_role_assignments` tables.
 - Server-side authorization (`src/lib/authz.ts`): `getCurrentProfile()`,
   `getCurrentOrganization()`, `getCurrentMembership()`,
-  `requirePermission()`.
-- Audit foundation: `recordAuditEvent()`, called from every identity-sync
-  path.
+  `requirePermission()`, including department-scoped permission checks.
+- Organization structure and people: locations, departments, teams,
+  member directory, invitations, bulk member import (`/app/*`).
+- Knowledge management: document upload/authoring, versioning, review
+  workflow (`/app/knowledge/*`).
+- Process builder: visual drag-and-drop process editor over a graph
+  definition, three-stage review pipeline, server-side graph validation,
+  immutable published versions (`/app/processes/*`).
+- Workflow execution engine (Phase 8, in progress): token-based
+  execution over a published process version's graph
+  (`src/lib/services/workflow-engine.ts`), the workflow/task service
+  layer (`src/lib/services/workflows.ts`), two background jobs (timer
+  advance, deadline breach detection —
+  `src/lib/jobs/workflow-handlers.ts`), and routes for the workflow list/
+  detail and the task inbox/detail (`/app/workflows/*`, `/app/tasks/*`).
+  See [workflow-engine.md](../architecture/workflow-engine.md) for the
+  node-type/state-machine detail and known gaps (manual start only;
+  `system_action` nodes unsupported; deadline breach is detection-only,
+  not full escalation).
+- Audit foundation: `recordAuditEvent()`, called from every mutating
+  service-layer action, including the workflow engine's.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
-  tests against Vercel previews (`preview-checks.yml`), plus Phase 4's new
+  tests against Vercel previews (`preview-checks.yml`), plus the
   service-role client-bundle leak check
   (`npm run check:bundle-secrets`, wired into `phase:commit`).
 - **Not yet applied anywhere real:** no Supabase project has been
   provisioned, so none of the above has run against a live database —
   see [supabase-setup.md](../development/supabase-setup.md) for the
-  manual steps that unblock this.
+  manual steps that unblock this. The live-RLS
+  `tenant-isolation.integration.test.ts` suite is written but unverified
+  against a real Postgres engine for this reason (carried forward since
+  Phase 4).
 
 ## What's not built yet
 
-- Scoped (non-organization-wide) permission enforcement — e.g. a
-  `manager`'s department-scoped `department.manage` — deferred to Phase 5,
-  which builds the location/department/team scope-assignment model this
-  needs. See
-  [authentication-and-authorization.md — known limitations](../architecture/authentication-and-authorization.md#known-limitations).
-- No knowledge management, process builder, or workflow execution (Phases
-  6–8).
-- No billing, analytics, AI, notifications, integrations, or external
-  portal (later milestones).
+- Scheduled/event-triggered workflow starts (Phase 8 supports manual
+  start only) and `system_action` node execution.
+- Structured form field capture and evidence upload (Phase 9) — Phase 8's
+  `form`/`evidence` nodes execute as generic tasks in the meantime.
+- Configurable multi-step approval chains, SLA reminders/escalation
+  (Phase 10) — Phase 8 has a single-assignee approval decision and
+  deadline-breach _detection_ only.
+- Exception/CAPA management, training/certifications, AI copilot,
+  analytics, audit/compliance center, notifications, billing,
+  integrations, external portal (later phases/milestones).
 
 ## Immediate next steps
 
@@ -69,9 +95,9 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    see [supabase-setup.md](../development/supabase-setup.md). Blocks
    applying the committed migrations, regenerating real database types,
    and running the live-DB tenant-isolation tests for real.
-2. Phase 4 audit, once requested.
-3. Phase 5: business onboarding and employee management, once Phase 4 is
-   marked `Complete`.
+2. Merge `feature/phase-8-workflow-execution` into `develop` once
+   reviewed, and mark Phase 8 `Complete` in the phase tracker.
+3. Phase 9: forms and evidence management, once Phase 8 is merged.
 
 ## Known risks carried forward
 

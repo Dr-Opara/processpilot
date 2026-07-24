@@ -20,7 +20,15 @@ function getPool(): postgres.Sql {
         "SUPABASE_DB_URL is not set — see docs/development/supabase-setup.md for how to provision it.",
       );
     }
-    pool = postgres(url, { max: 10 });
+    // prepare: false — SUPABASE_DB_URL is expected to be a Supabase pooler
+    // connection (session or transaction mode; see .env.example), and
+    // transaction-mode pooling (Supavisor/PgBouncer) silently breaks
+    // postgres.js's default prepared-statement caching, since a prepared
+    // statement can end up issued against a different backend connection
+    // than the one that prepared it. Disabling it costs a little
+    // performance and works correctly under either pooling mode, so it's
+    // the safe default rather than something to toggle per environment.
+    pool = postgres(url, { max: 10, prepare: false });
   }
   return pool;
 }

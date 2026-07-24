@@ -458,3 +458,97 @@ export interface WebhookEventRow {
   processed_at: string | null;
   error_message: string | null;
 }
+
+export type BackgroundJobStatus = "pending" | "processing" | "succeeded" | "failed" | "dead_letter";
+
+export interface BackgroundJobRow {
+  id: string;
+  organization_id: string;
+  job_type: string;
+  payload: Record<string, unknown>;
+  idempotency_key: string;
+  status: BackgroundJobStatus;
+  priority: number;
+  scheduled_at: string;
+  attempts: number;
+  max_attempts: number;
+  locked_at: string | null;
+  locked_by: string | null;
+  last_error: string | null;
+  last_error_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}
+
+export type WorkflowStatus = "running" | "suspended" | "completed" | "cancelled" | "failed";
+
+export interface WorkflowRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  process_id: string;
+  process_version_id: string;
+  title: string;
+  status: WorkflowStatus;
+  started_by: string | null;
+  started_at: string;
+  due_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  cancelled_by: string | null;
+  suspended_at: string | null;
+  suspended_by: string | null;
+  failure_reason: string | null;
+  restarted_from_workflow_id: string | null;
+  parent_task_id: string | null;
+  created_at: string;
+}
+
+export type TaskStatus =
+  "assigned" | "in_progress" | "completed" | "rejected" | "skipped" | "cancelled" | "failed";
+
+export interface TaskRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  workflow_id: string;
+  node_id: string;
+  node_type: ProcessNodeType;
+  label: string;
+  required: boolean;
+  status: TaskStatus;
+  assignee_member_id: string | null;
+  assignee_team_id: string | null;
+  assignee_role_id: string | null;
+  output: Record<string, unknown>;
+  started_at: string;
+  due_at: string | null;
+  completed_at: string | null;
+  completed_by: string | null;
+  created_at: string;
+}
+
+export interface WorkflowHistoryRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  workflow_id: string;
+  event_type: string;
+  actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface TaskHistoryRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  workflow_id: string;
+  task_id: string;
+  event_type: string;
+  actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}

@@ -1,5 +1,6 @@
 import "server-only";
 import type { ProcessGraphDefinition, ProcessNode } from "@/lib/db/database.types";
+import { validateConditionSyntax } from "@/lib/services/workflow-condition";
 
 /**
  * Server-side graph validation — never trusts that the canvas editor's
@@ -171,6 +172,16 @@ function validateNode(
         message: `Decision step "${label}" has a branch with no condition set.`,
         nodeId: node.id,
       });
+    } else {
+      for (const edge of nodeOutgoingEdges) {
+        const conditionError = validateConditionSyntax(edge.condition as string);
+        if (conditionError) {
+          errors.push({
+            message: `Decision step "${label}": ${conditionError.message}`,
+            nodeId: node.id,
+          });
+        }
+      }
     }
   }
 

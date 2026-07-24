@@ -6,6 +6,23 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-24 — Phase 8 documentation and status update
+
+Rewrote [workflow-engine.md](../architecture/workflow-engine.md) to
+describe the engine as actually implemented on
+`feature/phase-8-workflow-execution` (token-based execution, the
+per-node-type behavior table, the decision condition grammar, the
+workflow/task state machines, the two background jobs, and the new
+`/app/workflows/*` and `/app/tasks/*` routes) rather than the
+Phase-0-era forward-looking design. Updated
+[phase-tracker.md](phase-tracker.md): Phase 8 moved from `Not Started` to
+`In Progress` with implementation/testing detail and known gaps; also
+corrected stale `Not Started` summary-table rows for Phases 5–7, which
+their own detail sections already recorded as `Complete`. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot, which
+had been left at its Phase 4 (2026-07-19) state despite Phases 5–7
+shipping since.
+
 ## 2026-07-19 — Milestone 2 documentation initialized
 
 Introduced the milestone framing that sits alongside the existing
