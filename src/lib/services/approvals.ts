@@ -139,6 +139,7 @@ async function completeApprovalTask(
       workflow.id,
       task.organization_id,
       `Required approval "${updated.label}" was rejected.`,
+      { taskId: task.id, exceptionSource: "failed_approval", exceptionType: "process_deviation" },
     );
     return updated;
   }

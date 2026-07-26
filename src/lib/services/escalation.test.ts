@@ -1,12 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/services/exceptions", () => ({
+  createSystemException: vi.fn().mockResolvedValue({}),
+}));
 
 import {
   createFakeSql,
   asTransactionSql,
   type FakeQueryHandler,
 } from "@/lib/db/test-helpers/fake-sql";
+import { createSystemException } from "@/lib/services/exceptions";
 import { checkTaskEscalations } from "./escalation";
 import type { TaskRow } from "@/lib/db/database.types";
 
@@ -162,6 +166,44 @@ describe("checkTaskEscalations", () => {
     );
 
     expect(fakeSql.calls.length).toBe(0);
+  });
+
+  it("records a missed-SLA exception when escalation reaches the admin level", async () => {
+    vi.mocked(createSystemException).mockClear();
+    const dueAt = new Date(Date.now() - 60_000).toISOString();
+    const handlers: FakeQueryHandler[] = [
+      {
+        match: (t) => t.includes("from escalation_rules"),
+        respond: () => [
+          {
+            id: "rule-1",
+            level: 1,
+            trigger_after_minutes_past_due: 0,
+            action: "escalate_admin",
+            reassign_target: null,
+          },
+        ],
+      },
+      {
+        match: (t) => t.includes("select escalation_rule_id from escalation_events"),
+        respond: () => [],
+      },
+      {
+        match: (t) => t.includes("from member_role_assignments"),
+        respond: () => [{ organization_member_id: "admin-1" }],
+      },
+      { match: (t) => t.includes("update tasks set assignee_member_id"), respond: () => [] },
+      { match: (t) => t.includes("insert into escalation_events"), respond: () => [] },
+      { match: (t) => t.includes("insert into audit_events"), respond: () => [{ id: "audit-1" }] },
+    ];
+    const fakeSql = createFakeSql(handlers);
+
+    await checkTaskEscalations(asTransactionSql(fakeSql), task({ due_at: dueAt }), "org-1");
+
+    expect(createSystemException).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: "missed_sla", exceptionType: "missed_sla" }),
+    );
   });
 
   it("does not re-fire a level that has already been logged (idempotent retry)", async () => {

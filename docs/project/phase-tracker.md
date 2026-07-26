@@ -29,7 +29,7 @@ phases from this tracker and does not close until those phases are
 | 8.5   | MVP staging and design-partner validation   | Not Started |
 | 9     | Forms and evidence                          | Complete    |
 | 10    | Approvals and escalations                   | Complete    |
-| 11    | Exception management                        | Not Started |
+| 11    | Exception management                        | Complete    |
 | 12    | Training and certifications                 | Not Started |
 | 13    | AI ingestion and copilot                    | Not Started |
 | 14    | Analytics                                   | Not Started |
@@ -470,9 +470,47 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Exceptions can be created (automatically and
   manually), triaged, and closed with a linked corrective action and
   audit trail.
-- **Status:** Not Started.
-- **Risks:** AI exception summarization (Phase 13 dependency) must not be
-  required for this phase's manual triage flow to function.
+- **Status:** Complete. Implementation complete, expanded beyond the
+  original deliverables to the fuller exception/CAPA/waiver model this
+  phase's requirements called for: exception intake (11 types, 12
+  sources, both manual and automatic), lifecycle (reported → triaged →
+  under_investigation → containment/action-plan/remediation →
+  pending_verification → closed, plus rejected/reopened), severity/
+  likelihood/impact with a calculated priority and required-reason
+  manual override, root-cause analysis (Five Whys/fishbone) that gates
+  closure, containment actions, CAPA plans (draft → pending_approval →
+  approved → in_progress → pending_verification →
+  effective/ineffective → closed, with individual corrective/preventive
+  actions, approvals, and effectiveness checks), temporary waivers
+  (required expiration, approval, renewal, revocation, and an
+  expiration background job), and heuristic recurrence matching —
+  `src/lib/services/exceptions.ts`/`exception-root-cause.ts`/
+  `exception-containment.ts`/`exception-recurrence.ts`/`capa.ts`/
+  `waivers.ts`. Automatic creation wired from `workflow-engine.ts`'s
+  `failWorkflow()` (any workflow failure), `escalation.ts`'s admin-
+  escalation firing (missed SLA), and `evidence.ts`'s evidence rejection
+  — each idempotent against retries. Routes: `/app/exceptions`,
+  `/app/exceptions/new`, `/app/exceptions/[exceptionId]`, `/app/capa`,
+  `/app/capa/[capaId]`, `/app/waivers`, `/app/waivers/[waiverId]`.
+  `npm run phase:commit` (format, lint, typecheck, unit tests,
+  production build) is green. See
+  [exception-management.md](../architecture/exception-management.md).
+- **Known gaps carried forward:** Routes are consolidated relative to
+  the originally-envisioned per-concern route set — exception overview/
+  investigation/containment/root-cause/CAPA/waiver content lives on one
+  detail page rather than separate `/edit`/`/investigation`/`/capa`/
+  `/waiver` sub-routes, and "dashboard" views are query-param-filtered
+  list views rather than separate `/dashboard` route files (see
+  exception-management.md's "Routes" section). Recurrence matching is a
+  plain heuristic, not fuzzy/ML matching, and explicitly not a
+  duplicate-detection guarantee. No automated effectiveness-check
+  scheduling. Notification delivery for any of this phase's events is
+  Phase 16's job, same deferred posture as every prior phase. Same
+  carried-forward live-RLS integration-suite gap as prior phases (not
+  verified against a real Supabase project in this environment).
+- **Risks:** AI exception summarization (Phase 13 dependency) is not
+  required for this phase's manual triage flow, and nothing in this
+  phase's implementation depends on it.
 
 ## Phase 12: Training and certifications
 

@@ -131,6 +131,34 @@ export const AuditAction = {
   TaskSlaPaused: "task.sla_paused",
   TaskSlaResumed: "task.sla_resumed",
   TaskDueAtRecalculated: "task.due_at_recalculated",
+
+  // Phase 11 (Exceptions and CAPA).
+  ExceptionCreated: "exception.created",
+  ExceptionUpdated: "exception.updated",
+  ExceptionTriaged: "exception.triaged",
+  ExceptionSeverityChanged: "exception.severity_changed",
+  ExceptionOwnerAssigned: "exception.owner_assigned",
+  ExceptionInvestigationStarted: "exception.investigation_started",
+  ExceptionRootCauseAdded: "exception.root_cause_added",
+  ExceptionContainmentActionCreated: "exception.containment_action_created",
+  ExceptionContainmentActionCompleted: "exception.containment_action_completed",
+  ExceptionClosed: "exception.closed",
+  ExceptionRejected: "exception.rejected",
+  ExceptionReopened: "exception.reopened",
+  CapaPlanCreated: "capa_plan.created",
+  CapaPlanApproved: "capa_plan.approved",
+  CapaPlanRejected: "capa_plan.rejected",
+  CapaActionCompleted: "capa_action.completed",
+  CapaEffectivenessCheckCompleted: "capa_effectiveness_check.completed",
+  CapaPlanMarkedIneffective: "capa_plan.marked_ineffective",
+  CapaPlanClosed: "capa_plan.closed",
+  WaiverRequested: "waiver.requested",
+  WaiverApproved: "waiver.approved",
+  WaiverRejected: "waiver.rejected",
+  WaiverRenewed: "waiver.renewed",
+  WaiverRevoked: "waiver.revoked",
+  // source: "system" — recorded by the waiver-expiration background job.
+  WaiverExpired: "waiver.expired",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -158,6 +186,9 @@ export const AuditResourceType = {
   SlaDefinition: "sla_definition",
   BusinessCalendar: "business_calendar",
   EscalationRule: "escalation_rule",
+  Exception: "exception",
+  CapaPlan: "capa_plan",
+  TemporaryWaiver: "temporary_waiver",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

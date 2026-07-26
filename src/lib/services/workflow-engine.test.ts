@@ -4,8 +4,12 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/jobs/enqueue", () => ({
   enqueueJob: vi.fn().mockResolvedValue({}),
 }));
+vi.mock("@/lib/services/exceptions", () => ({
+  createSystemException: vi.fn().mockResolvedValue({}),
+}));
 
 import { enqueueJob } from "@/lib/jobs/enqueue";
+import { createSystemException } from "@/lib/services/exceptions";
 import {
   createFakeSql,
   asTransactionSql,
@@ -30,6 +34,7 @@ import {
 
 beforeEach(() => {
   vi.mocked(enqueueJob).mockClear();
+  vi.mocked(createSystemException).mockClear();
 });
 
 function node(id: string, type: ProcessNodeType, data: Partial<ProcessNodeData> = {}): ProcessNode {

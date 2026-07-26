@@ -6,6 +6,39 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-27 — Phase 11 documentation and status update
+
+Added [exception-management.md](../architecture/exception-management.md)
+documenting the exception/CAPA/waiver model built on
+`feature/phase-11-exceptions-capa`: exception intake and lifecycle,
+severity/priority calculation, root-cause analysis, containment
+actions, CAPA plans through approval/verification/closure, temporary
+waivers, and heuristic recurrence matching. Updated
+[database-schema.md](../architecture/database-schema.md) with the 15
+new tables. Updated
+[authentication-and-authorization.md](../architecture/authentication-and-authorization.md)
+to note the `exceptions.*`/`capa.*`/`waivers.*` permission families,
+which replaced the coarser `exception.create`/`exception.manage`
+placeholder rows the matrix had reserved (but never used) since Phase 0.
+Updated [phase-tracker.md](phase-tracker.md): Phase 10 marked `Complete`
+(merged via PR #13); Phase 11 added with implementation/testing detail
+and known gaps (consolidated route scope; deferred effectiveness-
+automation and fuzzy recurrence matching). Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly. Updated [roadmap.md](roadmap.md) and
+[repository-map.md](repository-map.md) for the new routes/services.
+
+## 2026-07-26 — Phase 10 documentation and status update (retroactive)
+
+Phase 10 (approvals, SLAs, and escalations) shipped and merged via PR
+#13 without a changelog entry at the time — recorded here for
+continuity. Added
+[approvals-and-slas.md](../architecture/approvals-and-slas.md)
+documenting configurable multi-approver chains, business-calendar-aware
+SLA due dates, and numbered escalation levels. Updated
+[workflow-engine.md](../architecture/workflow-engine.md)'s `approval`
+node-type entry and deadline-tracking description accordingly.
+
 ## 2026-07-25 — Phase 9 documentation and status update
 
 Added [forms-and-evidence.md](../architecture/forms-and-evidence.md)

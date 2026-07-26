@@ -7,6 +7,7 @@ import { withTenantContext } from "@/lib/db/tenant-context";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { resolveMemberIdsForRule } from "@/lib/services/approval-resolution";
+import { createSystemException } from "@/lib/services/exceptions";
 import type { EscalationRuleRow, SlaDefinitionRow, TaskRow } from "@/lib/db/database.types";
 
 function toTenantContext(membership: {
@@ -266,5 +267,24 @@ export async function checkTaskEscalations(
       resourceId: task.id,
       source: "system",
     });
+
+    // Phase 11: reaching the top escalation level (admin escalation)
+    // means every lower-level attempt to resolve the breach on its own
+    // has already failed — that's a recorded exception, not just an
+    // escalation_events row, so it enters triage rather than staying
+    // implicit in the escalation log.
+    if (rule.action === "escalate_admin") {
+      await createSystemException(tx, {
+        organizationId,
+        departmentId: task.department_id,
+        title: `Missed SLA: "${task.label}" escalated to an administrator.`,
+        exceptionType: "missed_sla",
+        source: "missed_sla",
+        severity: "high",
+        workflowId: task.workflow_id,
+        taskId: task.id,
+        idempotencyMatch: { taskId: task.id },
+      });
+    }
   }
 }
