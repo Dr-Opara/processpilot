@@ -5,7 +5,7 @@
  * than ever forwarding a raw driver/database error message to a client —
  * see docs/architecture/authentication-and-authorization.md.
  */
-export type AppErrorCode = "unauthorized" | "forbidden" | "not_found" | "conflict";
+export type AppErrorCode = "unauthorized" | "forbidden" | "not_found" | "conflict" | "unavailable";
 
 export class AppError extends Error {
   readonly code: AppErrorCode;
@@ -27,6 +27,8 @@ function toHttpStatus(code: AppErrorCode): number {
       return 404;
     case "conflict":
       return 409;
+    case "unavailable":
+      return 503;
   }
 }
 

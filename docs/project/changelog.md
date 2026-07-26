@@ -6,6 +6,29 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-29 — Phase 13 documentation and status update
+
+Rewrote [ai-architecture.md](../architecture/ai-architecture.md) with an
+"Implementation" section describing the actual provider-neutral adapter
+(`src/lib/ai/adapter.ts`, `providers/anthropic-provider.ts`,
+`get-provider.ts`), the environment-vs-organization availability split,
+the structural governance-boundary enforcement (a static import scan in
+`ai-governance.test.ts`), prompt-injection defenses, and grounding/usage-
+tracking detail, built on `feature/phase-13-ai-copilot`. Updated
+[ADR-0008](../architecture/decisions/0008-provider-neutral-ai-abstraction.md)
+from "Proposed" to "Accepted." Updated
+[database-schema.md](../architecture/database-schema.md) with the 2 new
+tables (`ai_drafts`, `ai_usage_events`). Updated
+[environment-variables.md](../development/environment-variables.md) to
+move `ANTHROPIC_API_KEY` from "planned" to "current," documenting its
+placeholder-detection and optional-at-boot behavior. Updated
+[phase-tracker.md](phase-tracker.md): Phase 12 marked `Complete` (merged
+via PR #15); Phase 13 added with implementation/testing detail and
+known gaps (live Claude API output unverified — only the documented
+placeholder credential exists in this environment). Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-07-28 — Phase 12 documentation and status update
 
 Added

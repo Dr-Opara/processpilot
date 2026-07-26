@@ -171,6 +171,11 @@ export const AuditAction = {
   CertificationRevoked: "certification.revoked",
   // source: "system" — recorded by the certification-expiry-check background job.
   CertificationExpired: "certification.expired",
+
+  // Phase 13 (AI ingestion and copilot).
+  AiDraftGenerated: "ai_draft.generated",
+  AiDraftAccepted: "ai_draft.accepted",
+  AiDraftDismissed: "ai_draft.dismissed",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -204,6 +209,7 @@ export const AuditResourceType = {
   TrainingCourse: "training_course",
   TrainingAssignment: "training_assignment",
   Certification: "certification",
+  AiDraft: "ai_draft",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

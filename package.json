@@ -27,6 +27,7 @@
     "check:bundle-secrets": "node scripts/check-no-service-role-in-client-bundle.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@clerk/nextjs": "^7.5.20",
     "@supabase/supabase-js": "^2.110.8",
     "@xyflow/react": "^12.11.2",

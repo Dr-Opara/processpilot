@@ -164,7 +164,7 @@ describe("supabase/migrations schema coverage", () => {
     tablesWithAuthenticatedRevoke,
   } = parseSchema(sql);
 
-  it("found the expected 60 tables from the domain model", () => {
+  it("found the expected 62 tables from the domain model", () => {
     // A change to this count is not itself wrong — it's a prompt to
     // confirm the new/removed table was intentional and update this
     // expectation deliberately, not silently drift. 17 (Phase 4) + 2
@@ -183,8 +183,8 @@ describe("supabase/migrations schema coverage", () => {
     // waiver_approvals, waiver_renewals, recurrence_matches) + 5
     // (Phase 12: training_courses, training_course_versions,
     // training_assignments, training_assignment_history,
-    // certifications).
-    expect(tables.size).toBe(60);
+    // certifications) + 2 (Phase 13: ai_drafts, ai_usage_events).
+    expect(tables.size).toBe(62);
   });
 
   it("enables Row-Level Security on every table", () => {

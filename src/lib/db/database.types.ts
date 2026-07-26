@@ -1253,3 +1253,48 @@ export interface CertificationRow {
   created_at: string;
   created_by: string | null;
 }
+
+// --- Phase 13: AI ingestion and copilot ---
+
+export type AiDraftType =
+  | "process_extraction"
+  | "training_content"
+  | "process_improvement"
+  | "exception_summary"
+  | "document_comparison"
+  | "qa_answer";
+
+export type AiDraftStatus = "pending" | "accepted" | "dismissed";
+
+export interface AiDraftRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  draft_type: AiDraftType;
+  source_type: string | null;
+  source_id: string | null;
+  prompt_summary: string;
+  output: Record<string, unknown>;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  status: AiDraftStatus;
+  accepted_resource_type: string | null;
+  accepted_resource_id: string | null;
+  decided_at: string | null;
+  decided_by: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export interface AiUsageEventRow {
+  id: string;
+  organization_id: string;
+  feature: string;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  ai_draft_id: string | null;
+  created_at: string;
+  created_by: string | null;
+}

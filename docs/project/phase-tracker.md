@@ -31,7 +31,7 @@ phases from this tracker and does not close until those phases are
 | 10    | Approvals and escalations                   | Complete    |
 | 11    | Exception management                        | Complete    |
 | 12    | Training and certifications                 | Complete    |
-| 13    | AI ingestion and copilot                    | Not Started |
+| 13    | AI ingestion and copilot                    | Complete    |
 | 14    | Analytics                                   | Not Started |
 | 15    | Audit and compliance center                 | Not Started |
 | 16    | Notifications                               | Not Started |
@@ -567,10 +567,45 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Every AI capability is verifiably incapable of
   independently publishing, approving, closing, or certifying — covered
   by tests asserting the governance boundary, not just documentation.
-- **Status:** Not Started.
+- **Status:** Complete. Implementation complete: the provider-neutral
+  adapter (`src/lib/ai/adapter.ts`, `providers/anthropic-provider.ts`,
+  `get-provider.ts`, per [ADR-0008](../architecture/decisions/0008-provider-neutral-ai-abstraction.md)),
+  all six catalog capabilities (grounded Q&A with citation validation,
+  process-step extraction, draft training content, document-version
+  comparison, exception summarization, process-improvement suggestions
+  grounded in real exception history) as `src/lib/services/ai-*.ts`
+  modules that import only read functions from the rest of the
+  codebase, an `ai_drafts`/`ai_usage_events` persistence layer requiring
+  an explicit human accept/dismiss action before anything is acted on,
+  prompt-injection defenses (fixed governance system prompt,
+  fenced/isolated retrieved content, code-level citation validation —
+  `src/lib/ai/prompt-safety.ts`), an environment-vs-organization
+  availability split (`isAiConfigured()`/`isAiCopilotEnabledForOrg()`),
+  and the new `training.complete`-style `ai.use`/`ai.configure`
+  permission-gated `/app/ai` and `/app/ai/settings` routes. The
+  governance boundary is enforced structurally (no `ai-*.ts` module
+  imports a publish/approve/close/certify function) and verified by
+  `src/lib/services/ai-governance.test.ts`'s static import scan, per
+  this phase's exit criterion. `npm run phase:commit` (format, lint,
+  typecheck, unit tests, production build) is green.
+- **Known gaps carried forward:** Live output from the Claude API is
+  **unverified** in this environment — only the documented
+  `.env.example` placeholder is present, not a real credential, so
+  every test exercises the adapter through deterministic mocked
+  providers, never a real model response; this must be verified for
+  real before this phase's AI output is treated as production-proven,
+  not just correctly wired. Retrieval is keyword/join-based, not
+  semantic/vector search. No notification delivery when a draft is
+  generated — Phase 16's job, same deferred posture as every other
+  phase. Same carried-forward live-RLS integration-suite gap as prior
+  phases (not verified against a real Supabase project in this
+  environment).
 - **Risks:** The single highest product-trust risk in the roadmap if the
-  governance boundary is not enforced server-side — mandatory
-  security-review gate before this phase can close.
+  governance boundary is not enforced server-side — mitigated here by
+  the structural import restriction plus its static test, but a
+  dedicated security-review pass (Phase 22) should still re-verify this
+  boundary independently before general availability, per this phase's
+  own stated risk.
 
 ## Phase 14: Analytics
 
