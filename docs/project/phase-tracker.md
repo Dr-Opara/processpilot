@@ -30,7 +30,7 @@ phases from this tracker and does not close until those phases are
 | 9     | Forms and evidence                          | Complete    |
 | 10    | Approvals and escalations                   | Complete    |
 | 11    | Exception management                        | Complete    |
-| 12    | Training and certifications                 | Not Started |
+| 12    | Training and certifications                 | Complete    |
 | 13    | AI ingestion and copilot                    | Not Started |
 | 14    | Analytics                                   | Not Started |
 | 15    | Audit and compliance center                 | Not Started |
@@ -524,7 +524,32 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   assignment rules.
 - **Exit criteria:** A course can be assigned, completed, and result in a
   certification with a tracked expiry/renewal date.
-- **Status:** Not Started.
+- **Status:** Complete. Implementation complete: course authoring/
+  versioning following ADR-0011's mutable-shell/immutable-published-
+  version split (same pattern as Phase 9's forms), an optional embedded
+  multiple-choice assessment, assignment by individual/role/department/
+  team (fanning out to one assignment per resolved member, deduplicated
+  against re-assignment), completion tracking with assessment scoring
+  and automatic overdue detection, certification issuance on a pass
+  with required-choice expiry, renewal (a new chained row, never
+  mutating the prior certification), and revocation —
+  `src/lib/services/training-courses.ts`/`training-assessment.ts`/
+  `training-assignments.ts`/`certifications.ts`. New `training.complete`
+  permission (assignee's own narrower grant, alongside the existing
+  `training.view`/`training.manage`). Routes: `/app/training`,
+  `/app/training/new`, `/app/training/[courseId]`, `/app/training/my`,
+  `/app/training/assignments/[assignmentId]`, `/app/certifications`.
+  `npm run phase:commit` (format, lint, typecheck, unit tests,
+  production build) is green. See
+  [training-and-certifications.md](../architecture/training-and-certifications.md).
+- **Known gaps carried forward:** Course content is a single text
+  field, not a structured authoring/media pipeline. No notification
+  delivery for assignment/due-date/certification-expiry events —
+  Phase 16's job, same deferred posture as every prior phase. No
+  reminder emails before a due date, only the automatic overdue
+  transition itself. Same carried-forward live-RLS integration-suite
+  gap as prior phases (not verified against a real Supabase project in
+  this environment).
 - **Risks:** None beyond standard scoping coverage.
 
 ## Phase 13: AI ingestion and copilot

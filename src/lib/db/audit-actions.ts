@@ -159,6 +159,18 @@ export const AuditAction = {
   WaiverRevoked: "waiver.revoked",
   // source: "system" — recorded by the waiver-expiration background job.
   WaiverExpired: "waiver.expired",
+
+  // Phase 12 (Training and certifications).
+  TrainingCourseCreated: "training_course.created",
+  TrainingCourseVersionPublished: "training_course_version.published",
+  TrainingAssignmentCreated: "training_assignment.created",
+  TrainingAssignmentCompleted: "training_assignment.completed",
+  TrainingAssignmentWaived: "training_assignment.waived",
+  CertificationIssued: "certification.issued",
+  CertificationRenewed: "certification.renewed",
+  CertificationRevoked: "certification.revoked",
+  // source: "system" — recorded by the certification-expiry-check background job.
+  CertificationExpired: "certification.expired",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -189,6 +201,9 @@ export const AuditResourceType = {
   Exception: "exception",
   CapaPlan: "capa_plan",
   TemporaryWaiver: "temporary_waiver",
+  TrainingCourse: "training_course",
+  TrainingAssignment: "training_assignment",
+  Certification: "certification",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

@@ -36,10 +36,12 @@ graph LR
 ## Current position
 
 Milestone 2 (Core Platform) is in progress; Phases 5–10 are `Complete`
-per the phase tracker and Milestone 3 (Execution governance) work has
-begun in parallel with Phase 11 (Exception management), on
-`feature/phase-11-exceptions-capa`. Phase 4 (Database and tenant
-isolation) remains `In Progress` pending a live Supabase project — see
+per the phase tracker and Milestone 3 (Execution governance) is
+progressing in parallel — Phases 11 (Exception management) and 12
+(Training and certifications) are `Complete`, and Phase 13 (AI ingestion
+and copilot) is starting on `feature/phase-13-ai-copilot`. Phase 4
+(Database and tenant isolation) remains `In Progress` pending a live
+Supabase project — see
 [current-project-status.md](current-project-status.md) for the live
 snapshot.
 

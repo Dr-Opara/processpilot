@@ -1145,3 +1145,111 @@ export interface RecurrenceMatchRow {
   match_basis: Record<string, unknown>;
   created_at: string;
 }
+
+// --- Phase 12: training and certifications ---
+
+export type TrainingCourseStatus = "draft" | "published" | "archived";
+
+export interface TrainingCourseRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  title: string;
+  description: string | null;
+  category: string | null;
+  status: TrainingCourseStatus;
+  current_version_id: string | null;
+  owner_member_id: string | null;
+  created_at: string;
+  created_by: string | null;
+  updated_at: string;
+  archived_at: string | null;
+}
+
+export interface TrainingAssessmentOption {
+  key: string;
+  label: string;
+}
+
+export interface TrainingAssessmentQuestion {
+  id: string;
+  prompt: string;
+  options: TrainingAssessmentOption[];
+  correctOptionKey: string;
+}
+
+export type TrainingCourseVersionStatus = "draft" | "published" | "superseded";
+
+export interface TrainingCourseVersionRow {
+  id: string;
+  organization_id: string;
+  course_id: string;
+  department_id: string | null;
+  version_number: number;
+  title: string;
+  content: string;
+  has_assessment: boolean;
+  assessment_questions: TrainingAssessmentQuestion[];
+  passing_score_percent: number | null;
+  status: TrainingCourseVersionStatus;
+  published_by: string | null;
+  published_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export type TrainingAssignedVia = "individual" | "role" | "department" | "team";
+export type TrainingAssignmentStatus =
+  "assigned" | "in_progress" | "completed" | "overdue" | "waived";
+
+export interface TrainingAssignmentRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  course_version_id: string;
+  assignee_member_id: string;
+  assigned_via: TrainingAssignedVia;
+  due_at: string | null;
+  status: TrainingAssignmentStatus;
+  attempt_count: number;
+  started_at: string | null;
+  completed_at: string | null;
+  score_percent: number | null;
+  passed: boolean | null;
+  answers: Record<string, string>;
+  waived_reason: string | null;
+  waived_by: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export interface TrainingAssignmentHistoryRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  training_assignment_id: string;
+  event_type: string;
+  actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export type CertificationStatus = "active" | "expired" | "revoked";
+
+export interface CertificationRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  member_id: string;
+  course_id: string;
+  training_assignment_id: string | null;
+  issued_at: string;
+  expires_at: string | null;
+  status: CertificationStatus;
+  renewed_from_certification_id: string | null;
+  revoked_reason: string | null;
+  revoked_by: string | null;
+  revoked_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}

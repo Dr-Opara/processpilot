@@ -6,6 +6,22 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-28 — Phase 12 documentation and status update
+
+Added
+[training-and-certifications.md](../architecture/training-and-certifications.md)
+documenting course authoring/versioning (the same immutable-published-
+version pattern as Phase 9's forms), the embedded multiple-choice
+assessment model, role/department/team/individual assignment,
+completion tracking, and certification issuance/renewal/revocation
+built on `feature/phase-12-training-certifications`. Updated
+[database-schema.md](../architecture/database-schema.md) with the 5 new
+tables. Updated [phase-tracker.md](phase-tracker.md): Phase 11 marked
+`Complete` (merged via PR #14); Phase 12 added with implementation/
+testing detail and known gaps. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-07-27 — Phase 11 documentation and status update
 
 Added [exception-management.md](../architecture/exception-management.md)
