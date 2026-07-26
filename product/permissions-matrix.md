@@ -40,6 +40,8 @@ touches a protected resource — never through UI visibility alone. See
 | `evidence.upload`       | Upload evidence files against a task or approval.                         |
 | `evidence.review`       | Review uploaded evidence for adequacy.                                    |
 | `approval.review`       | Approve or reject an approval step.                                       |
+| `approval.manage`       | Create/edit approval policies; administratively override a decision.      |
+| `sla.manage`            | Create/edit SLA definitions, business calendars, and escalation rules.    |
 | `exception.create`      | Flag or record a new exception.                                           |
 | `exception.manage`      | Triage, assign, and resolve exceptions and corrective actions.            |
 | `training.view`         | View own or scoped training assignments and certifications.               |
@@ -91,6 +93,8 @@ via a custom role if `role.manage` is used to do so.
 | evidence.upload       |                    |                    |               | Scoped  | ✓             |         | Scoped        |
 | evidence.review       |                    |                    | Scoped        | Scoped  |               | Scoped  |               |
 | approval.review       |                    |                    | Scoped        | Scoped  |               |         | Scoped        |
+| approval.manage       |                    | ✓                  | Scoped        | Scoped  |               |         |               |
+| sla.manage            |                    | ✓                  | Scoped        |         |               |         |               |
 | exception.create      |                    | ✓                  | Scoped        | Scoped  | ✓             |         |               |
 | exception.manage      |                    | ✓                  | Scoped        | Scoped  |               |         |               |
 | training.view         | ✓                  | ✓                  |               | Scoped  | Scoped (self) | Scoped  |               |

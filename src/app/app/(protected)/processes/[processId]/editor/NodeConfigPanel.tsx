@@ -21,6 +21,8 @@ export function NodeConfigPanel({
   roles,
   teams,
   forms,
+  approvalPolicies,
+  slaDefinitions,
   onChangeNode,
   onChangeEdge,
   onDelete,
@@ -30,6 +32,8 @@ export function NodeConfigPanel({
   roles: Option[];
   teams: Option[];
   forms: Option[];
+  approvalPolicies: Option[];
+  slaDefinitions: Option[];
   onChangeNode: (id: string, data: Partial<CanvasNodeData>) => void;
   onChangeEdge: (id: string, data: Partial<CanvasEdgeData> & { label?: string }) => void;
   onDelete: () => void;
@@ -182,6 +186,50 @@ export function NodeConfigPanel({
           <Label htmlFor="node-required">Required</Label>
         </Cluster>
       )}
+
+      {data.nodeType === "approval" && (
+        <Stack className="gap-1">
+          <Label htmlFor="node-approval-policy-id">Approval policy (optional)</Label>
+          <Select
+            id="node-approval-policy-id"
+            value={data.approvalPolicyId ?? ""}
+            onChange={(e) => update({ approvalPolicyId: e.target.value || null })}
+          >
+            <option value="">Single assignee (no policy)</option>
+            {approvalPolicies.map((policy) => (
+              <option key={policy.id} value={policy.id}>
+                {policy.name}
+              </option>
+            ))}
+          </Select>
+          <Text className="text-xs text-muted">
+            When set, this step requires the policy&rsquo;s configured multi-approver chain instead
+            of the assignee above.
+          </Text>
+        </Stack>
+      )}
+
+      {data.nodeType !== "start" &&
+        data.nodeType !== "end" &&
+        data.nodeType !== "parallel_split" &&
+        data.nodeType !== "parallel_join" &&
+        data.nodeType !== "decision" && (
+          <Stack className="gap-1">
+            <Label htmlFor="node-sla-definition-id">SLA (optional)</Label>
+            <Select
+              id="node-sla-definition-id"
+              value={data.slaDefinitionId ?? ""}
+              onChange={(e) => update({ slaDefinitionId: e.target.value || null })}
+            >
+              <option value="">No SLA target</option>
+              {slaDefinitions.map((definition) => (
+                <option key={definition.id} value={definition.id}>
+                  {definition.name}
+                </option>
+              ))}
+            </Select>
+          </Stack>
+        )}
 
       {data.nodeType === "form" && (
         <Stack className="gap-1">

@@ -5,6 +5,11 @@ import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { enqueueJob } from "@/lib/jobs/enqueue";
 import { evaluateCondition, type WorkflowInstanceContext } from "@/lib/services/workflow-condition";
 import { getPublishedFormVersion } from "@/lib/services/forms";
+import {
+  createApprovalDecisions,
+  getActiveApprovalPolicy,
+} from "@/lib/services/approval-resolution";
+import { resolveDueAt } from "@/lib/services/sla";
 import type {
   ProcessEdge,
   ProcessGraphDefinition,
@@ -78,7 +83,7 @@ export function hasUnsupportedNodeType(definition: ProcessGraphDefinition): bool
   return definition.nodes.some((node) => node.type === "system_action");
 }
 
-async function buildInstanceContext(
+export async function buildInstanceContext(
   sql: Sql,
   workflowId: string,
 ): Promise<WorkflowInstanceContext> {
@@ -149,7 +154,10 @@ const HUMAN_NODE_TYPES = new Set(["human_task", "approval", "form", "evidence"])
 
 export interface ActivateNodeParams {
   sql: Sql;
-  workflow: Pick<WorkflowRow, "id" | "organization_id" | "process_version_id">;
+  workflow: Pick<
+    WorkflowRow,
+    "id" | "organization_id" | "process_version_id" | "process_id" | "department_id" | "started_by"
+  >;
   graph: GraphIndex;
   nodeId: string;
 }
@@ -191,6 +199,10 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
       ? ((await getPublishedFormVersion(sql, workflow.organization_id, node.data.formId))?.id ??
         null)
       : null;
+  const approvalPolicy =
+    node.type === "approval" && node.data.approvalPolicyId
+      ? await getActiveApprovalPolicy(sql, workflow.organization_id, node.data.approvalPolicyId)
+      : null;
 
   let task: TaskRow;
   try {
@@ -198,13 +210,13 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
       insert into tasks (
         organization_id, workflow_id, node_id, node_type, label, required, status,
         assignee_member_id, assignee_team_id, assignee_role_id,
-        completed_at, completed_by, form_version_id
+        completed_at, completed_by, form_version_id, approval_policy_id
       ) values (
         ${workflow.organization_id}, ${workflow.id}, ${node.id}, ${node.type}, ${node.data.label || node.id},
         ${node.data.required ?? true},
         ${isSystemExecuted ? "completed" : node.type === "timer" || node.type === "subprocess" ? "in_progress" : "assigned"},
         ${assignment?.assigneeMemberId ?? null}, ${assignment?.assigneeTeamId ?? null}, ${assignment?.assigneeRoleId ?? null},
-        ${isSystemExecuted ? new Date() : null}, null, ${formVersionId}
+        ${isSystemExecuted ? new Date() : null}, null, ${formVersionId}, ${approvalPolicy?.id ?? null}
       )
       returning *
     `;
@@ -214,6 +226,33 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
   }
 
   await recordTaskHistory(sql, task, "task.created", null, { nodeType: node.type });
+
+  if (approvalPolicy) {
+    await createApprovalDecisions(sql, task, approvalPolicy, {
+      departmentId: workflow.department_id,
+      startedByMemberId: workflow.started_by,
+      processId: workflow.process_id,
+      instanceContext: await buildInstanceContext(sql, workflow.id),
+    });
+  }
+
+  if (!isSystemExecuted && node.data.slaDefinitionId) {
+    const resolved = await resolveDueAt(
+      sql,
+      workflow.organization_id,
+      node.data.slaDefinitionId,
+      task.started_at ? new Date(task.started_at) : new Date(),
+    );
+    if (resolved) {
+      await sql`update tasks set due_at = ${resolved.dueAt}, sla_definition_id = ${resolved.definition.id} where id = ${task.id}`;
+      await enqueueJob(sql, workflow.organization_id, {
+        jobType: "task-escalation-check",
+        payload: { taskId: task.id },
+        idempotencyKey: `task-escalation-check:${task.id}:initial`,
+        scheduledAt: resolved.dueAt,
+      });
+    }
+  }
 
   if (node.type === "start") {
     await recordTaskHistory(sql, task, "task.completed", null, {});
@@ -317,7 +356,10 @@ function isUniqueViolation(error: unknown): boolean {
 
 export interface AdvanceFromParams {
   sql: Sql;
-  workflow: Pick<WorkflowRow, "id" | "organization_id" | "process_version_id">;
+  workflow: Pick<
+    WorkflowRow,
+    "id" | "organization_id" | "process_version_id" | "process_id" | "department_id" | "started_by"
+  >;
   graph: GraphIndex;
   task: Pick<TaskRow, "node_id">;
 }
