@@ -2,8 +2,13 @@
 
 ## Status
 
-Proposed — not yet integrated. Implemented in Phase 13 (AI ingestion and
-copilot).
+Accepted. Implemented in Phase 13 (AI ingestion and copilot) —
+`src/lib/ai/adapter.ts` (the interface), `src/lib/ai/providers/
+anthropic-provider.ts` (the initial concrete provider), and
+`src/lib/ai/get-provider.ts` (the one factory function every ai-*.ts
+feature service calls). See
+[ai-architecture.md](../ai-architecture.md) for the governance-boundary
+detail this decision exists to protect.
 
 ## Context
 

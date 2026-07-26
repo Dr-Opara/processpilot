@@ -5,29 +5,30 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-28.
+**Last updated:** 2026-07-29.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
-  In Progress. Milestone 3 (Execution governance) work is progressing in
-  parallel via Phases 11–12.
-- **Current phase:** Phase 13 — AI ingestion and copilot, starting on
-  `feature/phase-13-ai-copilot`.
+  In Progress. Milestone 3 (Execution governance) is progressing in
+  parallel; Milestone 4 (Intelligence) has begun via Phase 13.
+- **Current phase:** Phase 14 — Analytics, starting on
+  `feature/phase-14-analytics`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, and 12** (business onboarding/employee
-  management, knowledge management, process builder, workflow execution
-  engine, forms and evidence, approvals/SLAs/escalations, exceptions/CAPA,
-  training/certifications) are `Complete` per the phase tracker — Phase 9
-  merged via PR #12 (commit `5427118`); Phase 10 merged via PR #13; Phase
-  11 merged via PR #14; Phase 12 merged via the
-  `feature/phase-12-training-certifications` PR. Phase 4 (database and
-  tenant isolation) remains recorded as `In Progress` in the tracker; this
-  document does not re-audit that status.
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, and 13** (business onboarding/
+  employee management, knowledge management, process builder, workflow
+  execution engine, forms and evidence, approvals/SLAs/escalations,
+  exceptions/CAPA, training/certifications, AI copilot) are `Complete`
+  per the phase tracker — Phase 9 merged via PR #12 (commit `5427118`);
+  Phase 10 merged via PR #13; Phase 11 merged via PR #14; Phase 12
+  merged via PR #15; Phase 13 merged via the `feature/phase-13-ai-copilot`
+  PR. Phase 4 (database and tenant isolation) remains recorded as
+  `In Progress` in the tracker; this document does not re-audit that
+  status.
 
 ## What's built
 
@@ -35,7 +36,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   [product/information-architecture.md](../../product/information-architecture.md).
 - Authentication: Clerk sign-up/sign-in, organization creation and
   invitation at `/app/*`, server-side session gating via `requireAuth()`.
-- Database schema: 60 tables in
+- Database schema: 62 tables in
   [docs/architecture/database-schema.md](../architecture/database-schema.md),
   committed as SQL migrations with Row-Level Security enabled and at
   least one policy on every table — statically enforced by
@@ -136,9 +137,32 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   for the full model and known gaps (single-text course content, not a
   structured authoring/media pipeline; no reminder emails before a due
   date).
+- AI copilot (Phase 13, complete): a provider-neutral adapter
+  (`src/lib/ai/adapter.ts`, `providers/anthropic-provider.ts`,
+  `get-provider.ts`, per ADR-0008) backing six governed capabilities —
+  grounded Q&A with citation validation, process-step extraction from a
+  knowledge document, draft training content, document-version
+  comparison, exception summarization, and process-improvement
+  suggestions grounded in real exception history
+  (`src/lib/services/ai-qa.ts`, `ai-process-extraction.ts`,
+  `ai-training-draft.ts`, `ai-document-comparison.ts`,
+  `ai-exception-summary.ts`, `ai-process-improvement.ts`). Every
+  capability only imports read functions from the rest of the codebase
+  (never publish/approve/close/certify) — enforced structurally and
+  verified by a static import-scan test
+  (`src/lib/services/ai-governance.test.ts`) — and every output is
+  persisted as a pending `ai_drafts` row requiring an explicit human
+  accept/dismiss action. Environment-level (`isAiConfigured()`) and
+  organization-level (`isAiCopilotEnabledForOrg()`) availability are
+  distinct and both gate every feature. Routes: `/app/ai`,
+  `/app/ai/settings`. See
+  [ai-architecture.md](../architecture/ai-architecture.md) for the full
+  model and known gaps (live Claude API output is unverified in this
+  environment — only a placeholder credential exists; keyword-based,
+  not semantic, retrieval).
 - Audit foundation: `recordAuditEvent()`, called from every mutating
   service-layer action, including the workflow engine's and Phase 9's/
-  Phase 10's/Phase 11's/Phase 12's.
+  Phase 10's/Phase 11's/Phase 12's/Phase 13's.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -159,8 +183,12 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- AI copilot, analytics, audit/compliance center, notifications,
-  billing, integrations, external portal (later phases/milestones).
+- Analytics, audit/compliance center, notifications, billing,
+  integrations, external portal (later phases/milestones).
+- Live-verified AI output — the AI copilot's code is complete and
+  tested against deterministic mocked providers, but no real
+  `ANTHROPIC_API_KEY` has been supplied in this environment yet, so
+  actual Claude API responses remain unverified end-to-end.
 
 ## Immediate next steps
 
@@ -168,8 +196,11 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    see [supabase-setup.md](../development/supabase-setup.md). Blocks
    applying the committed migrations, regenerating real database types,
    and running the live-DB tenant-isolation tests for real.
-2. Begin Phase 13 (AI ingestion and copilot) on
-   `feature/phase-13-ai-copilot`.
+2. Supply a real `ANTHROPIC_API_KEY` (Codespaces/CI/Vercel secrets, per
+   [environment-variables.md](../development/environment-variables.md))
+   to verify live AI output for real, then re-run the Phase 13 test
+   suite against it.
+3. Begin Phase 14 (analytics) on `feature/phase-14-analytics`.
 
 ## Known risks carried forward
 

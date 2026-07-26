@@ -131,13 +131,15 @@ erDiagram
 | `training_assignments`          | `20260728000001_...`                                       |         Yes         | One row per `(course_version, assignee)`.                                                                                                                       |
 | `training_assignment_history`   | `20260728000001_...`                                       |         Yes         | Append-only, same shape as `task_history`.                                                                                                                      |
 | `certifications`                | `20260728000001_...`                                       |         Yes         | `expires_at` nullable only as an explicit non-expiring choice; renewal inserts a new row chained via `renewed_from_certification_id`.                           |
+| `ai_drafts`                     | `20260729000001_ai_copilot`                                |         Yes         | Phase 13. See [ai-architecture.md](ai-architecture.md). No mutation function is ever called from an `ai_drafts` write path.                                     |
+| `ai_usage_events`               | `20260729000001_...`                                       |         Yes         | One row per adapter call — token/model/feature — independent of whether a draft was persisted.                                                                  |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11 and Phase 12's rows above are complete; a full
+into this summary table). Phase 11, Phase 12, and Phase 13's rows above are complete; a full
 backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.
