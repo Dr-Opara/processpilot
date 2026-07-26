@@ -78,6 +78,8 @@ function CanvasInner({
   roles,
   teams,
   forms,
+  approvalPolicies,
+  slaDefinitions,
   onGraphChange,
 }: {
   draftKey: string;
@@ -85,6 +87,8 @@ function CanvasInner({
   roles: Option[];
   teams: Option[];
   forms: Option[];
+  approvalPolicies: Option[];
+  slaDefinitions: Option[];
   onGraphChange: (graph: ProcessGraphDefinition) => void;
 }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<CanvasNode>(
@@ -395,6 +399,8 @@ function CanvasInner({
             roles={roles}
             teams={teams}
             forms={forms}
+            approvalPolicies={approvalPolicies}
+            slaDefinitions={slaDefinitions}
             onChangeNode={updateNodeData}
             onChangeEdge={updateEdgeData}
             onDelete={deleteSelected}
@@ -419,6 +425,8 @@ export function ProcessCanvas({
   roles,
   teams,
   forms,
+  approvalPolicies,
+  slaDefinitions,
   onGraphChange,
 }: {
   draftKey: string;
@@ -426,6 +434,8 @@ export function ProcessCanvas({
   roles: Option[];
   teams: Option[];
   forms: Option[];
+  approvalPolicies: Option[];
+  slaDefinitions: Option[];
   onGraphChange: (graph: ProcessGraphDefinition) => void;
 }) {
   return (
@@ -436,6 +446,8 @@ export function ProcessCanvas({
         roles={roles}
         teams={teams}
         forms={forms}
+        approvalPolicies={approvalPolicies}
+        slaDefinitions={slaDefinitions}
         onGraphChange={onGraphChange}
       />
     </ReactFlowProvider>

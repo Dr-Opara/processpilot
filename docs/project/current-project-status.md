@@ -5,24 +5,26 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-25.
+**Last updated:** 2026-07-26.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress.
-- **Current phase:** Phase 9 — Forms and evidence management, In Progress
-  (branch `feature/phase-9-forms-evidence`, not yet merged).
+- **Current phase:** Phase 11 — Exception management, starting on
+  `feature/phase-11-exceptions-capa`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, and 8** (business onboarding/employee management,
-  knowledge management, process builder, workflow execution engine) are
-  `Complete` per the phase tracker. Phase 4 (database and tenant
-  isolation) remains recorded as `In Progress` in the tracker; this
-  document does not re-audit that status.
+- **Phases 5, 6, 7, 8, 9, and 10** (business onboarding/employee management,
+  knowledge management, process builder, workflow execution engine, forms
+  and evidence, approvals/SLAs/escalations) are `Complete` per the phase
+  tracker — Phase 9 merged via PR #12 (commit `5427118`); Phase 10 merged
+  via the `feature/phase-10-approvals-slas-escalations` PR. Phase 4
+  (database and tenant isolation) remains recorded as `In Progress` in the
+  tracker; this document does not re-audit that status.
 
 ## What's built
 
@@ -61,7 +63,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   node-type/state-machine detail and known gaps (manual start only;
   `system_action` nodes unsupported; deadline breach is detection-only,
   not full escalation).
-- Forms and evidence (Phase 9, in progress): governed, versioned form
+- Forms and evidence (Phase 9, complete): governed, versioned form
   authoring with an 8-type field/validation/conditional-visibility
   engine (`src/lib/services/form-schema.ts`), structured submissions
   with draft save, final submit, and immutable amendments
@@ -75,8 +77,31 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   [forms-and-evidence.md](../architecture/forms-and-evidence.md) for the
   full model and known gaps (no malware scanning; evidence acceptance
   doesn't gate workflow advancement).
+- Approvals, SLAs, and escalations (Phase 10, complete): configurable
+  multi-approver chains (sequential/parallel/unanimous/majority/
+  first-response/any-one strategies; user/role/manager/department-owner/
+  process-owner/location-manager/team-manager/runtime-expression approver
+  assignment; delegation; administrative override; self-approval
+  prevention; approve/reject/request-changes with comments and
+  attachments) in `src/lib/services/approval-policies.ts`,
+  `approval-resolution.ts`, and `approvals.ts`; business-calendar- and
+  time-zone-aware SLA due-date resolution with holiday support, pause/
+  resume, and explicit recalculation (`business-calendar.ts`,
+  `sla-config.ts`, `sla.ts`); numbered escalation levels (reminders,
+  reassignment, manager/process-owner/admin escalation) via the
+  self-rescheduling `task-escalation-check` background job
+  (`escalation.ts`, `src/lib/jobs/escalation-handlers.ts`).
+  `workflow-engine.ts`'s `approval` node type now snapshots a linked
+  policy and resolves a linked SLA definition at task-creation time.
+  Routes: `/app/approval-policies/*`, `/app/sla/*`, the task-detail
+  chained-approval/attachment/SLA-control panels. See
+  [approvals-and-slas.md](../architecture/approvals-and-slas.md) for the
+  full model and known gaps (no malware scanning on attachments, same
+  deferred posture as Phase 9; SLA pause/resume is a manual, explicit
+  action only).
 - Audit foundation: `recordAuditEvent()`, called from every mutating
-  service-layer action, including the workflow engine's and Phase 9's.
+  service-layer action, including the workflow engine's and Phase 9's/
+  Phase 10's.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -94,12 +119,9 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
 - Scheduled/event-triggered workflow starts (Phase 8 supports manual
   start only) and `system_action` node execution.
-- Malware/virus scanning for evidence uploads (deferred since Phase 6,
-  same posture); an `evidence` node's task completion isn't gated on
-  evidence acceptance.
-- Configurable multi-step approval chains, SLA reminders/escalation
-  (Phase 10) — Phase 8 has a single-assignee approval decision and
-  deadline-breach _detection_ only.
+- Malware/virus scanning for evidence/approval-attachment uploads
+  (deferred since Phase 6, same posture); an `evidence` node's task
+  completion isn't gated on evidence acceptance.
 - Exception/CAPA management, training/certifications, AI copilot,
   analytics, audit/compliance center, notifications, billing,
   integrations, external portal (later phases/milestones).
@@ -110,9 +132,8 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    see [supabase-setup.md](../development/supabase-setup.md). Blocks
    applying the committed migrations, regenerating real database types,
    and running the live-DB tenant-isolation tests for real.
-2. Merge `feature/phase-9-forms-evidence` into `develop` once reviewed,
-   and mark Phase 9 `Complete` in the phase tracker.
-3. Phase 10: approvals, SLAs, and escalations, once Phase 9 is merged.
+2. Begin Phase 11 (exception management) on
+   `feature/phase-11-exceptions-capa`.
 
 ## Known risks carried forward
 

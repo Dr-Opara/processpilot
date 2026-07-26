@@ -11,6 +11,12 @@ import {
 } from "@/lib/services/workflows";
 import { amendForm, saveFormDraft, submitForm } from "@/lib/services/form-submissions";
 import { reviewEvidence } from "@/lib/services/evidence";
+import {
+  decideApprovalChain,
+  delegateApprovalDecision,
+  overrideApprovalDecision,
+} from "@/lib/services/approvals";
+import { pauseTaskSla, recalculateTaskDueAt, resumeTaskSla } from "@/lib/services/sla";
 
 function parseOutput(formData: FormData): Record<string, unknown> | undefined {
   const raw = String(formData.get("output") ?? "").trim();
@@ -111,6 +117,67 @@ export async function reviewEvidenceAction(
 ): Promise<void> {
   await runFormAction(`/app/tasks/${taskId}`, async () => {
     await reviewEvidence(evidenceId, { decision, notes: String(formData.get("notes") ?? "") });
+    revalidatePath(`/app/tasks/${taskId}`);
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function decideApprovalChainAction(
+  taskId: string,
+  decision: "approved" | "rejected" | "changes_requested",
+  formData: FormData,
+): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await decideApprovalChain(taskId, { decision, comment: String(formData.get("comment") ?? "") });
+    revalidatePath(`/app/tasks/${taskId}`);
+    revalidatePath("/app/tasks");
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function delegateApprovalDecisionAction(
+  taskId: string,
+  formData: FormData,
+): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await delegateApprovalDecision(taskId, String(formData.get("toMemberId") ?? ""));
+    revalidatePath(`/app/tasks/${taskId}`);
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function overrideApprovalDecisionAction(
+  taskId: string,
+  decision: "approved" | "rejected",
+  formData: FormData,
+): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await overrideApprovalDecision(taskId, decision, String(formData.get("reason") ?? ""));
+    revalidatePath(`/app/tasks/${taskId}`);
+    revalidatePath("/app/tasks");
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function pauseTaskSlaAction(taskId: string): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await pauseTaskSla(taskId);
+    revalidatePath(`/app/tasks/${taskId}`);
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function resumeTaskSlaAction(taskId: string): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await resumeTaskSla(taskId);
+    revalidatePath(`/app/tasks/${taskId}`);
+    return `/app/tasks/${taskId}`;
+  });
+}
+
+export async function recalculateTaskDueAtAction(taskId: string): Promise<void> {
+  await runFormAction(`/app/tasks/${taskId}`, async () => {
+    await recalculateTaskDueAt(taskId);
     revalidatePath(`/app/tasks/${taskId}`);
     return `/app/tasks/${taskId}`;
   });

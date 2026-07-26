@@ -10,15 +10,23 @@ import { getCurrentMembership } from "@/lib/authz";
 import { getTaskDetail } from "@/lib/services/workflows";
 import { getFormSubmissionForTask } from "@/lib/services/form-submissions";
 import { listEvidenceForTask } from "@/lib/services/evidence";
+import { isDecisionActionable, listApprovalDecisionsForTask } from "@/lib/services/approvals";
+import { getApprovalPolicy } from "@/lib/services/approval-policies";
 import { listMembers } from "@/lib/services/members";
 import { memberDisplayName } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
-import type { EvidenceStatus, TaskStatus } from "@/lib/db/database.types";
+import type { ApprovalDecisionStatus, EvidenceStatus, TaskStatus } from "@/lib/db/database.types";
 import {
   claimTaskAction,
   completeTaskAction,
   decideApprovalAction,
+  decideApprovalChainAction,
+  delegateApprovalDecisionAction,
+  overrideApprovalDecisionAction,
+  pauseTaskSlaAction,
   reassignTaskAction,
+  recalculateTaskDueAtAction,
+  resumeTaskSlaAction,
   reviewEvidenceAction,
   saveFormDraftAction,
   skipTaskAction,
@@ -38,6 +46,15 @@ function evidenceBadgeStatus(status: EvidenceStatus): "success" | "warning" | "d
   if (status === "accepted") return "success";
   if (status === "pending_review") return "warning";
   return "danger";
+}
+
+function decisionBadgeStatus(
+  status: ApprovalDecisionStatus,
+): "success" | "warning" | "danger" | "neutral" {
+  if (status === "approved") return "success";
+  if (status === "pending") return "warning";
+  if (status === "rejected" || status === "changes_requested") return "danger";
+  return "neutral";
 }
 
 export default async function TaskDetailPage({
@@ -74,21 +91,50 @@ export default async function TaskDetailPage({
   );
 
   const isOpen = task.status === "assigned" || task.status === "in_progress";
-  const isUnclaimed = isOpen && !task.assignee_member_id;
   const isApproval = task.node_type === "approval";
+  const isChainedApproval = isApproval && Boolean(task.approval_policy_id);
+  const isUnclaimed = isOpen && !task.assignee_member_id && !isChainedApproval;
   const isLinkedForm = task.node_type === "form" && Boolean(task.form_version_id);
   const isEvidenceNode = task.node_type === "evidence";
-  const membersResult = canAssign
-    ? await listMembers({ status: "active", pageSize: 100 }).catch(() => ({
-        members: [],
-        total: 0,
-      }))
-    : { members: [], total: 0 };
+  const canOverrideApproval = Boolean(
+    currentMembership?.permissions.includes("approval.manage") ||
+    currentMembership?.scopedPermissions.includes("approval.manage"),
+  );
+  const canManageSla = Boolean(
+    currentMembership?.permissions.includes("sla.manage") ||
+    currentMembership?.scopedPermissions.includes("sla.manage"),
+  );
+  const showAttachments = isEvidenceNode || isApproval;
+  const membersResult =
+    canAssign || isChainedApproval
+      ? await listMembers({ status: "active", pageSize: 100 }).catch(() => ({
+          members: [],
+          total: 0,
+        }))
+      : { members: [], total: 0 };
+  const memberName = (memberId: string) => {
+    const member = membersResult.members.find((m) => m.id === memberId);
+    return member ? memberDisplayName(member) : memberId;
+  };
 
   const formSubmission = isLinkedForm
     ? await getFormSubmissionForTask(taskId).catch(() => null)
     : null;
-  const evidenceList = isEvidenceNode ? await listEvidenceForTask(taskId).catch(() => []) : [];
+  const evidenceList = showAttachments ? await listEvidenceForTask(taskId).catch(() => []) : [];
+  const [approvalDecisions, approvalPolicy] = isChainedApproval
+    ? await Promise.all([
+        listApprovalDecisionsForTask(taskId).catch(() => []),
+        getApprovalPolicy(task.approval_policy_id as string).catch(() => null),
+      ])
+    : [[], null];
+  const myDecision = approvalDecisions.find(
+    (d) => d.approver_member_id === currentMembership?.member.id,
+  );
+  const myDecisionActionable = Boolean(
+    approvalPolicy &&
+    myDecision &&
+    isDecisionActionable(approvalPolicy, approvalDecisions, myDecision),
+  );
 
   return (
     <Stack className="mx-auto max-w-2xl gap-8">
@@ -100,6 +146,7 @@ export default async function TaskDetailPage({
         <Text className="text-muted">
           {task.node_type}
           {task.due_at ? ` · Due ${new Date(task.due_at).toLocaleString()}` : ""}
+          {task.sla_paused_at ? " · SLA paused" : ""}
         </Text>
         <a href={`/app/workflows/${workflow.id}`} className="text-cobalt">
           {workflow.title}
@@ -133,6 +180,99 @@ export default async function TaskDetailPage({
               submitAction={submitFormAction.bind(null, task.id)}
               saveDraftAction={saveFormDraftAction.bind(null, task.id)}
             />
+          ) : isChainedApproval ? (
+            <Stack className="gap-4">
+              <Stack className="gap-2">
+                <Text className="text-sm font-semibold">
+                  {approvalPolicy?.name} ({approvalPolicy?.strategy})
+                </Text>
+                {approvalDecisions.map((d) => (
+                  <Cluster
+                    key={d.id}
+                    className="justify-between gap-2 rounded-md border border-border/60 p-2"
+                  >
+                    <Text className="text-sm">{memberName(d.approver_member_id)}</Text>
+                    <StatusBadge status={decisionBadgeStatus(d.status)}>{d.status}</StatusBadge>
+                  </Cluster>
+                ))}
+              </Stack>
+
+              {myDecisionActionable && (
+                <Stack className="gap-3">
+                  <form
+                    action={decideApprovalChainAction.bind(null, task.id, "approved")}
+                    className="flex flex-col gap-2"
+                  >
+                    <Label htmlFor="chain-approve-comment">Comment (optional)</Label>
+                    <Textarea id="chain-approve-comment" name="comment" rows={2} />
+                    <Cluster className="justify-end gap-2">
+                      <Button type="submit">Approve</Button>
+                    </Cluster>
+                  </form>
+                  <form
+                    action={decideApprovalChainAction.bind(null, task.id, "rejected")}
+                    className="flex flex-col gap-2"
+                  >
+                    <Label htmlFor="chain-reject-comment">Rejection reason</Label>
+                    <Textarea id="chain-reject-comment" name="comment" rows={2} />
+                    <Cluster className="justify-end gap-2">
+                      <Button type="submit" variant="secondary">
+                        Reject
+                      </Button>
+                    </Cluster>
+                  </form>
+                  {approvalPolicy?.allow_delegation && (
+                    <form
+                      action={delegateApprovalDecisionAction.bind(null, task.id)}
+                      className="flex flex-col gap-2"
+                    >
+                      <Label htmlFor="delegate-to">Delegate to</Label>
+                      <Cluster className="gap-2">
+                        <Select id="delegate-to" name="toMemberId" className="w-56" required>
+                          <option value="">Select a member</option>
+                          {membersResult.members.map((member) => (
+                            <option key={member.id} value={member.id}>
+                              {memberDisplayName(member)}
+                            </option>
+                          ))}
+                        </Select>
+                        <Button type="submit" variant="secondary">
+                          Delegate
+                        </Button>
+                      </Cluster>
+                    </form>
+                  )}
+                </Stack>
+              )}
+
+              {canOverrideApproval && (
+                <Stack className="gap-2 rounded-md border border-border p-3">
+                  <Text className="text-xs font-semibold text-muted">Administrative override</Text>
+                  <form
+                    action={overrideApprovalDecisionAction.bind(null, task.id, "approved")}
+                    className="flex flex-col gap-2"
+                  >
+                    <Textarea name="reason" rows={2} placeholder="Reason for override" required />
+                    <Cluster className="justify-end gap-2">
+                      <Button type="submit" variant="secondary">
+                        Override: Approve
+                      </Button>
+                    </Cluster>
+                  </form>
+                  <form
+                    action={overrideApprovalDecisionAction.bind(null, task.id, "rejected")}
+                    className="flex flex-col gap-2"
+                  >
+                    <Textarea name="reason" rows={2} placeholder="Reason for override" required />
+                    <Cluster className="justify-end gap-2">
+                      <Button type="submit" variant="secondary">
+                        Override: Reject
+                      </Button>
+                    </Cluster>
+                  </form>
+                </Stack>
+              )}
+            </Stack>
           ) : isApproval ? (
             <Stack className="gap-3">
               <form
@@ -199,20 +339,49 @@ export default async function TaskDetailPage({
               </Button>
             </form>
           )}
+
+          {canManageSla && task.sla_definition_id && (
+            <Cluster className="gap-2">
+              {task.sla_paused_at ? (
+                <form action={resumeTaskSlaAction.bind(null, task.id)}>
+                  <Button type="submit" variant="secondary">
+                    Resume SLA
+                  </Button>
+                </form>
+              ) : (
+                <form action={pauseTaskSlaAction.bind(null, task.id)}>
+                  <Button type="submit" variant="secondary">
+                    Pause SLA
+                  </Button>
+                </form>
+              )}
+              <form action={recalculateTaskDueAtAction.bind(null, task.id)}>
+                <Button type="submit" variant="secondary">
+                  Recalculate due date
+                </Button>
+              </form>
+            </Cluster>
+          )}
         </Stack>
       )}
 
-      {isEvidenceNode && (
+      {showAttachments && (
         <Stack className="gap-3">
-          <Heading as="h2">Evidence</Heading>
+          <Heading as="h2">{isApproval ? "Attachments" : "Evidence"}</Heading>
           {isOpen && workflow.status === "running" && (
             <Stack className="gap-2 rounded-md border border-border p-4">
-              <Text className="text-sm">Upload a file to attach as evidence for this step.</Text>
+              <Text className="text-sm">
+                {isApproval
+                  ? "Attach a supporting file to this approval step."
+                  : "Upload a file to attach as evidence for this step."}
+              </Text>
               <EvidenceFileField taskId={task.id} onUploaded={() => {}} />
             </Stack>
           )}
           {evidenceList.length === 0 ? (
-            <Text className="text-muted">No evidence uploaded yet.</Text>
+            <Text className="text-muted">
+              {isApproval ? "No attachments yet." : "No evidence uploaded yet."}
+            </Text>
           ) : (
             <Stack className="gap-3">
               {evidenceList.map((item) => (

@@ -112,6 +112,25 @@ export const AuditAction = {
   EvidenceReplaced: "evidence.replaced",
   // source: "system" — recorded by the evidence-expiration background job.
   EvidenceExpired: "evidence.expired",
+
+  // Phase 10 (Approvals, SLAs, and escalations).
+  ApprovalPolicyCreated: "approval_policy.created",
+  ApprovalPolicyUpdated: "approval_policy.updated",
+  ApprovalPolicyArchived: "approval_policy.archived",
+  ApprovalPolicyRestored: "approval_policy.restored",
+  ApprovalDelegated: "approval.delegated",
+  ApprovalOverridden: "approval.overridden",
+  SlaDefinitionCreated: "sla_definition.created",
+  SlaDefinitionUpdated: "sla_definition.updated",
+  BusinessCalendarCreated: "business_calendar.created",
+  BusinessCalendarUpdated: "business_calendar.updated",
+  EscalationRuleCreated: "escalation_rule.created",
+  EscalationRuleDeleted: "escalation_rule.deleted",
+  // source: "system" — recorded by the escalation-check background job.
+  EscalationFired: "escalation.fired",
+  TaskSlaPaused: "task.sla_paused",
+  TaskSlaResumed: "task.sla_resumed",
+  TaskDueAtRecalculated: "task.due_at_recalculated",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -135,6 +154,10 @@ export const AuditResourceType = {
   FormVersion: "form_version",
   FormSubmission: "form_submission",
   Evidence: "evidence",
+  ApprovalPolicy: "approval_policy",
+  SlaDefinition: "sla_definition",
+  BusinessCalendar: "business_calendar",
+  EscalationRule: "escalation_rule",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

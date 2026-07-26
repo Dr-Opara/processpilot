@@ -387,6 +387,10 @@ export interface ProcessNodeData {
   formFields?: ProcessNodeFormField[];
   /** Read for "form" nodes — links this step to a specific, real Form (Phase 9). Falls back to the generic formFields/output capture when unset, per workflow-engine.ts. */
   formId?: string | null;
+  /** Read for "approval" nodes — links this step to a configurable multi-approver ApprovalPolicy (Phase 10). Falls back to Phase 8's single-assignee decision when unset. */
+  approvalPolicyId?: string | null;
+  /** Read for any node type that carries a due date (human_task/approval/form/evidence/timer) — resolves a business-calendar-aware due_at via sla.ts (Phase 10) instead of a bare timerDurationMinutes-style offset. */
+  slaDefinitionId?: string | null;
   /** Read for "evidence" nodes. */
   evidenceDescription?: string | null;
   /** Read for "timer" nodes. */
@@ -506,6 +510,7 @@ export interface WorkflowRow {
   restarted_from_workflow_id: string | null;
   parent_task_id: string | null;
   created_at: string;
+  sla_definition_id: string | null;
 }
 
 export type TaskStatus =
@@ -532,6 +537,14 @@ export interface TaskRow {
   created_at: string;
   /** Set at task-creation time for a 'form' node whose ProcessNodeData.formId resolved to a published form — see workflow-engine.ts. */
   form_version_id: string | null;
+  /** Set at task-creation time for an 'approval' node whose ProcessNodeData.approvalPolicyId is configured — see approvals.ts. */
+  approval_policy_id: string | null;
+  /** Set at task-creation time when ProcessNodeData.slaDefinitionId resolves due_at via a business calendar — see sla.ts. */
+  sla_definition_id: string | null;
+  /** Set while the SLA clock is paused (see sla.ts's pauseTaskSla) — the escalation job skips this task entirely until resumeTaskSla clears it. */
+  sla_paused_at: string | null;
+  /** Cumulative wall-clock minutes this task has spent paused, across every pause/resume cycle — informational only, not used in due_at math beyond the shift resumeTaskSla already applies. */
+  sla_paused_minutes_total: number;
 }
 
 export interface WorkflowHistoryRow {
@@ -690,6 +703,126 @@ export interface EvidenceEventRow {
   evidence_id: string;
   event_type: EvidenceEventType;
   actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export type ApprovalStrategy =
+  "sequential" | "parallel" | "unanimous" | "majority" | "first_response" | "any_one";
+
+export interface ApproverRule {
+  type:
+    | "user"
+    | "role"
+    | "manager"
+    | "department_owner"
+    | "process_owner"
+    | "location_manager"
+    | "team_manager"
+    | "runtime_expression";
+  value: string | null;
+}
+
+export type ApprovalPolicyStatus = "active" | "archived";
+
+export interface ApprovalPolicyRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  name: string;
+  strategy: ApprovalStrategy;
+  approver_rules: ApproverRule[];
+  allow_delegation: boolean;
+  allow_abstain: boolean;
+  prevent_self_approval: boolean;
+  status: ApprovalPolicyStatus;
+  created_at: string;
+  created_by: string | null;
+  archived_at: string | null;
+}
+
+export type ApprovalDecisionStatus =
+  "pending" | "approved" | "rejected" | "changes_requested" | "abstained" | "delegated";
+
+export interface ApprovalDecisionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  task_id: string;
+  approval_policy_id: string;
+  approver_member_id: string;
+  sequence_order: number;
+  status: ApprovalDecisionStatus;
+  comment: string | null;
+  decided_at: string | null;
+  delegated_to_member_id: string | null;
+  delegated_from_member_id: string | null;
+  is_override: boolean;
+  override_by_member_id: string | null;
+  override_reason: string | null;
+  created_at: string;
+}
+
+export interface BusinessCalendarRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  name: string;
+  timezone: string;
+  work_days: number[];
+  work_start_minutes: number;
+  work_end_minutes: number;
+  created_at: string;
+}
+
+export interface BusinessCalendarHolidayRow {
+  id: string;
+  organization_id: string;
+  calendar_id: string;
+  holiday_date: string;
+  name: string;
+}
+
+export type SlaTargetType = "task" | "approval" | "workflow";
+export type SlaDefinitionStatus = "active" | "archived";
+
+export interface SlaDefinitionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  name: string;
+  target_type: SlaTargetType;
+  target_minutes: number;
+  business_calendar_id: string | null;
+  reminder_minutes_before_due: number[];
+  created_at: string;
+  status: SlaDefinitionStatus;
+}
+
+export type EscalationAction =
+  "remind" | "reassign" | "escalate_manager" | "escalate_process_owner" | "escalate_admin";
+
+export interface EscalationRuleRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  sla_definition_id: string;
+  level: number;
+  trigger_after_minutes_past_due: number;
+  action: EscalationAction;
+  reassign_target: ApproverRule | null;
+  created_at: string;
+}
+
+export interface EscalationEventRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  task_id: string | null;
+  workflow_id: string | null;
+  escalation_rule_id: string | null;
+  level: number;
+  action: string;
   metadata: Record<string, unknown>;
   created_at: string;
 }

@@ -28,6 +28,10 @@ import {
   instantiateWorkflow,
 } from "./workflow-engine";
 
+beforeEach(() => {
+  vi.mocked(enqueueJob).mockClear();
+});
+
 function node(id: string, type: ProcessNodeType, data: Partial<ProcessNodeData> = {}): ProcessNode {
   return { id, type, position: { x: 0, y: 0 }, data: { label: data.label ?? id, ...data } };
 }
@@ -41,10 +45,16 @@ function edge(
   return { id, source, target, condition };
 }
 
-const workflow: Pick<WorkflowRow, "id" | "organization_id" | "process_version_id"> = {
+const workflow: Pick<
+  WorkflowRow,
+  "id" | "organization_id" | "process_version_id" | "process_id" | "department_id" | "started_by"
+> = {
   id: "wf-1",
   organization_id: "org-1",
   process_version_id: "pv-1",
+  process_id: "process-1",
+  department_id: null,
+  started_by: "member-1",
 };
 
 /** A generic handler that turns any `insert into tasks (...)` call into a plausible TaskRow built from its own bound values, since every activateNode() call inserts a task with the same column order. */
@@ -140,7 +150,7 @@ describe("activateNode — form node (Phase 9 linkage)", () => {
     await activateNode({ sql, workflow, graph, nodeId: "form-1" });
 
     const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
-    expect(insertedTask?.values.at(-1)).toBe("fv-1");
+    expect(insertedTask?.values[11]).toBe("fv-1");
   });
 
   it("leaves form_version_id null when the node has no formId configured (Phase 8's generic behavior)", async () => {
@@ -150,7 +160,137 @@ describe("activateNode — form node (Phase 9 linkage)", () => {
     await activateNode({ sql, workflow, graph, nodeId: "form-1" });
 
     const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
-    expect(insertedTask?.values.at(-1)).toBeNull();
+    expect(insertedTask?.values[11]).toBeNull();
+  });
+});
+
+describe("activateNode — approval node (Phase 10 linkage)", () => {
+  const approvalPolicy = {
+    id: "policy-1",
+    strategy: "parallel",
+    approver_rules: [{ type: "user", value: "member-1" }],
+    allow_delegation: true,
+    allow_abstain: false,
+    status: "active",
+    name: "Test policy",
+  };
+
+  it("snapshots the policy and fans out one approval_decisions row per resolved approver", async () => {
+    const graph = buildGraphIndex({
+      nodes: [node("approval-1", "approval", { approvalPolicyId: "policy-1" })],
+      edges: [],
+    });
+    const { sql, fake } = fakeSql([
+      {
+        match: (t) => t.includes("select * from approval_policies where id"),
+        respond: () => [approvalPolicy],
+      },
+      {
+        match: (t) => t.includes("insert into approval_decisions"),
+        respond: () => [{ id: "dec-1", approver_member_id: "member-1" }],
+      },
+      taskInsertHandler,
+      ...historyHandlers,
+    ]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "approval-1" });
+
+    const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
+    expect(insertedTask?.values[12]).toBe("policy-1");
+    expect(fake.calls.some((c) => c.text.includes("insert into approval_decisions"))).toBe(true);
+  });
+
+  it("resolves a 'runtime_expression' approver rule against the workflow instance's accumulated task outputs", async () => {
+    const graph = buildGraphIndex({
+      nodes: [node("approval-1", "approval", { approvalPolicyId: "policy-2" })],
+      edges: [],
+    });
+    const { sql, fake } = fakeSql([
+      {
+        match: (t) => t.includes("select * from approval_policies where id"),
+        respond: () => [
+          {
+            ...approvalPolicy,
+            id: "policy-2",
+            approver_rules: [
+              { type: "runtime_expression", value: "intake-1.requested_by_member_id" },
+            ],
+          },
+        ],
+      },
+      {
+        match: (t) => t.includes("select node_id, output from tasks where workflow_id"),
+        respond: () => [{ node_id: "intake-1", output: { requested_by_member_id: "member-9" } }],
+      },
+      {
+        match: (t) => t.includes("insert into approval_decisions"),
+        respond: (values) => [{ id: "dec-9", approver_member_id: values[3] }],
+      },
+      taskInsertHandler,
+      ...historyHandlers,
+    ]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "approval-1" });
+
+    const insertedDecision = fake.calls.find((c) =>
+      c.text.includes("insert into approval_decisions"),
+    );
+    expect(insertedDecision?.values[3]).toBe("member-9");
+  });
+
+  it("leaves approval_policy_id null when the node has no approvalPolicyId configured (Phase 8's generic single-assignee behavior)", async () => {
+    const graph = buildGraphIndex({ nodes: [node("approval-1", "approval")], edges: [] });
+    const { sql, fake } = fakeSql([taskInsertHandler, ...historyHandlers]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "approval-1" });
+
+    const insertedTask = fake.calls.find((c) => c.text.includes("insert into tasks ("));
+    expect(insertedTask?.values[12]).toBeNull();
+    expect(fake.calls.some((c) => c.text.includes("insert into approval_decisions"))).toBe(false);
+  });
+});
+
+describe("activateNode — SLA linkage (Phase 10)", () => {
+  it("resolves a business-calendar-aware due_at and schedules a task-escalation-check job when the node has a slaDefinitionId", async () => {
+    const graph = buildGraphIndex({
+      nodes: [node("task-1", "human_task", { slaDefinitionId: "sla-1" })],
+      edges: [],
+    });
+    const { sql, fake } = fakeSql([
+      {
+        match: (t) => t.includes("from sla_definitions"),
+        respond: () => [
+          {
+            id: "sla-1",
+            organization_id: "org-1",
+            target_minutes: 60,
+            business_calendar_id: null,
+            status: "active",
+          },
+        ],
+      },
+      { match: (t) => t.includes("update tasks set due_at"), respond: () => [] },
+      taskInsertHandler,
+      ...historyHandlers,
+    ]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "task-1" });
+
+    expect(fake.calls.some((c) => c.text.includes("update tasks set due_at"))).toBe(true);
+    expect(enqueueJob).toHaveBeenCalledWith(
+      sql,
+      workflow.organization_id,
+      expect.objectContaining({ jobType: "task-escalation-check" }),
+    );
+  });
+
+  it("does nothing when the node has no slaDefinitionId", async () => {
+    const graph = buildGraphIndex({ nodes: [node("task-1", "human_task")], edges: [] });
+    const { sql, fake } = fakeSql([taskInsertHandler, ...historyHandlers]);
+
+    await activateNode({ sql, workflow, graph, nodeId: "task-1" });
+
+    expect(fake.calls.some((c) => c.text.includes("update tasks set due_at"))).toBe(false);
   });
 });
 

@@ -27,8 +27,8 @@ phases from this tracker and does not close until those phases are
 | 7     | Process builder                             | Complete    |
 | 8     | Workflow execution engine                   | Complete    |
 | 8.5   | MVP staging and design-partner validation   | Not Started |
-| 9     | Forms and evidence                          | In Progress |
-| 10    | Approvals and escalations                   | Not Started |
+| 9     | Forms and evidence                          | Complete    |
+| 10    | Approvals and escalations                   | Complete    |
 | 11    | Exception management                        | Not Started |
 | 12    | Training and certifications                 | Not Started |
 | 13    | AI ingestion and copilot                    | Not Started |
@@ -377,8 +377,8 @@ phases from this tracker and does not close until those phases are
 - **Entry criteria:** Tasks exist to attach forms/evidence to.
 - **Exit criteria:** Form submissions and evidence are immutable once
   recorded, tenant-isolated, and linked to the originating task/workflow.
-- **Status:** In Progress, on `feature/phase-9-forms-evidence` — not yet
-  merged. Implementation complete: the form authoring/versioning service
+- **Status:** Complete. Merged into `develop` via PR #12 (commit
+  `5427118`). Implementation complete: the form authoring/versioning service
   layer (`forms.ts`), the field-type/validation/conditional-visibility
   engine (`form-schema.ts` — text, number, date, select, checkbox, file,
   table, signature), structured submission handling with draft save,
@@ -432,9 +432,31 @@ phases from this tracker and does not close until those phases are
   model available.
 - **Exit criteria:** An approval step blocks workflow advancement until
   decided; decisions are immutable and auditable.
-- **Status:** Not Started.
+- **Status:** Complete. Implementation complete: configurable multi-approver
+  chains (sequential/parallel/unanimous/majority/first-response/any-one
+  strategies; approver assignment by user/role/manager/department-owner/
+  process-owner/location-manager/team-manager/runtime-expression;
+  delegation; administrative override with required reason; self-approval
+  prevention; immutable per-decision `task_history` trail; comments and
+  attachments) in `approval-policies.ts`/`approval-resolution.ts`/
+  `approvals.ts`; business-calendar- and time-zone-aware SLA due-date
+  resolution with holidays, pause/resume, and explicit recalculation
+  (`business-calendar.ts`, `sla-config.ts`, `sla.ts`); numbered escalation
+  levels (reminders, reassignment, manager/process-owner/admin escalation)
+  via the idempotent, self-rescheduling `task-escalation-check` background
+  job (`escalation.ts`, `src/lib/jobs/escalation-handlers.ts`).
+  `workflow-engine.ts`'s `approval` node type snapshots a linked policy and
+  resolves a linked SLA definition at task-creation time. `npm run
+phase:commit` (format, lint, typecheck, unit tests, production build) is
+  green. See [approvals-and-slas.md](../architecture/approvals-and-slas.md).
+- **Known gaps carried forward:** No malware/virus scanning applies to
+  approval attachments, same deferred posture as Phase 9's evidence
+  uploads. SLA pause/resume is a manual, explicit action only — nothing
+  pauses a clock automatically. Same carried-forward live-RLS
+  integration-suite gap as prior phases (not verified against a real
+  Supabase project in this environment).
 - **Risks:** None beyond standard permission-boundary coverage
-  (`approval.review` scoping).
+  (`approval.review`/`approval.manage`/`sla.manage` scoping).
 
 ## Phase 11: Exception management
 

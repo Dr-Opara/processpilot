@@ -31,6 +31,8 @@ export function ProcessCanvasForm({
   roles,
   teams,
   forms,
+  approvalPolicies,
+  slaDefinitions,
   cancelHref,
   draftKey,
 }: {
@@ -43,6 +45,8 @@ export function ProcessCanvasForm({
   roles: Option[];
   teams: Option[];
   forms: Option[];
+  approvalPolicies: Option[];
+  slaDefinitions: Option[];
   cancelHref: string;
   draftKey: string;
 }) {
@@ -97,6 +101,8 @@ export function ProcessCanvasForm({
         roles={roles}
         teams={teams}
         forms={forms}
+        approvalPolicies={approvalPolicies}
+        slaDefinitions={slaDefinitions}
         onGraphChange={(graph) => {
           if (definitionRef.current) {
             definitionRef.current.value = JSON.stringify(graph);
