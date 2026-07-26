@@ -32,7 +32,7 @@ phases from this tracker and does not close until those phases are
 | 11    | Exception management                        | Complete    |
 | 12    | Training and certifications                 | Complete    |
 | 13    | AI ingestion and copilot                    | Complete    |
-| 14    | Analytics                                   | Not Started |
+| 14    | Analytics                                   | Complete    |
 | 15    | Audit and compliance center                 | Not Started |
 | 16    | Notifications                               | Not Started |
 | 17    | Billing and entitlements                    | Not Started |
@@ -618,7 +618,17 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   in place to aggregate meaningfully.
 - **Exit criteria:** Dashboards render real, correctly-scoped data with no
   fabricated or placeholder figures in any customer-facing view.
-- **Status:** Not Started.
+- **Status:** Complete. `/app/analytics` — per-process completion rate,
+  median cycle time, and exception rate; a 12-week zero-filled workflow
+  trend; audit readiness (evidence-gap detection); training on-time
+  completion and certification currency; CAPA closure rate and median
+  days to close; AI draft acceptance rate — all gated on `analytics.view`
+  (scoped by department for `process_owner`/`manager`), every rate
+  `number | null` with "No data yet" rendered instead of a fabricated
+  zero. See [docs/architecture/analytics.md](../architecture/analytics.md)
+  for the metric definitions and known gaps (draft-to-publish time delta
+  not yet implemented; adoption/commercial/platform-health metrics are
+  out of scope for this customer-facing surface).
 - **Risks:** Query performance at scale — flagged for Phase 23
   observability follow-up if aggregation becomes slow.
 
