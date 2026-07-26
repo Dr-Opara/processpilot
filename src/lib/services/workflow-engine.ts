@@ -10,7 +10,10 @@ import {
   getActiveApprovalPolicy,
 } from "@/lib/services/approval-resolution";
 import { resolveDueAt } from "@/lib/services/sla";
+import { createSystemException } from "@/lib/services/exceptions";
 import type {
+  ExceptionSource,
+  ExceptionType,
   ProcessEdge,
   ProcessGraphDefinition,
   ProcessNode,
@@ -300,6 +303,7 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
         workflow.id,
         workflow.organization_id,
         `Decision "${task.label}" had no matching branch.`,
+        { taskId: task.id, exceptionType: "process_deviation" },
       );
       return;
     }
@@ -414,11 +418,18 @@ async function maybeCompleteWorkflow(
   }
 }
 
+export interface FailWorkflowContext {
+  taskId?: string;
+  exceptionSource?: ExceptionSource;
+  exceptionType?: ExceptionType;
+}
+
 export async function failWorkflow(
   sql: Sql,
   workflowId: string,
   organizationId: string,
   reason: string,
+  context: FailWorkflowContext = {},
 ): Promise<void> {
   const [workflow] = await sql<WorkflowRow[]>`
     update workflows set status = 'failed', failure_reason = ${reason}
@@ -439,6 +450,24 @@ export async function failWorkflow(
     resourceId: workflowId,
     source: "app",
     reason,
+  });
+
+  // Phase 11: every workflow failure is a recorded exception, not just an
+  // audit/history entry — a rejected required approval or a decision
+  // with no matching branch is exactly the kind of deviation that needs
+  // triage, not just a log line. idempotencyMatch on the failing task
+  // (or the workflow itself, for a task-less failure) makes a retried
+  // caller a no-op rather than a duplicate exception.
+  await createSystemException(sql, {
+    organizationId,
+    departmentId: workflow.department_id,
+    title: reason,
+    exceptionType: context.exceptionType ?? "task_failure",
+    source: context.exceptionSource ?? "workflow_failure",
+    workflowId,
+    taskId: context.taskId ?? null,
+    processId: workflow.process_id,
+    idempotencyMatch: { taskId: context.taskId ?? null, workflowId },
   });
 
   if (workflow.parent_task_id) {

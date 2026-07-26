@@ -353,6 +353,7 @@ export async function decideApproval(
         workflow.id,
         membership.organization.id,
         `Required approval "${updated.label}" was rejected.`,
+        { taskId, exceptionSource: "failed_approval", exceptionType: "process_deviation" },
       );
       return updated;
     }

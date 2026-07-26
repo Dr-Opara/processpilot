@@ -9,6 +9,7 @@ import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { enqueueJob } from "@/lib/jobs/enqueue";
 import { validateEvidenceUpload } from "@/lib/services/evidence-upload-validation";
+import { createSystemException } from "@/lib/services/exceptions";
 import {
   buildEvidenceStoragePath,
   createEvidenceSignedUrl,
@@ -211,6 +212,21 @@ export async function reviewEvidence(
       source: "app",
       reason: notes,
     });
+
+    if (decision === "rejected") {
+      await createSystemException(tx, {
+        organizationId: membership.organization.id,
+        departmentId: updated.department_id,
+        title: `Evidence rejected: "${updated.original_filename}"`,
+        description: notes ?? undefined,
+        exceptionType: "evidence_deficiency",
+        source: "evidence_rejection",
+        workflowId: updated.workflow_id,
+        taskId: updated.task_id,
+        evidenceId: updated.id,
+        idempotencyMatch: { evidenceId: updated.id },
+      });
+    }
 
     return updated;
   });

@@ -347,6 +347,7 @@ describe("workflows service", () => {
         "wf-1",
         "org-1",
         expect.stringContaining("rejected"),
+        expect.objectContaining({ exceptionSource: "failed_approval" }),
       );
       expect(advanceFrom).not.toHaveBeenCalled();
     });

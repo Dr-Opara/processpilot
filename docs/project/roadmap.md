@@ -35,9 +35,13 @@ graph LR
 
 ## Current position
 
-Milestone 2 (Core Platform) is in progress, Phase 4 (Database and tenant
-isolation) started. See [current-project-status.md](current-project-status.md)
-for the live snapshot.
+Milestone 2 (Core Platform) is in progress; Phases 5–10 are `Complete`
+per the phase tracker and Milestone 3 (Execution governance) work has
+begun in parallel with Phase 11 (Exception management), on
+`feature/phase-11-exceptions-capa`. Phase 4 (Database and tenant
+isolation) remains `In Progress` pending a live Supabase project — see
+[current-project-status.md](current-project-status.md) for the live
+snapshot.
 
 ## Related documents
 

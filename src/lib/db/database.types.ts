@@ -826,3 +826,322 @@ export interface EscalationEventRow {
   metadata: Record<string, unknown>;
   created_at: string;
 }
+
+// --- Phase 11: exceptions and CAPA ---
+
+export type ExceptionType =
+  | "process_deviation"
+  | "policy_exception"
+  | "control_failure"
+  | "missed_sla"
+  | "evidence_deficiency"
+  | "task_failure"
+  | "security_issue"
+  | "training_deficiency"
+  | "vendor_issue"
+  | "data_quality_issue"
+  | "other";
+
+export type ExceptionSource =
+  | "employee_submission"
+  | "manager_submission"
+  | "workflow_failure"
+  | "task_failure"
+  | "missed_sla"
+  | "failed_approval"
+  | "evidence_rejection"
+  | "form_submission"
+  | "audit_finding"
+  | "integration_event"
+  | "system_detected"
+  | "administrative_entry";
+
+export type ExceptionSeverity = "low" | "moderate" | "high" | "critical";
+export type ExceptionLikelihoodImpact = "low" | "moderate" | "high";
+export type ExceptionPriority = "low" | "moderate" | "high" | "critical";
+
+export type ExceptionStatus =
+  | "reported"
+  | "triaged"
+  | "under_investigation"
+  | "containment_in_progress"
+  | "action_plan_required"
+  | "remediation_in_progress"
+  | "pending_verification"
+  | "closed"
+  | "rejected"
+  | "reopened";
+
+export interface ExceptionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  location_id: string | null;
+  team_id: string | null;
+  title: string;
+  description: string | null;
+  exception_type: ExceptionType;
+  source: ExceptionSource;
+  severity: ExceptionSeverity;
+  likelihood: ExceptionLikelihoodImpact | null;
+  impact: ExceptionLikelihoodImpact | null;
+  priority: ExceptionPriority | null;
+  priority_overridden: boolean;
+  priority_override_reason: string | null;
+  status: ExceptionStatus;
+  reporter_member_id: string | null;
+  owner_member_id: string | null;
+  investigator_member_id: string | null;
+  process_id: string | null;
+  process_version_id: string | null;
+  workflow_id: string | null;
+  task_id: string | null;
+  document_id: string | null;
+  document_version_id: string | null;
+  form_submission_id: string | null;
+  evidence_id: string | null;
+  approval_decision_id: string | null;
+  control_reference: string | null;
+  due_at: string | null;
+  detected_at: string | null;
+  occurred_at: string | null;
+  containment_summary: string | null;
+  root_cause_summary: string | null;
+  remediation_summary: string | null;
+  verification_summary: string | null;
+  closure_reason: string | null;
+  reopen_reason: string | null;
+  tags: string[];
+  created_at: string;
+  created_by_member_id: string | null;
+  updated_at: string;
+  closed_at: string | null;
+  closed_by_member_id: string | null;
+}
+
+export interface ExceptionCommentRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  author_member_id: string;
+  body: string;
+  created_at: string;
+}
+
+export type ExceptionLinkedType =
+  | "workflow"
+  | "task"
+  | "process"
+  | "document"
+  | "control"
+  | "form"
+  | "evidence"
+  | "approval"
+  | "training"
+  | "audit_record"
+  | "exception"
+  | "waiver";
+
+export interface ExceptionLinkRow {
+  id: string;
+  organization_id: string;
+  exception_id: string;
+  linked_type: ExceptionLinkedType;
+  linked_id: string;
+  created_at: string;
+  created_by_member_id: string | null;
+}
+
+export interface ExceptionHistoryRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  event_type: string;
+  actor_member_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export type ContainmentActionStatus = "open" | "completed" | "cancelled";
+
+export interface ExceptionContainmentActionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  action: string;
+  owner_member_id: string;
+  due_at: string | null;
+  status: ContainmentActionStatus;
+  evidence_id: string | null;
+  verification_notes: string | null;
+  created_at: string;
+  created_by_member_id: string | null;
+  completed_at: string | null;
+  completed_by_member_id: string | null;
+}
+
+export type RootCauseMethod = "five_whys" | "fishbone" | "other";
+export type FishboneCategory =
+  "people" | "process" | "equipment" | "materials" | "environment" | "management";
+
+export interface RootCauseAnalysisRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  method: RootCauseMethod;
+  fishbone_category: FishboneCategory | null;
+  primary_root_cause: string | null;
+  investigator_notes: string | null;
+  investigator_member_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type RootCauseFactorType = "five_why_step" | "secondary_root_cause" | "contributing_factor";
+
+export interface RootCauseFactorRow {
+  id: string;
+  organization_id: string;
+  root_cause_analysis_id: string;
+  factor_type: RootCauseFactorType;
+  sequence_order: number;
+  description: string;
+  evidence_reference: string | null;
+  created_at: string;
+}
+
+export type CapaPlanStatus =
+  | "draft"
+  | "pending_approval"
+  | "approved"
+  | "in_progress"
+  | "pending_verification"
+  | "effective"
+  | "ineffective"
+  | "closed"
+  | "canceled"
+  | "reopened";
+
+export interface CapaPlanRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  title: string;
+  description: string | null;
+  owner_member_id: string;
+  sponsor_member_id: string | null;
+  completion_criteria: string | null;
+  effectiveness_check_method: string | null;
+  effectiveness_check_date: string | null;
+  verification_owner_member_id: string | null;
+  status: CapaPlanStatus;
+  created_at: string;
+  created_by_member_id: string | null;
+  closed_at: string | null;
+  closed_by_member_id: string | null;
+}
+
+export type CapaActionType = "corrective" | "preventive";
+export type CapaActionStatus = "open" | "in_progress" | "completed" | "cancelled";
+
+export interface CapaActionRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  capa_plan_id: string;
+  action_type: CapaActionType;
+  title: string;
+  description: string | null;
+  owner_member_id: string;
+  due_at: string | null;
+  depends_on_action_id: string | null;
+  requires_evidence: boolean;
+  evidence_id: string | null;
+  status: CapaActionStatus;
+  created_at: string;
+  created_by_member_id: string | null;
+  completed_at: string | null;
+  completed_by_member_id: string | null;
+}
+
+export interface CapaApprovalRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  capa_plan_id: string;
+  approver_member_id: string;
+  decision: "approved" | "rejected";
+  comment: string | null;
+  decided_at: string;
+  created_at: string;
+}
+
+export interface CapaEffectivenessCheckRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  capa_plan_id: string;
+  checked_at: string;
+  outcome: "effective" | "ineffective";
+  notes: string | null;
+  verifier_member_id: string;
+  created_at: string;
+}
+
+export type WaiverStatus =
+  "requested" | "approved" | "rejected" | "active" | "renewed" | "revoked" | "expired";
+
+export interface TemporaryWaiverRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  exception_id: string;
+  business_justification: string;
+  compensating_controls: string | null;
+  risk_acceptance: string | null;
+  requested_by_member_id: string | null;
+  approver_member_id: string | null;
+  status: WaiverStatus;
+  start_at: string | null;
+  expires_at: string;
+  created_at: string;
+  decided_at: string | null;
+}
+
+export interface WaiverApprovalRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  waiver_id: string;
+  approver_member_id: string;
+  decision: "approved" | "rejected";
+  comment: string | null;
+  decided_at: string;
+  created_at: string;
+}
+
+export interface WaiverRenewalRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  waiver_id: string;
+  previous_expires_at: string;
+  new_expires_at: string;
+  requested_by_member_id: string | null;
+  approved_by_member_id: string | null;
+  created_at: string;
+}
+
+export interface RecurrenceMatchRow {
+  id: string;
+  organization_id: string;
+  exception_id: string;
+  matched_exception_id: string;
+  match_basis: Record<string, unknown>;
+  created_at: string;
+}

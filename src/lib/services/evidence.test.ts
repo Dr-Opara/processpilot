@@ -16,11 +16,15 @@ vi.mock("@/lib/services/evidence-storage", () => ({
 vi.mock("@/lib/jobs/enqueue", () => ({
   enqueueJob: vi.fn().mockResolvedValue({}),
 }));
+vi.mock("@/lib/services/exceptions", () => ({
+  createSystemException: vi.fn().mockResolvedValue({}),
+}));
 
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { createEvidenceSignedUrl, uploadEvidenceFile } from "@/lib/services/evidence-storage";
 import { enqueueJob } from "@/lib/jobs/enqueue";
+import { createSystemException } from "@/lib/services/exceptions";
 import {
   createFakeSql,
   asTransactionSql,
@@ -230,6 +234,35 @@ describe("evidence service", () => {
 
       expect(updated.status).toBe("accepted");
       expect(fakeSql.calls.some((c) => c.text.includes("insert into evidence_events"))).toBe(true);
+    });
+
+    it("records a system exception when evidence is rejected", async () => {
+      const preCheck = makeMembership();
+      vi.mocked(getCurrentMembership).mockResolvedValue(preCheck);
+      const membership = makeMembership({ permissions: ["evidence.review"] });
+      vi.mocked(requirePermission).mockResolvedValue(membership);
+      vi.mocked(createSystemException).mockClear();
+      wireTenantContext([
+        {
+          match: (t) => t.includes("select * from evidence where id"),
+          respond: () => [evidenceRow],
+        },
+        {
+          match: (t) => t.includes("update evidence set"),
+          respond: () => [{ ...evidenceRow, status: "rejected" }],
+        },
+        ...catchAllEventsAndAudit,
+      ]);
+
+      await reviewEvidence("ev-1", { decision: "rejected", notes: "Illegible photo" });
+
+      expect(createSystemException).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          source: "evidence_rejection",
+          exceptionType: "evidence_deficiency",
+        }),
+      );
     });
   });
 
