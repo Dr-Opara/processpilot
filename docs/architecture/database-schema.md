@@ -126,13 +126,18 @@ erDiagram
 | `waiver_approvals`              | `20260727000001_...`                                       |         Yes         |                                                                                                                                                                 |
 | `waiver_renewals`               | `20260727000001_...`                                       |         Yes         |                                                                                                                                                                 |
 | `recurrence_matches`            | `20260727000001_...`                                       |         Yes         | Logged heuristic matches, not a duplicate-detection guarantee.                                                                                                  |
+| `training_courses`              | `20260728000001_training_certifications`                   |         Yes         | Phase 12. See [training-and-certifications.md](training-and-certifications.md).                                                                                 |
+| `training_course_versions`      | `20260728000001_...`                                       |         Yes         | Immutable once published, same pattern as `form_versions`.                                                                                                      |
+| `training_assignments`          | `20260728000001_...`                                       |         Yes         | One row per `(course_version, assignee)`.                                                                                                                       |
+| `training_assignment_history`   | `20260728000001_...`                                       |         Yes         | Append-only, same shape as `task_history`.                                                                                                                      |
+| `certifications`                | `20260728000001_...`                                       |         Yes         | `expires_at` nullable only as an explicit non-expiring choice; renewal inserts a new row chained via `renewed_from_certification_id`.                           |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11's rows above are complete; a full
+into this summary table). Phase 11 and Phase 12's rows above are complete; a full
 backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.

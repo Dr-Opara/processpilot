@@ -4,6 +4,7 @@ import "@/lib/jobs/workflow-handlers";
 import "@/lib/jobs/evidence-handlers";
 import "@/lib/jobs/escalation-handlers";
 import "@/lib/jobs/waiver-handlers";
+import "@/lib/jobs/training-handlers";
 
 /**
  * The Vercel Cron-triggered worker tick (see vercel.json's `crons`

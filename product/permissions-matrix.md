@@ -60,6 +60,7 @@ touches a protected resource — never through UI visibility alone. See
 | `waivers.approve`        | Approve, reject, renew, or revoke a temporary waiver.                     |
 | `waivers.manage`         | Full administrative control over waivers in scope.                        |
 | `training.view`          | View own or scoped training assignments and certifications.               |
+| `training.complete`      | Complete or retake one's own assigned training.                           |
 | `training.manage`        | Create courses, assign training, and manage certifications.               |
 | `analytics.view`         | View operational analytics and dashboards within scope.                   |
 | `audit.view`             | View audit events within scope.                                           |
@@ -128,6 +129,7 @@ via a custom role if `role.manage` is used to do so.
 | waivers.approve        |                    | ✓                  | Scoped        |         |               |         |               |
 | waivers.manage         |                    | ✓                  |               |         |               |         |               |
 | training.view          | ✓                  | ✓                  |               | Scoped  | Scoped (self) | Scoped  |               |
+| training.complete      |                    | ✓                  |               | Scoped  | ✓             |         |               |
 | training.manage        |                    | ✓                  |               | Scoped  |               |         |               |
 | analytics.view         | ✓                  | ✓                  | Scoped        | Scoped  |               | Scoped  |               |
 | audit.view             | ✓                  | ✓                  |               | Scoped  |               | Scoped  |               |
