@@ -6,6 +6,38 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-02 — Phase 17 documentation and status update
+
+Rewrote [billing-architecture.md](../architecture/billing-architecture.md)
+with an "Implementation" section: the provider-neutral billing adapter
+(`src/lib/billing/adapter.ts`, `providers/stripe-provider.ts`,
+`get-provider.ts`, mirroring ADR-0008's AI/notification adapter
+pattern), Stripe as the sole writer of `subscriptions` via an idempotent
+webhook handler, derived (not persisted) entitlement resolution, and
+seat-limit enforcement at `invitations.ts`. Documents prominently, in
+its own section, that this phase's entry criteria required committed
+pricing which was never actually reached —
+`product/pricing-hypotheses.md` remains explicitly unvalidated — and
+that the phase was built anyway per explicit instruction using the
+hypothesis tiers as swappable configuration only, with instructions for
+replacing them once pricing is committed. Promoted
+[ADR-0007](../architecture/decisions/0007-stripe-billing.md) from
+"Proposed" to "Accepted," and corrected
+[architecture-decisions.md](../architecture/architecture-decisions.md)'s
+index, which had drifted (ADR-0008 was already "Accepted" in its own
+file since Phase 13 but the index still read "Proposed"). Updated
+[database-schema.md](../architecture/database-schema.md) with the 2 new
+tables and the `organizations.stripe_customer_id` column. Updated
+[environment-variables.md](../development/environment-variables.md) to
+move `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` from "planned" to
+"current" and document the new `STRIPE_PRICE_ID_*` variables. Updated
+[phase-tracker.md](phase-tracker.md): Phase 17 marked `Complete` with
+implementation detail and the pricing caveat, built on
+`feature/phase-17-billing-entitlements`. Updated
+[milestones.md](milestones.md)'s Milestone 5 status. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-08-01 — Phase 16 documentation and status update
 
 Added [notifications.md](../architecture/notifications.md) describing

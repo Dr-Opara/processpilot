@@ -32,6 +32,7 @@ export interface OrganizationRow {
   country: string | null;
   primary_use_case: string | null;
   logo_url: string | null;
+  stripe_customer_id: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -1346,4 +1347,42 @@ export interface NotificationPreferenceRow {
   email_enabled: boolean;
   created_at: string;
   updated_at: string;
+}
+
+/** Phase 17 (Billing and entitlements) — see docs/architecture/billing-architecture.md. */
+export type SubscriptionStatus =
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled"
+  | "incomplete"
+  | "incomplete_expired"
+  | "paused"
+  | "unpaid";
+
+export interface SubscriptionRow {
+  id: string;
+  organization_id: string;
+  stripe_subscription_id: string;
+  stripe_price_id: string;
+  /** A product/pricing-hypotheses.md working-tier key (e.g. "starter"/"business"/"enterprise") — not committed pricing, see billing.ts's PLAN_ENTITLEMENTS. */
+  plan_key: string;
+  status: SubscriptionStatus;
+  current_period_start: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  trial_end: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BillingWebhookEventRow {
+  id: string;
+  stripe_event_id: string;
+  event_type: string;
+  status: "processed" | "failed";
+  organization_id: string | null;
+  received_at: string;
+  processed_at: string | null;
+  error_message: string | null;
 }

@@ -137,13 +137,15 @@ erDiagram
 | `notifications`                 | `20260801000001_notifications`                             |         Yes         | Phase 16. See [notifications.md](notifications.md). Own-resource RLS — a recipient sees only their own feed.                                                                                                                                           |
 | `notification_deliveries`       | `20260801000001_...`                                       |         Yes         | One row per (notification, channel) send attempt; written only by the admin client from the `deliver-notification-email` job.                                                                                                                          |
 | `notification_preferences`      | `20260801000001_...`                                       |         Yes         | `member_id is null` = organization default for that type; two partial unique indexes enforce one default row and one override row per member per type.                                                                                                 |
+| `subscriptions`                 | `20260802000001_billing_entitlements`                      |         Yes         | Phase 17. See [billing-architecture.md](billing-architecture.md). Read-optimized mirror of Stripe state — written only by the webhook handler, never an app-initiated action.                                                                          |
+| `billing_webhook_events`        | `20260802000001_...`                                       |      Nullable       | Stripe-event counterpart to `webhook_events` — same partial-unique-on-processed idempotency pattern.                                                                                                                                                   |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11 through Phase 16's rows above are
+into this summary table). Phase 11 through Phase 17's rows above are
 complete; a full backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.

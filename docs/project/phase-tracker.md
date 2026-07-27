@@ -35,7 +35,7 @@ phases from this tracker and does not close until those phases are
 | 14    | Analytics                                   | Complete    |
 | 15    | Audit and compliance center                 | Complete    |
 | 16    | Notifications                               | Complete    |
-| 17    | Billing and entitlements                    | Not Started |
+| 17    | Billing and entitlements                    | Complete    |
 | 18    | Integrations                                | Not Started |
 | 19    | External portal                             | Not Started |
 | 20    | Responsive PWA                              | Not Started |
@@ -713,10 +713,32 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   into committed pricing).
 - **Exit criteria:** Seat/feature entitlements are enforced server-side;
   Stripe is the verified source of truth for subscription state.
-- **Status:** Not Started.
+- **Status:** Complete, with the explicit caveat this phase's own risk
+  below predicted: pricing was never actually validated/committed.
+  Built anyway, on explicit instruction, using
+  `product/pricing-hypotheses.md`'s working tiers as swappable
+  configuration only (`src/lib/billing/plans.ts`, every label suffixed
+  "(hypothesis)," never surfaced as a real price anywhere). Delivered:
+  a provider-neutral billing adapter (`src/lib/billing/adapter.ts`,
+  `providers/stripe-provider.ts`, mirroring ADR-0008's AI/notification
+  adapter pattern); Stripe as the sole writer of `subscriptions` via an
+  idempotent webhook handler (`src/app/api/webhooks/stripe/route.ts`),
+  never a dual-write from an app-initiated action; derived (not
+  persisted) entitlement resolution defaulting an unsubscribed
+  organization to the Starter tier; seat-limit enforcement at
+  `invitations.ts`'s `createInvitation()`; read-only AI-usage tracking
+  via the existing `ai_usage_events` table; `/app/billing`. No real
+  Stripe credentials exist in this environment — live billing is
+  unverified end-to-end. See
+  [docs/architecture/billing-architecture.md](../architecture/billing-architecture.md)
+  for full detail and known gaps (AI-usage quota tracked but not
+  enforced; no past_due degraded-access state; bulk member import isn't
+  seat-gated).
 - **Risks:** Cannot start meaningfully until pricing hypotheses are
   validated — tracked as a blocking dependency, not just a phase
-  dependency.
+  dependency. Materialized as predicted; proceeded anyway per explicit
+  instruction with hypothesis-only configuration, not committed
+  pricing.
 
 ## Phase 18: Integrations
 

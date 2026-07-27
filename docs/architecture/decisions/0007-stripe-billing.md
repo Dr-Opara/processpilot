@@ -2,8 +2,13 @@
 
 ## Status
 
-Proposed — not yet integrated. Implemented in Phase 17 (Billing and
-entitlements).
+Accepted. Implemented in Phase 17 (Billing and entitlements) — see
+[billing-architecture.md](../billing-architecture.md)'s "Implementation"
+section. No real Stripe credentials exist in this environment; live
+billing operations are unverified end-to-end until
+`STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` are supplied, and the plan
+tiers/prices wired in are unvalidated hypotheses, not committed
+pricing — see that document's "Known gaps and pending decisions."
 
 ## Context
 
