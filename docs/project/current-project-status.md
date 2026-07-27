@@ -5,29 +5,30 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-26.
+**Last updated:** 2026-07-30.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) is progressing in
-  parallel; Milestone 4 (Intelligence) is progressing via Phases 13–14.
-- **Current phase:** Phase 15 — Audit and compliance center, starting on
-  `feature/phase-15-audit-compliance-center`.
+  parallel; Milestone 4 (Intelligence) is progressing via Phases 13–15.
+- **Current phase:** Phase 16 — Notifications, starting on
+  `feature/phase-16-notifications`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, and 14** (business onboarding/
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, and 15** (business onboarding/
   employee management, knowledge management, process builder, workflow
   execution engine, forms and evidence, approvals/SLAs/escalations,
-  exceptions/CAPA, training/certifications, AI copilot, analytics) are
-  `Complete` per the phase tracker — Phase 9 merged via PR #12 (commit
-  `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR #14;
-  Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14 merged
-  via the `feature/phase-14-analytics` PR. Phase 4 (database and tenant
-  isolation) remains recorded as `In Progress` in the tracker; this
+  exceptions/CAPA, training/certifications, AI copilot, analytics, audit
+  and compliance center) are `Complete` per the phase tracker — Phase 9
+  merged via PR #12 (commit `5427118`); Phase 10 merged via PR #13; Phase
+  11 merged via PR #14; Phase 12 merged via PR #15; Phase 13 merged via PR
+  #16; Phase 14 merged via PR #17; Phase 15 merged via the
+  `feature/phase-15-audit-compliance-center` PR. Phase 4 (database and
+  tenant isolation) remains recorded as `In Progress` in the tracker; this
   document does not re-audit that status.
 
 ## What's built
@@ -177,9 +178,26 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   known gaps (no draft-to-publish time delta yet; adoption/commercial/
   platform-health metrics are out of scope for this customer-facing
   surface).
-- Audit foundation: `recordAuditEvent()`, called from every mutating
-  service-layer action, including the workflow engine's and Phase 9's/
-  Phase 10's/Phase 11's/Phase 12's/Phase 13's.
+- Audit and compliance center (Phase 15, complete): `recordAuditEvent()`
+  coverage was already comprehensive across Phases 5–13's mutating
+  service-layer actions going into this phase; Phase 15's own scope was
+  the read/scope/export layer — `src/lib/services/audit.ts`'s
+  `listAuditEvents()`/`exportAuditEvents()`, `/app/audit`. Found and
+  fixed a real pre-existing bug: `audit_events_select`'s RLS policy
+  checked only an _unscoped_ `audit.view` grant, so `manager`'s/
+  `auditor`'s seeded **scoped** grants were functionally inert (no
+  `department_id` column existed to check them against) —
+  `20260730000001_audit_scoped_views.sql` adds the column and switches
+  the policy to `has_scoped_permission`, and `department_id` is now
+  populated for the exception/CAPA/waiver and training/certification
+  domains (which also surfaced and fixed a second bug: those tables'
+  own `department_id` columns were never populated on insert, despite
+  their own scoped-permission checks depending on them). `audit.export`
+  is capped at 5,000 rows and itself produces an audit event. See
+  [audit-and-compliance.md](../architecture/audit-and-compliance.md) for
+  full detail and known gaps (department tagging not yet extended to
+  every resource type; historical events pre-dating the migration remain
+  visible only to an unscoped holder).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -200,8 +218,8 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- Audit/compliance center, notifications, billing, integrations,
-  external portal (later phases/milestones).
+- Notifications, billing, integrations, external portal (later
+  phases/milestones).
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so
@@ -217,8 +235,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    [environment-variables.md](../development/environment-variables.md))
    to verify live AI output for real, then re-run the Phase 13 test
    suite against it.
-3. Begin Phase 15 (audit and compliance center) on
-   `feature/phase-15-audit-compliance-center`.
+3. Begin Phase 16 (notifications) on `feature/phase-16-notifications`.
 
 ## Known risks carried forward
 

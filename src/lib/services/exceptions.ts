@@ -189,6 +189,7 @@ export async function createException(input: CreateExceptionInput): Promise<Exce
       action: AuditAction.ExceptionCreated,
       resourceType: AuditResourceType.Exception,
       resourceId: exception.id,
+      departmentId: exception.department_id,
       source: "app",
     });
 
@@ -279,6 +280,7 @@ export async function createSystemException(
     action: AuditAction.ExceptionCreated,
     resourceType: AuditResourceType.Exception,
     resourceId: exception.id,
+    departmentId: exception.department_id,
     source: "system",
   });
   await findRecurrenceMatches(tx, exception);
@@ -391,6 +393,7 @@ export async function triageException(
       action: AuditAction.ExceptionTriaged,
       resourceType: AuditResourceType.Exception,
       resourceId: exceptionId,
+      departmentId: existing.department_id,
       source: "app",
     });
 
@@ -418,6 +421,7 @@ export async function startInvestigation(exceptionId: string): Promise<Exception
       action: AuditAction.ExceptionInvestigationStarted,
       resourceType: AuditResourceType.Exception,
       resourceId: exceptionId,
+      departmentId: existing.department_id,
       source: "app",
     });
     return updated;
@@ -508,6 +512,7 @@ export async function closeException(
       action: AuditAction.ExceptionClosed,
       resourceType: AuditResourceType.Exception,
       resourceId: exceptionId,
+      departmentId: existing.department_id,
       source: "app",
       reason: input.allowClosureWithoutRootCause
         ? input.allowClosureWithoutRootCauseReason
@@ -547,6 +552,7 @@ export async function rejectException(exceptionId: string, reason: string): Prom
       action: AuditAction.ExceptionRejected,
       resourceType: AuditResourceType.Exception,
       resourceId: exceptionId,
+      departmentId: existing.department_id,
       source: "app",
       reason: trimmedReason,
     });
@@ -587,6 +593,7 @@ export async function reopenException(exceptionId: string, reason: string): Prom
       action: AuditAction.ExceptionReopened,
       resourceType: AuditResourceType.Exception,
       resourceId: exceptionId,
+      departmentId: existing.department_id,
       source: "app",
       reason: trimmedReason,
     });

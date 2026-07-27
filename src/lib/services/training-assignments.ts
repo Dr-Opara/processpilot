@@ -125,8 +125,8 @@ export async function assignTraining(input: AssignTrainingInput): Promise<Traini
     const assignments: TrainingAssignmentRow[] = [];
     for (const memberId of memberIds) {
       const [assignment] = await tx<TrainingAssignmentRow[]>`
-        insert into training_assignments (organization_id, course_version_id, assignee_member_id, assigned_via, due_at, created_by)
-        values (${membership.organization.id}, ${data.courseVersionId}, ${memberId}, ${data.assignedVia}, ${data.dueAt ?? null}, ${membership.profile.id})
+        insert into training_assignments (organization_id, department_id, course_version_id, assignee_member_id, assigned_via, due_at, created_by)
+        values (${membership.organization.id}, ${version.department_id}, ${data.courseVersionId}, ${memberId}, ${data.assignedVia}, ${data.dueAt ?? null}, ${membership.profile.id})
         on conflict (course_version_id, assignee_member_id) do nothing
         returning *
       `;
@@ -152,6 +152,7 @@ export async function assignTraining(input: AssignTrainingInput): Promise<Traini
       action: AuditAction.TrainingAssignmentCreated,
       resourceType: AuditResourceType.TrainingAssignment,
       resourceId: data.courseVersionId,
+      departmentId: version.department_id,
       source: "app",
     });
 
@@ -294,10 +295,12 @@ export async function completeTrainingAssignment(
         action: AuditAction.TrainingAssignmentCompleted,
         resourceType: AuditResourceType.TrainingAssignment,
         resourceId: assignmentId,
+        departmentId: assignment.department_id,
         source: "app",
       });
       await issueCertification(tx, {
         organizationId: membership.organization.id,
+        departmentId: assignment.department_id,
         memberId: membership.member.id,
         courseId: version.course_id,
         trainingAssignmentId: assignmentId,
@@ -364,6 +367,7 @@ export async function waiveTrainingAssignment(
       action: AuditAction.TrainingAssignmentWaived,
       resourceType: AuditResourceType.TrainingAssignment,
       resourceId: assignmentId,
+      departmentId: assignment.department_id,
       source: "app",
       reason: trimmedReason,
     });
