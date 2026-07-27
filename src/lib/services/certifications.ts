@@ -31,6 +31,7 @@ function toTenantContext(membership: {
 
 export interface IssueCertificationInput {
   organizationId: string;
+  departmentId?: string | null;
   memberId: string;
   courseId: string;
   trainingAssignmentId: string;
@@ -45,8 +46,8 @@ export async function issueCertification(
   input: IssueCertificationInput,
 ): Promise<CertificationRow> {
   const [certification] = await tx<CertificationRow[]>`
-    insert into certifications (organization_id, member_id, course_id, training_assignment_id, expires_at, created_by)
-    values (${input.organizationId}, ${input.memberId}, ${input.courseId}, ${input.trainingAssignmentId}, ${input.expiresAt}, ${input.actorProfileId ?? null})
+    insert into certifications (organization_id, department_id, member_id, course_id, training_assignment_id, expires_at, created_by)
+    values (${input.organizationId}, ${input.departmentId ?? null}, ${input.memberId}, ${input.courseId}, ${input.trainingAssignmentId}, ${input.expiresAt}, ${input.actorProfileId ?? null})
     returning *
   `;
   await recordAuditEvent(tx, {
@@ -55,6 +56,7 @@ export async function issueCertification(
     action: AuditAction.CertificationIssued,
     resourceType: AuditResourceType.Certification,
     resourceId: certification.id,
+    departmentId: certification.department_id,
     source: "app",
   });
   if (input.expiresAt) {
@@ -125,8 +127,8 @@ export async function renewCertification(
 
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [renewed] = await tx<CertificationRow[]>`
-      insert into certifications (organization_id, member_id, course_id, expires_at, renewed_from_certification_id, created_by)
-      values (${membership.organization.id}, ${existing.member_id}, ${existing.course_id}, ${newExpiresAt}, ${certificationId}, ${membership.profile.id})
+      insert into certifications (organization_id, department_id, member_id, course_id, expires_at, renewed_from_certification_id, created_by)
+      values (${membership.organization.id}, ${existing.department_id}, ${existing.member_id}, ${existing.course_id}, ${newExpiresAt}, ${certificationId}, ${membership.profile.id})
       returning *
     `;
     await recordAuditEvent(tx, {
@@ -135,6 +137,7 @@ export async function renewCertification(
       action: AuditAction.CertificationRenewed,
       resourceType: AuditResourceType.Certification,
       resourceId: renewed.id,
+      departmentId: renewed.department_id,
       source: "app",
     });
     if (newExpiresAt) {
@@ -180,6 +183,7 @@ export async function revokeCertification(
       action: AuditAction.CertificationRevoked,
       resourceType: AuditResourceType.Certification,
       resourceId: certificationId,
+      departmentId: existing.department_id,
       source: "app",
       reason: trimmedReason,
     });
@@ -206,6 +210,7 @@ export async function expireCertification(
     action: AuditAction.CertificationExpired,
     resourceType: AuditResourceType.Certification,
     resourceId: certificationId,
+    departmentId: certification.department_id,
     source: "system",
   });
 }

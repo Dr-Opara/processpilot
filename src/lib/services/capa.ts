@@ -88,11 +88,11 @@ export async function createCapaPlan(
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [plan] = await tx<CapaPlanRow[]>`
       insert into capa_plans (
-        organization_id, exception_id, title, description, owner_member_id, sponsor_member_id,
+        organization_id, department_id, exception_id, title, description, owner_member_id, sponsor_member_id,
         completion_criteria, effectiveness_check_method, effectiveness_check_date, verification_owner_member_id,
         created_by_member_id
       ) values (
-        ${membership.organization.id}, ${exceptionId}, ${data.title}, ${data.description ?? null}, ${data.ownerMemberId},
+        ${membership.organization.id}, ${exception.department_id}, ${exceptionId}, ${data.title}, ${data.description ?? null}, ${data.ownerMemberId},
         ${data.sponsorMemberId ?? null}, ${data.completionCriteria ?? null}, ${data.effectivenessCheckMethod ?? null},
         ${data.effectivenessCheckDate ?? null}, ${data.verificationOwnerMemberId ?? null}, ${membership.member.id}
       )
@@ -105,6 +105,7 @@ export async function createCapaPlan(
       action: AuditAction.CapaPlanCreated,
       resourceType: AuditResourceType.CapaPlan,
       resourceId: plan.id,
+      departmentId: plan.department_id,
       source: "app",
     });
     return plan;
@@ -185,6 +186,7 @@ export async function completeCapaAction(
       action: AuditAction.CapaActionCompleted,
       resourceType: AuditResourceType.CapaPlan,
       resourceId: existing.capa_plan_id,
+      departmentId: existing.department_id,
       source: "app",
     });
     return updated;
@@ -240,6 +242,7 @@ export async function decideCapaPlanApproval(
       action: decision === "approved" ? AuditAction.CapaPlanApproved : AuditAction.CapaPlanRejected,
       resourceType: AuditResourceType.CapaPlan,
       resourceId: capaPlanId,
+      departmentId: plan.department_id,
       source: "app",
     });
     return updated;
@@ -275,6 +278,7 @@ export async function recordCapaEffectivenessCheck(
           : AuditAction.CapaPlanMarkedIneffective,
       resourceType: AuditResourceType.CapaPlan,
       resourceId: capaPlanId,
+      departmentId: plan.department_id,
       source: "app",
     });
     return check;
@@ -305,6 +309,7 @@ export async function closeCapaPlan(capaPlanId: string): Promise<CapaPlanRow> {
       action: AuditAction.CapaPlanClosed,
       resourceType: AuditResourceType.CapaPlan,
       resourceId: capaPlanId,
+      departmentId: plan.department_id,
       source: "app",
     });
     return updated;

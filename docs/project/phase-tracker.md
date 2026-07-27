@@ -33,7 +33,7 @@ phases from this tracker and does not close until those phases are
 | 12    | Training and certifications                 | Complete    |
 | 13    | AI ingestion and copilot                    | Complete    |
 | 14    | Analytics                                   | Complete    |
-| 15    | Audit and compliance center                 | Not Started |
+| 15    | Audit and compliance center                 | Complete    |
 | 16    | Notifications                               | Not Started |
 | 17    | Billing and entitlements                    | Not Started |
 | 18    | Integrations                                | Not Started |
@@ -644,7 +644,27 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Every publish, approval, exception resolution, and
   permission change produces a verifiable, immutable audit event;
   `audit.export` produces a complete, correctly-scoped export.
-- **Status:** Not Started.
+- **Status:** Complete. `recordAuditEvent()` coverage across Phases 5–13
+  was already comprehensive going in — this phase's own scope was the
+  read/scope/export layer (`src/lib/services/audit.ts`, `/app/audit`) on
+  top of it, plus a real pre-existing bug this phase found and fixed:
+  `audit_events_select`'s RLS policy called `has_permission('audit.view')`
+  (unscoped-only), so `manager`'s/`auditor`'s seeded **scoped**
+  `audit.view`/`audit.export` grants were functionally inert — no
+  `department_id` column existed for a scoped check to run against. Fixed
+  by `20260730000001_audit_scoped_views.sql` (adds `department_id`,
+  switches the policy to `has_scoped_permission`) plus wiring
+  `department_id` through `recordAuditEvent()` for the exception/CAPA/
+  waiver and training/certification domains — which also surfaced and
+  fixed a second bug, that `capa_plans`/`temporary_waivers`/
+  `training_assignments`/`certifications` never populated their own
+  `department_id` column on insert despite their scoped-permission checks
+  depending on it. `audit.export` is capped at 5,000 rows per export and
+  itself produces an audit event. See
+  [docs/architecture/audit-and-compliance.md](../architecture/audit-and-compliance.md)
+  for full detail and the known gap (department tagging not yet extended
+  to every resource type; historical events pre-dating the migration are
+  visible only to an unscoped holder).
 - **Risks:** Retroactive audit-event gaps are unrecoverable — this phase
   must audit prior phases' event coverage, not just add new logging going
   forward.

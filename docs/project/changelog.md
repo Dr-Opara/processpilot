@@ -6,6 +6,29 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-31 — Phase 15 documentation and status update
+
+Added [audit-and-compliance.md](../architecture/audit-and-compliance.md)
+describing the Phase 15 implementation: `src/lib/services/audit.ts`'s
+`listAuditEvents()`/`exportAuditEvents()` and `/app/audit`, built on
+`recordAuditEvent()` coverage that was already comprehensive across
+Phases 5–13. Documents a real pre-existing bug this phase found and
+fixed — `audit_events_select`'s RLS policy checked only an unscoped
+`audit.view` grant, making `manager`'s/`auditor`'s seeded scoped grants
+functionally inert — fixed by `20260730000001_audit_scoped_views.sql`
+(adds `audit_events.department_id`, switches the policy to
+`has_scoped_permission`) plus wiring `department_id` through
+`recordAuditEvent()` for the exception/CAPA/waiver and training/
+certification domains, which also surfaced and fixed a second bug in
+those same domains' own unpopulated `department_id` columns. Updated
+[database-schema.md](../architecture/database-schema.md) with the new
+column. Updated [phase-tracker.md](phase-tracker.md): Phase 14 marked
+`Complete` (merged via PR #17); Phase 15 marked `Complete` with
+implementation detail, built on
+`feature/phase-15-audit-compliance-center`. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-07-30 — Phase 14 documentation and status update
 
 Added [analytics.md](../architecture/analytics.md) describing the Phase

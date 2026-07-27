@@ -130,6 +130,7 @@ export interface AuditEventRow {
   action: string;
   resource_type: string;
   resource_id: string | null;
+  department_id: string | null;
   correlation_id: string | null;
   source: AuditEventSource;
   reason: string | null;

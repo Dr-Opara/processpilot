@@ -176,6 +176,12 @@ export const AuditAction = {
   AiDraftGenerated: "ai_draft.generated",
   AiDraftAccepted: "ai_draft.accepted",
   AiDraftDismissed: "ai_draft.dismissed",
+
+  // Phase 15 (Audit and compliance center). Exporting the audit log is
+  // itself governance-relevant — who pulled a compliance export, and
+  // when, is exactly the kind of question an audit trail exists to
+  // answer — so it produces its own audit event.
+  AuditEventsExported: "audit_events.exported",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -210,6 +216,7 @@ export const AuditResourceType = {
   TrainingAssignment: "training_assignment",
   Certification: "certification",
   AiDraft: "ai_draft",
+  AuditExport: "audit_export",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

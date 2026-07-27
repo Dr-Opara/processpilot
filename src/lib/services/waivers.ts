@@ -80,10 +80,10 @@ export async function requestWaiver(
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [waiver] = await tx<TemporaryWaiverRow[]>`
       insert into temporary_waivers (
-        organization_id, exception_id, business_justification, compensating_controls, risk_acceptance,
+        organization_id, department_id, exception_id, business_justification, compensating_controls, risk_acceptance,
         requested_by_member_id, start_at, expires_at
       ) values (
-        ${membership.organization.id}, ${exceptionId}, ${data.businessJustification}, ${data.compensatingControls ?? null},
+        ${membership.organization.id}, ${exception.department_id}, ${exceptionId}, ${data.businessJustification}, ${data.compensatingControls ?? null},
         ${data.riskAcceptance ?? null}, ${membership.member.id}, ${data.startAt ?? null}, ${data.expiresAt}
       )
       returning *
@@ -94,6 +94,7 @@ export async function requestWaiver(
       action: AuditAction.WaiverRequested,
       resourceType: AuditResourceType.TemporaryWaiver,
       resourceId: waiver.id,
+      departmentId: waiver.department_id,
       source: "app",
     });
     return waiver;
@@ -132,6 +133,7 @@ export async function decideWaiver(
       action: decision === "approved" ? AuditAction.WaiverApproved : AuditAction.WaiverRejected,
       resourceType: AuditResourceType.TemporaryWaiver,
       resourceId: waiverId,
+      departmentId: waiver.department_id,
       source: "app",
     });
     if (decision === "approved") {
@@ -178,6 +180,7 @@ export async function renewWaiver(
       action: AuditAction.WaiverRenewed,
       resourceType: AuditResourceType.TemporaryWaiver,
       resourceId: waiverId,
+      departmentId: waiver.department_id,
       source: "app",
     });
     await enqueueJob(tx, membership.organization.id, {
@@ -212,6 +215,7 @@ export async function revokeWaiver(waiverId: string): Promise<TemporaryWaiverRow
       action: AuditAction.WaiverRevoked,
       resourceType: AuditResourceType.TemporaryWaiver,
       resourceId: waiverId,
+      departmentId: waiver.department_id,
       source: "app",
     });
     return updated;
@@ -276,6 +280,7 @@ export async function expireWaiver(
     action: AuditAction.WaiverExpired,
     resourceType: AuditResourceType.TemporaryWaiver,
     resourceId: waiverId,
+    departmentId: waiver.department_id,
     source: "system",
   });
 }
