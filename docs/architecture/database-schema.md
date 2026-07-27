@@ -134,14 +134,17 @@ erDiagram
 | `certifications`                | `20260728000001_...`                                       |         Yes         | `expires_at` nullable only as an explicit non-expiring choice; renewal inserts a new row chained via `renewed_from_certification_id`.                                                                                                                  |
 | `ai_drafts`                     | `20260729000001_ai_copilot`                                |         Yes         | Phase 13. See [ai-architecture.md](ai-architecture.md). No mutation function is ever called from an `ai_drafts` write path.                                                                                                                            |
 | `ai_usage_events`               | `20260729000001_...`                                       |         Yes         | One row per adapter call — token/model/feature — independent of whether a draft was persisted.                                                                                                                                                         |
+| `notifications`                 | `20260801000001_notifications`                             |         Yes         | Phase 16. See [notifications.md](notifications.md). Own-resource RLS — a recipient sees only their own feed.                                                                                                                                           |
+| `notification_deliveries`       | `20260801000001_...`                                       |         Yes         | One row per (notification, channel) send attempt; written only by the admin client from the `deliver-notification-email` job.                                                                                                                          |
+| `notification_preferences`      | `20260801000001_...`                                       |         Yes         | `member_id is null` = organization default for that type; two partial unique indexes enforce one default row and one override row per member per type.                                                                                                 |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11, Phase 12, and Phase 13's rows above are complete; a full
-backfill of the missing phases is tracked against
+into this summary table). Phase 11 through Phase 16's rows above are
+complete; a full backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.
 

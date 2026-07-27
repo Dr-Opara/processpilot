@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/services/notifications", () => ({ createNotification: vi.fn() }));
 
 import { createFakeSql, asSql } from "@/lib/db/test-helpers/fake-sql";
 import { AppError } from "@/lib/errors";
@@ -229,7 +230,7 @@ describe("createApprovalDecisions", () => {
 
     const decisions = await createApprovalDecisions(
       sql,
-      { id: "task-1", organization_id: "org-1" },
+      { id: "task-1", organization_id: "org-1", label: "Test task" },
       p,
       {
         departmentId: null,
@@ -246,11 +247,16 @@ describe("createApprovalDecisions", () => {
     const p = policy({ approver_rules: [{ type: "user", value: null }] });
 
     await expect(
-      createApprovalDecisions(sql, { id: "task-1", organization_id: "org-1" }, p, {
-        departmentId: null,
-        startedByMemberId: null,
-        processId: "process-1",
-      }),
+      createApprovalDecisions(
+        sql,
+        { id: "task-1", organization_id: "org-1", label: "Test task" },
+        p,
+        {
+          departmentId: null,
+          startedByMemberId: null,
+          processId: "process-1",
+        },
+      ),
     ).rejects.toThrow(AppError);
   });
 
@@ -274,7 +280,7 @@ describe("createApprovalDecisions", () => {
 
     const decisions = await createApprovalDecisions(
       sql,
-      { id: "task-1", organization_id: "org-1" },
+      { id: "task-1", organization_id: "org-1", label: "Test task" },
       p,
       {
         departmentId: null,
@@ -294,11 +300,16 @@ describe("createApprovalDecisions", () => {
     });
 
     await expect(
-      createApprovalDecisions(sql, { id: "task-1", organization_id: "org-1" }, p, {
-        departmentId: null,
-        startedByMemberId: "m1",
-        processId: "process-1",
-      }),
+      createApprovalDecisions(
+        sql,
+        { id: "task-1", organization_id: "org-1", label: "Test task" },
+        p,
+        {
+          departmentId: null,
+          startedByMemberId: "m1",
+          processId: "process-1",
+        },
+      ),
     ).rejects.toThrow(AppError);
   });
 });

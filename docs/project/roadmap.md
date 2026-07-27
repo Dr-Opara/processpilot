@@ -38,12 +38,13 @@ graph LR
 Milestone 2 (Core Platform) is in progress; Phases 5–10 are `Complete`
 per the phase tracker. Milestone 3 (Execution governance) is complete —
 Phases 11 (Exception management) and 12 (Training and certifications)
-are both `Complete` — and Milestone 4 (Intelligence) is progressing:
-Phase 13 (AI ingestion and copilot), Phase 14 (Analytics), and Phase 15
-(Audit and compliance center) are all `Complete`; Phase 16
-(Notifications) is starting on `feature/phase-16-notifications`. Phase 4
-(Database and tenant isolation) remains `In Progress` pending a live
-Supabase project — see
+are both `Complete`. Milestone 4 (Intelligence) is complete — Phase 13
+(AI ingestion and copilot), Phase 14 (Analytics), and Phase 15 (Audit
+and compliance center) are all `Complete`. Milestone 5 (Commercial
+readiness) has begun: Phase 16 (Notifications) is `Complete`; Phase 17
+(Billing and entitlements) is starting on
+`feature/phase-17-billing-entitlements`. Phase 4 (Database and tenant
+isolation) remains `In Progress` pending a live Supabase project — see
 [current-project-status.md](current-project-status.md) for the live
 snapshot.
 

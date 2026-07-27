@@ -7,6 +7,9 @@ vi.mock("@/lib/jobs/enqueue", () => ({
 vi.mock("@/lib/services/exceptions", () => ({
   createSystemException: vi.fn().mockResolvedValue({}),
 }));
+vi.mock("@/lib/services/notifications", () => ({
+  createNotification: vi.fn().mockResolvedValue({}),
+}));
 
 import { enqueueJob } from "@/lib/jobs/enqueue";
 import { createSystemException } from "@/lib/services/exceptions";

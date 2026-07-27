@@ -11,6 +11,7 @@ import {
 } from "@/lib/services/approval-resolution";
 import { resolveDueAt } from "@/lib/services/sla";
 import { createSystemException } from "@/lib/services/exceptions";
+import { createNotification } from "@/lib/services/notifications";
 import type {
   ExceptionSource,
   ExceptionType,
@@ -229,6 +230,19 @@ export async function activateNode(params: ActivateNodeParams): Promise<void> {
   }
 
   await recordTaskHistory(sql, task, "task.created", null, { nodeType: node.type });
+
+  if (task.assignee_member_id) {
+    await createNotification(sql, {
+      organizationId: workflow.organization_id,
+      departmentId: workflow.department_id,
+      recipientMemberId: task.assignee_member_id,
+      notificationType: "task_assigned",
+      title: `New task: ${task.label}`,
+      body: `You've been assigned "${task.label}" in a running workflow.`,
+      resourceType: "task",
+      resourceId: task.id,
+    });
+  }
 
   if (approvalPolicy) {
     await createApprovalDecisions(sql, task, approvalPolicy, {

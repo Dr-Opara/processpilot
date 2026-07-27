@@ -36,31 +36,40 @@ tracker's own definition.
 - **Status:** In Progress — Phase 4 started.
 - **Detail:** [milestone-2-core-platform.md](milestone-2-core-platform.md).
 
-## Milestone 3: Execution governance (planned)
+## Milestone 3: Execution governance
 
 - **Outcome:** The core loop gains the accountability layer real
   operational customers require: structured evidence, multi-step approvals,
   exception handling, and training/certification tracking.
 - **Phases:** 9 (Forms and evidence), 10 (Approvals and escalations), 11
   (Exception management), 12 (Training and certifications).
-- **Status:** Not Started.
+- **Status:** Complete — Phases 9–12 are all `Complete` per the
+  [phase tracker](phase-tracker.md).
 
-## Milestone 4: Intelligence (planned)
+## Milestone 4: Intelligence
 
 - **Outcome:** AI assists across the product loop under a verified
   governance boundary, and operational data becomes analytics and an audit
   trail customers can rely on.
 - **Phases:** 13 (AI ingestion and copilot), 14 (Analytics), 15 (Audit and
   compliance center).
-- **Status:** Not Started.
+- **Status:** Complete — Phases 13–15 are all `Complete` per the
+  [phase tracker](phase-tracker.md). Live AI output remains unverified
+  end-to-end (no real `ANTHROPIC_API_KEY` in this environment) — the
+  code is complete and tested against deterministic mocks, but this
+  milestone's "customers can rely on it" outcome is not yet proven
+  against a live provider.
 
-## Milestone 5: Commercial readiness (planned)
+## Milestone 5: Commercial readiness
 
 - **Outcome:** The product is sellable — billed, notifiable, integrable,
   usable by external collaborators, and usable on mobile.
 - **Phases:** 16 (Notifications), 17 (Billing and entitlements), 18
   (Integrations), 19 (External portal), 20 (Responsive PWA).
-- **Status:** Not Started.
+- **Status:** In Progress — Phase 16 is `Complete` per the
+  [phase tracker](phase-tracker.md) (live email delivery similarly
+  unverified — no real `EMAIL_PROVIDER_API_KEY` in this environment);
+  Phases 17–20 have not started.
 
 ## Milestone 6: General availability (planned)
 

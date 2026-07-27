@@ -5,30 +5,32 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-30.
+**Last updated:** 2026-08-01.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) is progressing in
-  parallel; Milestone 4 (Intelligence) is progressing via Phases 13–15.
-- **Current phase:** Phase 16 — Notifications, starting on
-  `feature/phase-16-notifications`.
+  parallel; Milestone 4 (Intelligence, Phases 13–15) is complete, and
+  Milestone 5 (Commercial readiness) has begun via Phase 16.
+- **Current phase:** Phase 17 — Billing and entitlements, starting on
+  `feature/phase-17-billing-entitlements`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, and 15** (business onboarding/
-  employee management, knowledge management, process builder, workflow
-  execution engine, forms and evidence, approvals/SLAs/escalations,
-  exceptions/CAPA, training/certifications, AI copilot, analytics, audit
-  and compliance center) are `Complete` per the phase tracker — Phase 9
-  merged via PR #12 (commit `5427118`); Phase 10 merged via PR #13; Phase
-  11 merged via PR #14; Phase 12 merged via PR #15; Phase 13 merged via PR
-  #16; Phase 14 merged via PR #17; Phase 15 merged via the
-  `feature/phase-15-audit-compliance-center` PR. Phase 4 (database and
-  tenant isolation) remains recorded as `In Progress` in the tracker; this
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, and 16** (business
+  onboarding/employee management, knowledge management, process builder,
+  workflow execution engine, forms and evidence, approvals/SLAs/
+  escalations, exceptions/CAPA, training/certifications, AI copilot,
+  analytics, audit and compliance center, notifications) are `Complete`
+  per the phase tracker — Phase 9 merged via PR #12 (commit `5427118`);
+  Phase 10 merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged
+  via PR #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17;
+  Phase 15 merged via PR #18; Phase 16 merged via the
+  `feature/phase-16-notifications` PR. Phase 4 (database and tenant
+  isolation) remains recorded as `In Progress` in the tracker; this
   document does not re-audit that status.
 
 ## What's built
@@ -198,6 +200,25 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   full detail and known gaps (department tagging not yet extended to
   every resource type; historical events pre-dating the migration remain
   visible only to an unscoped holder).
+- Notifications (Phase 16, complete): provider-neutral email adapter
+  (`src/lib/notifications/adapter.ts`, `providers/resend-provider.ts`,
+  `get-provider.ts`, mirroring ADR-0008's AI adapter pattern), an in-app
+  notification feed (`notifications`), per-channel delivery tracking
+  (`notification_deliveries`), and per-member/org-default preferences
+  (`notification_preferences`). Delivery is always scheduled through the
+  existing background-job worker (`deliver-notification-email`), never
+  sent synchronously — idempotent by delivery id, retried through the
+  worker's own backoff on a real provider failure, marked
+  `skipped_not_configured` (never a fabricated success) when no real
+  `EMAIL_PROVIDER_API_KEY` exists. Wired at one representative trigger
+  per named category: task assignment, approval request, deadline
+  reminder/breach, and exception owner assignment. No real email
+  provider is configured in this environment — live Resend delivery is
+  unverified end-to-end. Routes: `/app/notifications`,
+  `/app/notifications/preferences`. See
+  [notifications.md](../architecture/notifications.md) for full detail
+  and known gaps (bounded trigger coverage; no digest/batching; in-app
+  visibility not itself preference-gated).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -218,12 +239,15 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- Notifications, billing, integrations, external portal (later
-  phases/milestones).
+- Billing, integrations, external portal (later phases/milestones).
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so
   actual Claude API responses remain unverified end-to-end.
+- Live-verified email delivery — Phase 16's notification code is
+  complete and tested against deterministic mocks, but no real
+  `EMAIL_PROVIDER_API_KEY` has been supplied in this environment yet, so
+  actual Resend delivery remains unverified end-to-end.
 
 ## Immediate next steps
 
@@ -231,11 +255,13 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    see [supabase-setup.md](../development/supabase-setup.md). Blocks
    applying the committed migrations, regenerating real database types,
    and running the live-DB tenant-isolation tests for real.
-2. Supply a real `ANTHROPIC_API_KEY` (Codespaces/CI/Vercel secrets, per
+2. Supply a real `ANTHROPIC_API_KEY` and `EMAIL_PROVIDER_API_KEY`/
+   `EMAIL_FROM_ADDRESS` (Codespaces/CI/Vercel secrets, per
    [environment-variables.md](../development/environment-variables.md))
-   to verify live AI output for real, then re-run the Phase 13 test
-   suite against it.
-3. Begin Phase 16 (notifications) on `feature/phase-16-notifications`.
+   to verify live AI output and email delivery for real, then re-run the
+   Phase 13 and Phase 16 test suites against them.
+3. Begin Phase 17 (billing and entitlements) on
+   `feature/phase-17-billing-entitlements`.
 
 ## Known risks carried forward
 

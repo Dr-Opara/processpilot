@@ -8,6 +8,7 @@ import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { resolveMemberIdsForRule } from "@/lib/services/approval-resolution";
 import { createSystemException } from "@/lib/services/exceptions";
+import { createNotification } from "@/lib/services/notifications";
 import type { EscalationRuleRow, SlaDefinitionRow, TaskRow } from "@/lib/db/database.types";
 
 function toTenantContext(membership: {
@@ -156,6 +157,18 @@ async function checkTaskReminders(
       insert into escalation_events (organization_id, task_id, workflow_id, level, action, metadata)
       values (${organizationId}, ${task.id}, ${task.workflow_id}, 0, 'remind', ${tx.json({ reminderMinutesBeforeDue: threshold } as unknown as Parameters<typeof tx.json>[0])})
     `;
+    if (task.assignee_member_id) {
+      await createNotification(tx, {
+        organizationId,
+        departmentId: task.department_id,
+        recipientMemberId: task.assignee_member_id,
+        notificationType: "deadline_approaching",
+        title: `Due soon: ${task.label}`,
+        body: `"${task.label}" is due ${new Date(task.due_at as string).toLocaleString()}.`,
+        resourceType: "task",
+        resourceId: task.id,
+      });
+    }
   }
 }
 
@@ -267,6 +280,18 @@ export async function checkTaskEscalations(
       resourceId: task.id,
       source: "system",
     });
+    if (target) {
+      await createNotification(tx, {
+        organizationId,
+        departmentId: task.department_id,
+        recipientMemberId: target,
+        notificationType: "deadline_breached",
+        title: `Missed deadline: ${task.label}`,
+        body: `"${task.label}" is past due and has been escalated to you.`,
+        resourceType: "task",
+        resourceId: task.id,
+      });
+    }
 
     // Phase 11: reaching the top escalation level (admin escalation)
     // means every lower-level attempt to resolve the breach on its own

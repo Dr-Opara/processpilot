@@ -1299,3 +1299,51 @@ export interface AiUsageEventRow {
   created_at: string;
   created_by: string | null;
 }
+
+/** Phase 16 (Notifications) — see docs/architecture/notifications.md. */
+export type NotificationType =
+  | "task_assigned"
+  | "approval_requested"
+  | "deadline_approaching"
+  | "deadline_breached"
+  | "exception_assigned";
+
+export interface NotificationRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  recipient_member_id: string;
+  notification_type: NotificationType;
+  title: string;
+  body: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export type NotificationDeliveryStatus =
+  "pending" | "sent" | "failed" | "skipped_not_configured" | "skipped_preference";
+
+export interface NotificationDeliveryRow {
+  id: string;
+  notification_id: string;
+  organization_id: string;
+  channel: "email";
+  status: NotificationDeliveryStatus;
+  provider_message_id: string | null;
+  error_message: string | null;
+  attempt_count: number;
+  created_at: string;
+  sent_at: string | null;
+}
+
+export interface NotificationPreferenceRow {
+  id: string;
+  organization_id: string;
+  member_id: string | null;
+  notification_type: NotificationType;
+  email_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
