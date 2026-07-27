@@ -34,7 +34,7 @@ phases from this tracker and does not close until those phases are
 | 13    | AI ingestion and copilot                    | Complete    |
 | 14    | Analytics                                   | Complete    |
 | 15    | Audit and compliance center                 | Complete    |
-| 16    | Notifications                               | Not Started |
+| 16    | Notifications                               | Complete    |
 | 17    | Billing and entitlements                    | Not Started |
 | 18    | Integrations                                | Not Started |
 | 19    | External portal                             | Not Started |
@@ -680,7 +680,25 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Notifications are delivered reliably and are
   idempotent (no duplicate sends) per
   [docs/architecture/event-model.md](../architecture/event-model.md).
-- **Status:** Not Started.
+- **Status:** Complete. Provider-neutral email adapter
+  (`src/lib/notifications/adapter.ts`, `providers/resend-provider.ts`,
+  `get-provider.ts`, mirroring ADR-0008's AI adapter pattern) plus an
+  in-app notification feed (`notifications` table), per-channel delivery
+  tracking (`notification_deliveries`), and per-member/org-default
+  preferences (`notification_preferences`). Delivery is scheduled — never
+  sent synchronously — via the existing background-job worker
+  (`deliver-notification-email`, idempotent by delivery id, retried
+  through the worker's own backoff on a real provider failure, marked
+  `skipped_not_configured` without throwing when no real
+  `EMAIL_PROVIDER_API_KEY` exists). Wired at one representative trigger
+  per named category: task assignment (`workflow-engine.ts`), approval
+  request (`approval-resolution.ts`), deadline reminder/breach
+  (`escalation.ts`), and exception owner assignment (`exceptions.ts`).
+  No real email provider is configured in this environment — live
+  Resend delivery is unverified end-to-end; see
+  [docs/architecture/notifications.md](../architecture/notifications.md)
+  for full detail and known gaps (bounded trigger coverage, no
+  digest/batching, in-app visibility not itself preference-gated).
 - **Risks:** None beyond standard idempotency testing.
 
 ## Phase 17: Billing and entitlements

@@ -7,6 +7,7 @@ import { withTenantContext } from "@/lib/db/tenant-context";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { findRecurrenceMatches } from "@/lib/services/exception-recurrence";
+import { createNotification } from "@/lib/services/notifications";
 import type {
   ExceptionCommentRow,
   ExceptionHistoryRow,
@@ -192,6 +193,18 @@ export async function createException(input: CreateExceptionInput): Promise<Exce
       departmentId: exception.department_id,
       source: "app",
     });
+    if (exception.owner_member_id) {
+      await createNotification(tx, {
+        organizationId: membership.organization.id,
+        departmentId: exception.department_id,
+        recipientMemberId: exception.owner_member_id,
+        notificationType: "exception_assigned",
+        title: `Exception assigned: ${exception.title}`,
+        body: `You've been made the owner of exception "${exception.title}".`,
+        resourceType: "exception",
+        resourceId: exception.id,
+      });
+    }
 
     await findRecurrenceMatches(tx, exception);
 
@@ -396,6 +409,18 @@ export async function triageException(
       departmentId: existing.department_id,
       source: "app",
     });
+    if (updated.owner_member_id && updated.owner_member_id !== existing.owner_member_id) {
+      await createNotification(tx, {
+        organizationId: membership.organization.id,
+        departmentId: existing.department_id,
+        recipientMemberId: updated.owner_member_id,
+        notificationType: "exception_assigned",
+        title: `Exception assigned: ${updated.title}`,
+        body: `You've been made the owner of exception "${updated.title}".`,
+        resourceType: "exception",
+        resourceId: updated.id,
+      });
+    }
 
     return updated;
   });

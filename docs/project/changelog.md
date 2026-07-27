@@ -6,6 +6,36 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-01 — Phase 16 documentation and status update
+
+Added [notifications.md](../architecture/notifications.md) describing
+the Phase 16 implementation: the provider-neutral email adapter
+(`src/lib/notifications/adapter.ts`, `providers/resend-provider.ts`,
+`get-provider.ts`, mirroring ADR-0008's AI adapter pattern), the
+in-app notification feed/delivery-tracking/preferences data model,
+the idempotent `deliver-notification-email` background job (retried
+via the worker's own backoff, marked `skipped_not_configured` without
+throwing when unconfigured), and the four trigger call sites
+(assignment, approval, deadline, exception). Documents that no real
+email provider is configured in this environment — live Resend
+delivery is unverified end-to-end, same posture as Phase 13's
+Anthropic key. Updated
+[database-schema.md](../architecture/database-schema.md) with the 3
+new tables. Updated
+[environment-variables.md](../development/environment-variables.md) to
+move `EMAIL_PROVIDER_API_KEY`/`EMAIL_FROM_ADDRESS` from "planned" to
+"current." Updated [phase-tracker.md](phase-tracker.md): Phase 15
+marked `Complete` (merged via PR #18); Phase 16 marked `Complete` with
+implementation detail, built on `feature/phase-16-notifications`.
+Corrected [milestones.md](milestones.md), which had drifted out of
+sync with the phase tracker across several prior phases: Milestone 3
+(Execution governance) and Milestone 4 (Intelligence) marked `Complete`
+(Phases 9–12 and 13–15 respectively were already `Complete` in the
+tracker but milestones.md still read "Not Started"); Milestone 5
+(Commercial readiness) marked `In Progress`. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-07-31 — Phase 15 documentation and status update
 
 Added [audit-and-compliance.md](../architecture/audit-and-compliance.md)

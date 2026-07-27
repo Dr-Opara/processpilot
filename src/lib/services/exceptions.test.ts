@@ -8,6 +8,9 @@ vi.mock("@/lib/authz", () => ({
 vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
+vi.mock("@/lib/services/notifications", () => ({
+  createNotification: vi.fn().mockResolvedValue({}),
+}));
 vi.mock("@/lib/services/exception-recurrence", () => ({
   findRecurrenceMatches: vi.fn().mockResolvedValue(undefined),
 }));

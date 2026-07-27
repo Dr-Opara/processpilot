@@ -4,6 +4,9 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/services/exceptions", () => ({
   createSystemException: vi.fn().mockResolvedValue({}),
 }));
+vi.mock("@/lib/services/notifications", () => ({
+  createNotification: vi.fn().mockResolvedValue({}),
+}));
 
 import {
   createFakeSql,

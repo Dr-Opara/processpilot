@@ -1,6 +1,7 @@
 import "server-only";
 import type postgres from "postgres";
 import { AppError } from "@/lib/errors";
+import { createNotification } from "@/lib/services/notifications";
 import type { WorkflowInstanceContext } from "@/lib/services/workflow-condition";
 import type {
   ApprovalDecisionRow,
@@ -107,7 +108,7 @@ export async function resolveMemberIdsForRule(
 /** Fans an 'approval' task out into one approval_decisions row per resolved approver — called by workflow-engine.ts's activateNode() when the node's snapshotted policy resolves to at least one approver. Throws if it resolves to none, since an approval step nobody can act on would strand the workflow. */
 export async function createApprovalDecisions(
   sql: postgres.Sql | postgres.TransactionSql,
-  task: Pick<TaskRow, "id" | "organization_id">,
+  task: Pick<TaskRow, "id" | "organization_id" | "label">,
   policy: ApprovalPolicyRow,
   context: {
     departmentId: string | null;
@@ -147,6 +148,21 @@ export async function createApprovalDecisions(
       returning *
     `;
     decisions.push(decision);
+    // Every resolved approver is notified when the chain opens, not just
+    // whoever's turn it is under a sequential strategy — a bounded v1
+    // simplification (see docs/architecture/notifications.md's known
+    // gaps) rather than tracking per-strategy turn-order in the
+    // notification trigger itself.
+    await createNotification(sql, {
+      organizationId: task.organization_id,
+      departmentId: context.departmentId,
+      recipientMemberId: memberId,
+      notificationType: "approval_requested",
+      title: `Approval requested: ${task.label}`,
+      body: `Your approval is requested for "${task.label}".`,
+      resourceType: "task",
+      resourceId: task.id,
+    });
   }
   return decisions;
 }
