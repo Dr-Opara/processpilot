@@ -66,10 +66,16 @@ tracker's own definition.
   usable by external collaborators, and usable on mobile.
 - **Phases:** 16 (Notifications), 17 (Billing and entitlements), 18
   (Integrations), 19 (External portal), 20 (Responsive PWA).
-- **Status:** In Progress — Phase 16 is `Complete` per the
-  [phase tracker](phase-tracker.md) (live email delivery similarly
-  unverified — no real `EMAIL_PROVIDER_API_KEY` in this environment);
-  Phases 17–20 have not started.
+- **Status:** In Progress — Phase 16 and Phase 17 are `Complete` per the
+  [phase tracker](phase-tracker.md) (live email delivery and live
+  billing both similarly unverified — no real `EMAIL_PROVIDER_API_KEY`
+  or `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` in this environment;
+  Phase 17's pricing is also still an unvalidated hypothesis, not
+  committed pricing — see
+  [billing-architecture.md](../architecture/billing-architecture.md));
+  Phases 18–20 have not started. This milestone's "billed" outcome is
+  not yet actually proven — it's built and mocked-tested, not verified
+  against a real Stripe account or a real commercial pricing decision.
 
 ## Milestone 6: General availability (planned)
 

@@ -185,9 +185,10 @@ describe("supabase/migrations schema coverage", () => {
     // training_assignments, training_assignment_history,
     // certifications) + 2 (Phase 13: ai_drafts, ai_usage_events) + 3
     // (Phase 16: notifications, notification_deliveries,
-    // notification_preferences). Phase 14 and Phase 15 added no new
+    // notification_preferences) + 2 (Phase 17: subscriptions,
+    // billing_webhook_events). Phase 14 and Phase 15 added no new
     // tables (Phase 15 added a column to the existing audit_events).
-    expect(tables.size).toBe(65);
+    expect(tables.size).toBe(67);
   });
 
   it("enables Row-Level Security on every table", () => {

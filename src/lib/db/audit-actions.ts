@@ -182,6 +182,14 @@ export const AuditAction = {
   // when, is exactly the kind of question an audit trail exists to
   // answer — so it produces its own audit event.
   AuditEventsExported: "audit_events.exported",
+
+  // Phase 17 (Billing and entitlements). Subscription state itself
+  // (created/renewed/canceled by Stripe) is synced by the webhook
+  // handler, not recorded as its own audit action here — the
+  // subscriptions table row *is* the durable record of that. Only the
+  // app-initiated request to cancel is audited, since Stripe doesn't
+  // record "who, inside ProcessPilot, clicked cancel."
+  SubscriptionCancellationRequested: "subscription.cancellation_requested",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -217,6 +225,7 @@ export const AuditResourceType = {
   Certification: "certification",
   AiDraft: "ai_draft",
   AuditExport: "audit_export",
+  Subscription: "subscription",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

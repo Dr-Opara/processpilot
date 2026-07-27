@@ -27,8 +27,8 @@ format:
 | [0004](decisions/0004-supabase-postgresql.md)                | Supabase PostgreSQL and private storage           | Proposed |
 | [0005](decisions/0005-postgresql-row-level-security.md)      | PostgreSQL Row-Level Security                     | Proposed |
 | [0006](decisions/0006-vercel-deployment.md)                  | Vercel deployment                                 | Accepted |
-| [0007](decisions/0007-stripe-billing.md)                     | Stripe billing                                    | Proposed |
-| [0008](decisions/0008-provider-neutral-ai-abstraction.md)    | Provider-neutral AI abstraction                   | Proposed |
+| [0007](decisions/0007-stripe-billing.md)                     | Stripe billing                                    | Accepted |
+| [0008](decisions/0008-provider-neutral-ai-abstraction.md)    | Provider-neutral AI abstraction                   | Accepted |
 | [0009](decisions/0009-provider-neutral-background-jobs.md)   | Provider-neutral background jobs                  | Proposed |
 | [0010](decisions/0010-event-driven-workflow-execution.md)    | Event-driven workflow execution                   | Proposed |
 | [0011](decisions/0011-immutable-published-versions.md)       | Immutable published document and process versions | Accepted |

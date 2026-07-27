@@ -6,6 +6,7 @@ import { AppError } from "@/lib/errors";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
+import { requireSeatAvailable } from "@/lib/services/billing";
 import type { CurrentMembership } from "@/lib/authz";
 import type { OrganizationInvitationRow, RoleRow } from "@/lib/db/database.types";
 
@@ -89,6 +90,7 @@ export async function createInvitation(input: InvitationInput): Promise<Organiza
   if (data.email === membership.profile.email.toLowerCase()) {
     throw new AppError("conflict", "You cannot invite yourself.");
   }
+  await requireSeatAvailable(membership.organization.id);
 
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [role] = await tx<RoleRow[]>`

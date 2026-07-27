@@ -8,6 +8,9 @@ vi.mock("@/lib/authz", () => ({
 vi.mock("@/lib/db/tenant-context", () => ({
   withTenantContext: vi.fn(),
 }));
+vi.mock("@/lib/services/billing", () => ({
+  requireSeatAvailable: vi.fn().mockResolvedValue(undefined),
+}));
 
 const createOrganizationInvitation = vi.fn();
 vi.mock("@clerk/nextjs/server", () => ({
