@@ -6,6 +6,23 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-07-30 — Phase 14 documentation and status update
+
+Added [analytics.md](../architecture/analytics.md) describing the Phase
+14 analytics implementation: live queries over existing tenant-scoped
+tables (no cache/snapshot table), the `analytics.view` permission gate,
+the null-vs-fabricated-zero rate convention, each metric's definition
+(per-process/cross-process workflow stats, 12-week trend, audit
+readiness, training/CAPA compliance, AI draft acceptance rate), and
+known gaps (no draft-to-publish time delta yet; adoption/commercial/
+platform-health metrics deliberately out of scope for this
+customer-facing surface). Updated [phase-tracker.md](phase-tracker.md):
+Phase 13 marked `Complete` (merged via PR #16); Phase 14 marked
+`Complete` with implementation detail, built on
+`feature/phase-14-analytics`. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-07-29 — Phase 13 documentation and status update
 
 Rewrote [ai-architecture.md](../architecture/ai-architecture.md) with an

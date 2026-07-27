@@ -17,7 +17,12 @@ import {
   type FakeQueryHandler,
 } from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
-import { acceptAiDraft, createAiDraft, dismissAiDraft } from "./ai-drafts";
+import {
+  acceptAiDraft,
+  createAiDraft,
+  dismissAiDraft,
+  getAiDraftAcceptanceStats,
+} from "./ai-drafts";
 import { AppError } from "@/lib/errors";
 import type { AiDraftRow } from "@/lib/db/database.types";
 
@@ -152,5 +157,38 @@ describe("acceptAiDraft / dismissAiDraft", () => {
 
     const updated = await dismissAiDraft("draft-1");
     expect(updated.status).toBe("dismissed");
+  });
+});
+
+describe("getAiDraftAcceptanceStats", () => {
+  it("returns a null rate when nothing has been decided yet", async () => {
+    const membership = makeMembership({ permissions: ["analytics.view"] });
+    vi.mocked(requirePermission).mockResolvedValue(membership);
+    wireTenantContext([
+      {
+        match: (t) => t.includes("from ai_drafts"),
+        respond: () => [{ accepted: "0", dismissed: "0" }],
+      },
+    ]);
+
+    const result = await getAiDraftAcceptanceStats();
+
+    expect(result.acceptanceRate).toBeNull();
+  });
+
+  it("computes the acceptance rate from accepted vs dismissed drafts", async () => {
+    const membership = makeMembership({ permissions: ["analytics.view"] });
+    vi.mocked(requirePermission).mockResolvedValue(membership);
+    wireTenantContext([
+      {
+        match: (t) => t.includes("from ai_drafts"),
+        respond: () => [{ accepted: "3", dismissed: "1" }],
+      },
+    ]);
+
+    const result = await getAiDraftAcceptanceStats();
+
+    expect(result.totalDecided).toBe(4);
+    expect(result.acceptanceRate).toBeCloseTo(0.75);
   });
 });

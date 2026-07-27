@@ -193,3 +193,31 @@ export async function dismissAiDraft(draftId: string): Promise<AiDraftRow> {
     return updated;
   });
 }
+
+export interface AiDraftAcceptanceStats {
+  totalDecided: number;
+  accepted: number;
+  /** null when nothing has been decided yet — success-metrics.md's "draft process acceptance rate" AI-assist quality metric, generalized across every draft type, not just process extraction. */
+  acceptanceRate: number | null;
+}
+
+export async function getAiDraftAcceptanceStats(): Promise<AiDraftAcceptanceStats> {
+  const membership = await requirePermission("analytics.view");
+  return withTenantContext(toTenantContext(membership), async (tx) => {
+    const [row] = await tx<{ accepted: string; dismissed: string }[]>`
+      select
+        count(*) filter (where status = 'accepted') as accepted,
+        count(*) filter (where status = 'dismissed') as dismissed
+      from ai_drafts
+      where organization_id = ${membership.organization.id}
+    `;
+    const accepted = Number(row?.accepted ?? 0);
+    const dismissed = Number(row?.dismissed ?? 0);
+    const totalDecided = accepted + dismissed;
+    return {
+      totalDecided,
+      accepted,
+      acceptanceRate: totalDecided > 0 ? accepted / totalDecided : null,
+    };
+  });
+}

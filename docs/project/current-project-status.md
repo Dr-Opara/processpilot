@@ -5,30 +5,30 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-29.
+**Last updated:** 2026-07-26.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) is progressing in
-  parallel; Milestone 4 (Intelligence) has begun via Phase 13.
-- **Current phase:** Phase 14 — Analytics, starting on
-  `feature/phase-14-analytics`.
+  parallel; Milestone 4 (Intelligence) is progressing via Phases 13–14.
+- **Current phase:** Phase 15 — Audit and compliance center, starting on
+  `feature/phase-15-audit-compliance-center`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, and 13** (business onboarding/
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, and 14** (business onboarding/
   employee management, knowledge management, process builder, workflow
   execution engine, forms and evidence, approvals/SLAs/escalations,
-  exceptions/CAPA, training/certifications, AI copilot) are `Complete`
-  per the phase tracker — Phase 9 merged via PR #12 (commit `5427118`);
-  Phase 10 merged via PR #13; Phase 11 merged via PR #14; Phase 12
-  merged via PR #15; Phase 13 merged via the `feature/phase-13-ai-copilot`
-  PR. Phase 4 (database and tenant isolation) remains recorded as
-  `In Progress` in the tracker; this document does not re-audit that
-  status.
+  exceptions/CAPA, training/certifications, AI copilot, analytics) are
+  `Complete` per the phase tracker — Phase 9 merged via PR #12 (commit
+  `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR #14;
+  Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14 merged
+  via the `feature/phase-14-analytics` PR. Phase 4 (database and tenant
+  isolation) remains recorded as `In Progress` in the tracker; this
+  document does not re-audit that status.
 
 ## What's built
 
@@ -160,6 +160,23 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   model and known gaps (live Claude API output is unverified in this
   environment — only a placeholder credential exists; keyword-based,
   not semantic, retrieval).
+- Analytics (Phase 14, complete): live operational dashboards computed
+  directly over existing tenant-scoped tables — no snapshot/cache table.
+  Per-process completion rate, median cycle time, and exception rate
+  (`src/lib/services/analytics-workflows.ts`); a 12-week zero-filled
+  workflow trend; audit readiness (evidence-gap detection, scoped to
+  evidence because a required approval's rejection already fails the
+  workflow before it can complete); training on-time completion and
+  certification currency, CAPA closure rate and median days to close
+  (`analytics-compliance.ts`); AI draft acceptance rate
+  (`ai-drafts.ts`'s `getAiDraftAcceptanceStats()`). Every rate is
+  `number | null` — `/app/analytics` renders "No data yet" rather than a
+  fabricated zero when the denominator is zero, gated on `analytics.view`
+  (scoped by department for `process_owner`/`manager`). See
+  [analytics.md](../architecture/analytics.md) for the full model and
+  known gaps (no draft-to-publish time delta yet; adoption/commercial/
+  platform-health metrics are out of scope for this customer-facing
+  surface).
 - Audit foundation: `recordAuditEvent()`, called from every mutating
   service-layer action, including the workflow engine's and Phase 9's/
   Phase 10's/Phase 11's/Phase 12's/Phase 13's.
@@ -183,8 +200,8 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- Analytics, audit/compliance center, notifications, billing,
-  integrations, external portal (later phases/milestones).
+- Audit/compliance center, notifications, billing, integrations,
+  external portal (later phases/milestones).
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so
@@ -200,7 +217,8 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    [environment-variables.md](../development/environment-variables.md))
    to verify live AI output for real, then re-run the Phase 13 test
    suite against it.
-3. Begin Phase 14 (analytics) on `feature/phase-14-analytics`.
+3. Begin Phase 15 (audit and compliance center) on
+   `feature/phase-15-audit-compliance-center`.
 
 ## Known risks carried forward
 
