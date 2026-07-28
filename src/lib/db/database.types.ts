@@ -1493,3 +1493,20 @@ export interface InboundWebhookEventRow {
   processed_at: string | null;
   error_message: string | null;
 }
+
+/** Phase 19 (External portal) — see docs/architecture/external-portal.md. */
+export type ExternalAccessGrantStatus = "pending" | "active" | "completed" | "revoked" | "expired";
+
+export interface ExternalAccessGrantRow {
+  id: string;
+  organization_id: string;
+  department_id: string | null;
+  invitation_id: string;
+  task_id: string;
+  member_id: string | null;
+  status: ExternalAccessGrantStatus;
+  expires_at: string;
+  created_at: string;
+  accepted_at: string | null;
+  revoked_at: string | null;
+}

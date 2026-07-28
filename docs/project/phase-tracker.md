@@ -37,7 +37,7 @@ phases from this tracker and does not close until those phases are
 | 16    | Notifications                               | Complete    |
 | 17    | Billing and entitlements                    | Complete    |
 | 18    | Integrations                                | Complete    |
-| 19    | External portal                             | Not Started |
+| 19    | External portal                             | Complete    |
 | 20    | Responsive PWA                              | Not Started |
 | 21    | Organization administration                 | Not Started |
 | 22    | Security hardening                          | Not Started |
@@ -827,7 +827,14 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** An external user can complete exactly the resource
   they were invited to and nothing else; automated tests prove no
   privilege escalation path exists.
-- **Status:** Not Started.
+- **Status:** Complete. Invitation flow (`src/lib/services/external-access.ts`),
+  activation-on-accept wiring (`src/lib/db/identity-sync.ts`), expiration
+  job, revocation, and a minimal invite/list/revoke UI at
+  `/app/tasks/[taskId]/external-access` are implemented. Exit-criteria
+  verification is unit-test-level (`external-access.test.ts`), consistent
+  with this repo's existing, documented posture that RLS/tenant-isolation
+  claims are unverified against a live Postgres engine in CI — see
+  [external-portal.md](../architecture/external-portal.md).
 - **Risks:** Privilege-escalation risk explicitly flagged in
   [product/assumptions-and-risks.md](../../product/assumptions-and-risks.md)
   — mandatory security-review gate.

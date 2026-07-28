@@ -5,32 +5,36 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-08-03.
+**Last updated:** 2026-08-05.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–18.
-- **Current phase:** Phase 19 — External portal, starting on
-  `feature/phase-19-external-portal`.
+  is progressing via Phases 16–19.
+- **Current phase:** Phase 19 — External portal, completing on
+  `feature/phase-19-external-portal`; Phase 20 (Responsive PWA) is next.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, and 18**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, and 19**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
   AI copilot, analytics, audit and compliance center, notifications,
-  billing and entitlements, integrations) are `Complete` per the phase
-  tracker — Phase 9 merged via PR #12 (commit `5427118`); Phase 10
-  merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged via PR
-  #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17; Phase 15
-  merged via PR #18; Phase 16 merged via PR #19; Phase 17 merged via PR
-  #20; Phase 18 merged via the `feature/phase-18-integrations` PR.
+  billing and entitlements, integrations, external portal) are `Complete`
+  per the phase tracker — Phase 9 merged via PR #12 (commit `5427118`);
+  Phase 10 merged via PR #13; Phase 11 merged via PR #14; Phase 12
+  merged via PR #15; Phase 13 merged via PR #16; Phase 14 merged via PR
+  #17; Phase 15 merged via PR #18; Phase 16 merged via PR #19; Phase 17
+  merged via PR #20; Phase 18 merged via the
+  `feature/phase-18-integrations` and
+  `feature/phase-18-integrations-api-webhooks` PRs; Phase 19's
+  implementation is complete on `feature/phase-19-external-portal`,
+  pending its PR merge.
   Phase 4 (database and
   tenant isolation) remains recorded as `In Progress` in the tracker; this
   document does not re-audit that status.
@@ -274,6 +278,24 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   environment. See
   [public-api.md](../architecture/public-api.md) for full detail and a
   long, explicit known-gaps list.
+- External portal (Phase 19, complete): resource-scoped, invitation-based
+  access for the `external_user` role — a staff member holding
+  `workflow.assign` invites one external collaborator to exactly one
+  open task, for a limited (1–30 day) window, without a new RLS layer
+  (the existing own-resource `assignee_member_id = current_member_id()`
+  clauses from Phases 8/9 already provide exactly the scoped access
+  needed once the external user becomes that task's assignee).
+  `src/lib/services/external-access.ts` handles invite/activate/revoke/
+  expire; activation is wired into the existing Clerk-invitation-accept
+  webhook path (`src/lib/db/identity-sync.ts`); expiration reuses the
+  `background_jobs` worker. External-role members are excluded from the
+  regular people directory (`listMembers()`). Admin UI at
+  `/app/tasks/[taskId]/external-access`. See
+  [external-portal.md](../architecture/external-portal.md) for full
+  detail and known gaps (no dedicated minimal external-session shell
+  yet; privilege-escalation coverage is unit-test-level only, same
+  unverified-against-live-Postgres posture as every other RLS claim in
+  this environment).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -294,7 +316,10 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- External portal, responsive PWA (later phases/milestone).
+- A dedicated minimal external-session UI shell (Phase 19 lists it as a
+  deliverable; external users currently see the same `/app` layout as
+  any other member, correctly scoped by RLS but not yet redirected
+  straight to their one assigned task). Responsive PWA (later phase).
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so

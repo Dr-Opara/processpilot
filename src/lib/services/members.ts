@@ -78,6 +78,14 @@ export async function listMembers(
           join roles r2 on r2.id = mra2.role_id
           where mra2.organization_member_id = om.id and r2.key = ${filters.roleKey ?? null}
         ))
+        -- external_user members are resource-scoped guests, not staff
+        -- — they don't appear in the regular people directory, per
+        -- product/user-roles.md.
+        and not exists (
+          select 1 from member_role_assignments mra3
+          join roles r3 on r3.id = mra3.role_id
+          where mra3.organization_member_id = om.id and r3.key = 'external_user'
+        )
       group by om.id, p.email, p.first_name, p.last_name, om.job_title, om.status, l.name, d.name
       order by p.last_name asc nulls last, p.first_name asc nulls last
       limit ${pageSize} offset ${offset}
@@ -94,6 +102,11 @@ export async function listMembers(
         and (${filters.locationId ?? null} is null or om.location_id = ${filters.locationId ?? null})
         and (${filters.departmentId ?? null} is null or om.department_id = ${filters.departmentId ?? null})
         and (${filters.teamId ?? null} is null or tm.team_id = ${filters.teamId ?? null})
+        and not exists (
+          select 1 from member_role_assignments mra3
+          join roles r3 on r3.id = mra3.role_id
+          where mra3.organization_member_id = om.id and r3.key = 'external_user'
+        )
     `;
 
     return { members, total: Number(count) };
