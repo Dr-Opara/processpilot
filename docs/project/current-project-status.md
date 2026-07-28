@@ -5,32 +5,33 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-08-02.
+**Last updated:** 2026-08-03.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–17.
-- **Current phase:** Phase 18 — Integrations, starting on
-  `feature/phase-18-integrations`.
+  is progressing via Phases 16–18.
+- **Current phase:** Phase 19 — External portal, starting on
+  `feature/phase-19-external-portal`.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, and 17** (business
-  onboarding/employee management, knowledge management, process builder,
-  workflow execution engine, forms and evidence, approvals/SLAs/
-  escalations, exceptions/CAPA, training/certifications, AI copilot,
-  analytics, audit and compliance center, notifications, billing and
-  entitlements) are `Complete` per the phase tracker — Phase 9 merged via
-  PR #12 (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged
-  via PR #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16;
-  Phase 14 merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged
-  via PR #19; Phase 17 merged via the
-  `feature/phase-17-billing-entitlements` PR. Phase 4 (database and
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, and 18**
+  (business onboarding/employee management, knowledge management,
+  process builder, workflow execution engine, forms and evidence,
+  approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
+  AI copilot, analytics, audit and compliance center, notifications,
+  billing and entitlements, integrations) are `Complete` per the phase
+  tracker — Phase 9 merged via PR #12 (commit `5427118`); Phase 10
+  merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged via PR
+  #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17; Phase 15
+  merged via PR #18; Phase 16 merged via PR #19; Phase 17 merged via PR
+  #20; Phase 18 merged via the `feature/phase-18-integrations` PR.
+  Phase 4 (database and
   tenant isolation) remains recorded as `In Progress` in the tracker; this
   document does not re-audit that status.
 
@@ -240,6 +241,23 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   full detail, how to replace hypothesis pricing with committed pricing,
   and known gaps (AI-usage quota tracked but not enforced; no past_due
   degraded-access state; bulk member import isn't seat-gated).
+- Integrations (Phase 18, complete — SSO/SAML): `src/lib/services/sso.ts`
+  is a thin admin wrapper over Clerk's Enterprise Connections API
+  (`@clerk/backend`), not a from-scratch SAML/OIDC implementation —
+  Clerk (already the sole identity provider, ADR-0003) performs the
+  handshake and stores the IdP credential material itself, so
+  `sso_connections` holds no secret material at all, only a label for
+  `/app/sso`'s admin UI and the audit trail. No new environment
+  variable is needed — it reuses the already-real `CLERK_SECRET_KEY`.
+  This phase's own entry criteria required a customer-identified
+  integration target, which doesn't exist pre-launch — SSO was chosen
+  deliberately (matches `product/user-roles.md`'s `external_user` role
+  and the Enterprise-tier pricing hypothesis) rather than sourced from
+  feedback. See
+  [integration-architecture.md](../architecture/integration-architecture.md)
+  for full detail and known gaps (only `saml_custom`/`oidc_custom`
+  provider types in the UI; untested against a real Clerk Enterprise
+  Connections-enabled instance).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -260,7 +278,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - Malware/virus scanning for evidence/approval-attachment uploads
   (deferred since Phase 6, same posture); an `evidence` node's task
   completion isn't gated on evidence acceptance.
-- Integrations, external portal (later phases/milestones).
+- External portal, responsive PWA (later phases/milestone).
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so
@@ -274,6 +292,10 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   `STRIPE_WEBHOOK_SECRET` has been supplied, so actual Stripe checkout/
   portal/webhook processing remains unverified end-to-end. Pricing
   itself also remains uncommitted — see billing-architecture.md.
+- Live-verified SSO — Phase 18's code is complete and tested against
+  mocked Clerk API calls, but has not been exercised against a real
+  Clerk organization with Enterprise Connections enabled, so actual
+  SAML/OIDC sign-in remains unverified end-to-end.
 
 ## Immediate next steps
 
@@ -292,7 +314,10 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
    `src/lib/billing/plans.ts`'s `PLAN_ENTITLEMENTS` and the
    `STRIPE_PRICE_ID_*` environment variables accordingly — see
    [billing-architecture.md](../architecture/billing-architecture.md).
-4. Begin Phase 18 (integrations) on `feature/phase-18-integrations`.
+4. Verify SSO against a real Clerk organization with Enterprise
+   Connections enabled (may require a Clerk plan upgrade) before
+   relying on `/app/sso` in production.
+5. Begin Phase 19 (external portal) on `feature/phase-19-external-portal`.
 
 ## Known risks carried forward
 

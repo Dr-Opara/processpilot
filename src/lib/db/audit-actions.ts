@@ -190,6 +190,13 @@ export const AuditAction = {
   // app-initiated request to cancel is audited, since Stripe doesn't
   // record "who, inside ProcessPilot, clicked cancel."
   SubscriptionCancellationRequested: "subscription.cancellation_requested",
+
+  // Phase 18 (Integrations — SSO/SAML). Never include idp_certificate,
+  // client_secret, or raw metadata in this event's metadata — see
+  // sso.ts's header comment.
+  SsoConnectionCreated: "sso_connection.created",
+  SsoConnectionUpdated: "sso_connection.updated",
+  SsoConnectionDeleted: "sso_connection.deleted",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -226,6 +233,7 @@ export const AuditResourceType = {
   AiDraft: "ai_draft",
   AuditExport: "audit_export",
   Subscription: "subscription",
+  SsoConnection: "sso_connection",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

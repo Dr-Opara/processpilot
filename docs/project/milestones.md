@@ -66,16 +66,23 @@ tracker's own definition.
   usable by external collaborators, and usable on mobile.
 - **Phases:** 16 (Notifications), 17 (Billing and entitlements), 18
   (Integrations), 19 (External portal), 20 (Responsive PWA).
-- **Status:** In Progress — Phase 16 and Phase 17 are `Complete` per the
-  [phase tracker](phase-tracker.md) (live email delivery and live
-  billing both similarly unverified — no real `EMAIL_PROVIDER_API_KEY`
-  or `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` in this environment;
-  Phase 17's pricing is also still an unvalidated hypothesis, not
-  committed pricing — see
-  [billing-architecture.md](../architecture/billing-architecture.md));
-  Phases 18–20 have not started. This milestone's "billed" outcome is
-  not yet actually proven — it's built and mocked-tested, not verified
-  against a real Stripe account or a real commercial pricing decision.
+- **Status:** In Progress — Phase 16, Phase 17, and Phase 18 are
+  `Complete` per the [phase tracker](phase-tracker.md) (live email
+  delivery, live billing, and live SSO all similarly unverified — no
+  real `EMAIL_PROVIDER_API_KEY`, `STRIPE_SECRET_KEY`/
+  `STRIPE_WEBHOOK_SECRET`, or Clerk Enterprise Connections-enabled
+  organization exercised in this environment; Phase 17's pricing is
+  also still an unvalidated hypothesis, not committed pricing, and
+  Phase 18's SSO/SAML target wasn't sourced from customer feedback,
+  since none exists pre-launch — see
+  [billing-architecture.md](../architecture/billing-architecture.md)
+  and
+  [integration-architecture.md](../architecture/integration-architecture.md));
+  Phases 19–20 have not started. This milestone's "billed, integrable"
+  outcomes are not yet actually proven — they're built and
+  mocked-tested, not verified against a real Stripe account, a real
+  Clerk Enterprise Connections-enabled organization, or a real
+  commercial pricing decision.
 
 ## Milestone 6: General availability (planned)
 

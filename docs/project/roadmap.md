@@ -41,12 +41,15 @@ Phases 11 (Exception management) and 12 (Training and certifications)
 are both `Complete`. Milestone 4 (Intelligence) is complete — Phase 13
 (AI ingestion and copilot), Phase 14 (Analytics), and Phase 15 (Audit
 and compliance center) are all `Complete`. Milestone 5 (Commercial
-readiness) is progressing: Phase 16 (Notifications) and Phase 17
-(Billing and entitlements) are both `Complete` — Phase 17 shipped with
-hypothesis-only pricing configuration, since
+readiness) is progressing: Phase 16 (Notifications), Phase 17 (Billing
+and entitlements), and Phase 18 (Integrations) are all `Complete` —
+Phase 17 shipped with hypothesis-only pricing configuration, since
 `product/pricing-hypotheses.md` was never actually promoted to
-committed pricing (see billing-architecture.md); Phase 18
-(Integrations) is starting on `feature/phase-18-integrations`. Phase 4
+committed pricing, and Phase 18 shipped SSO/SAML without a customer-
+identified target, since none exists pre-launch (see
+billing-architecture.md and integration-architecture.md); Phase 19
+(External portal) is starting on `feature/phase-19-external-portal`.
+Phase 4
 (Database and tenant isolation) remains `In Progress` pending a live
 Supabase project — see
 [current-project-status.md](current-project-status.md) for the live
