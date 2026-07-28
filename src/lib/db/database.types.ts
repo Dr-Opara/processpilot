@@ -1400,3 +1400,96 @@ export interface SsoConnectionRow {
   updated_at: string;
   created_by: string | null;
 }
+
+/** Phase 18 continuation (public API, webhooks, integration catalog) — see docs/architecture/integration-architecture.md and public-api.md. */
+export type IntegrationProviderKey =
+  | "slack"
+  | "microsoft_teams"
+  | "microsoft_365"
+  | "google_workspace"
+  | "jira"
+  | "servicenow"
+  | "zapier";
+
+export type IntegrationConnectionStatus = "connected" | "disconnected" | "degraded" | "error";
+
+export interface IntegrationConnectionRow {
+  id: string;
+  organization_id: string;
+  provider: string;
+  status: IntegrationConnectionStatus;
+  auth_type: "oauth2" | "api_key";
+  encrypted_credentials: string | null;
+  scopes: string[];
+  external_account_label: string | null;
+  last_verified_at: string | null;
+  last_error: string | null;
+  connected_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiKeyRow {
+  id: string;
+  organization_id: string;
+  name: string;
+  key_prefix: string;
+  key_hash: string;
+  scopes: string[];
+  status: "active" | "revoked";
+  expires_at: string | null;
+  last_used_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  revoked_at: string | null;
+}
+
+export interface ApiKeyUsageLogRow {
+  id: string;
+  api_key_id: string;
+  organization_id: string;
+  method: string;
+  path: string;
+  status_code: number;
+  created_at: string;
+}
+
+export interface WebhookSubscriptionRow {
+  id: string;
+  organization_id: string;
+  target_url: string;
+  event_types: string[];
+  encrypted_secret: string;
+  status: "active" | "disabled";
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type WebhookDeliveryStatus = "pending" | "delivered" | "failed" | "dead_letter";
+
+export interface WebhookDeliveryRow {
+  id: string;
+  subscription_id: string;
+  organization_id: string;
+  event_type: string;
+  payload: Record<string, unknown>;
+  status: WebhookDeliveryStatus;
+  attempt_count: number;
+  last_attempt_at: string | null;
+  last_response_status: number | null;
+  last_error: string | null;
+  created_at: string;
+}
+
+export interface InboundWebhookEventRow {
+  id: string;
+  provider: string;
+  external_event_id: string;
+  organization_id: string | null;
+  event_type: string | null;
+  status: "processed" | "ignored" | "failed";
+  received_at: string;
+  processed_at: string | null;
+  error_message: string | null;
+}

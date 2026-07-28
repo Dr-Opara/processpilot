@@ -106,6 +106,11 @@ API consumers.
 
 ## Related documents
 
+- [Public API, webhooks, and the integration catalog](public-api.md) —
+  the public REST API, outbound/inbound webhook infrastructure, API
+  key lifecycle, and the 7-provider integration catalog (Slack
+  implemented; the other 6 are documented, unimplemented placeholders)
+  built as a continuation of this phase
 - [System overview](system-overview.md)
 - [Event model](event-model.md)
 - [AI architecture](ai-architecture.md)

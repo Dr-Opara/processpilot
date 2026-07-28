@@ -6,6 +6,7 @@ import "@/lib/jobs/escalation-handlers";
 import "@/lib/jobs/waiver-handlers";
 import "@/lib/jobs/training-handlers";
 import "@/lib/jobs/notification-handlers";
+import "@/lib/jobs/webhook-handlers";
 
 /**
  * The Vercel Cron-triggered worker tick (see vercel.json's `crons`

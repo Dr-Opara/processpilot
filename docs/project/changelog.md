@@ -6,6 +6,30 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-04 — Phase 18 continuation: public API, webhooks, and integration catalog
+
+Added [public-api.md](../architecture/public-api.md) documenting the
+large follow-up scope added to Phase 18 on explicit instruction: the
+versioned public REST API and its API-key auth/lifecycle/rate-limiting,
+outbound webhook signing/delivery/retry/dead-lettering/replay (reusing
+the existing background-job worker rather than a new queue), inbound
+webhooks (a real, signature-verified Slack adapter plus a
+provider-generalized idempotency table), the 7-provider integration
+catalog (one real adapter — Slack — the other six explicit,
+undisguised placeholders), and the AES-256-GCM credential-encryption
+helper shared by both the SSO and this continuation's stored
+credentials. Documents a long, explicit known-gaps list rather than
+overstating what shipped. Updated
+[database-schema.md](../architecture/database-schema.md) with the 6
+new tables and
+[environment-variables.md](../development/environment-variables.md)
+with `INTEGRATION_ENCRYPTION_KEY` and the three `SLACK_*` variables —
+none configured with real values in this environment. Updated
+[phase-tracker.md](phase-tracker.md)'s Phase 18 entry with the
+continuation's scope and an updated risk note (encryption/hashing
+mitigates but does not substitute for an actual security review of
+this larger surface).
+
 ## 2026-08-03 — Phase 18 documentation and status update
 
 Updated [integration-architecture.md](../architecture/integration-architecture.md)

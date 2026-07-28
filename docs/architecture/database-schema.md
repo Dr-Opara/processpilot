@@ -140,13 +140,20 @@ erDiagram
 | `subscriptions`                 | `20260802000001_billing_entitlements`                      |         Yes         | Phase 17. See [billing-architecture.md](billing-architecture.md). Read-optimized mirror of Stripe state — written only by the webhook handler, never an app-initiated action.                                                                          |
 | `billing_webhook_events`        | `20260802000001_...`                                       |      Nullable       | Stripe-event counterpart to `webhook_events` — same partial-unique-on-processed idempotency pattern.                                                                                                                                                   |
 | `sso_connections`               | `20260803000001_sso_connections`                           |         Yes         | Phase 18. See [integration-architecture.md](integration-architecture.md). No IdP secret material — Clerk's Enterprise Connections API stores that; this is a label only.                                                                               |
+| `integration_connections`       | `20260804000001_integrations_api_webhooks`                 |         Yes         | Phase 18 continuation. See [public-api.md](public-api.md). Credentials are application-layer-encrypted (AES-256-GCM), never plaintext in the database.                                                                                                 |
+| `api_keys`                      | `20260804000001_...`                                       |         Yes         | Only a sha256 hash is stored — the raw key is shown once, at creation, and is unrecoverable afterward.                                                                                                                                                 |
+| `api_key_usage_log`             | `20260804000001_...`                                       |         Yes         | One row per public-API request; written only by the admin client.                                                                                                                                                                                      |
+| `webhook_subscriptions`         | `20260804000001_...`                                       |         Yes         | An organization-configured outbound webhook endpoint; `encrypted_secret` signs every delivery.                                                                                                                                                         |
+| `webhook_deliveries`            | `20260804000001_...`                                       |         Yes         | Delivery history; actual retry/backoff/dead-lettering is the existing `background_jobs` worker's job, not reimplemented here.                                                                                                                          |
+| `inbound_webhook_events`        | `20260804000001_...`                                       |      Nullable       | Idempotency for events _received_ from a provider (Slack), generalized across providers by `(provider, external_event_id)`.                                                                                                                            |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11 through Phase 18's rows above are
+into this summary table). Phase 11 through the Phase 18 continuation's
+rows above are
 complete; a full backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.
