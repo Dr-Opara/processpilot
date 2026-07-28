@@ -6,6 +6,29 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-03 — Phase 18 documentation and status update
+
+Updated [integration-architecture.md](../architecture/integration-architecture.md)
+with an "Implementation: SSO/SAML" section: `src/lib/services/sso.ts`
+is a thin admin wrapper over Clerk's Enterprise Connections API
+(`@clerk/backend`'s `clerkClient().enterpriseConnections`), not a
+from-scratch SAML/OIDC implementation — Clerk (already the sole
+identity provider per ADR-0003) performs the handshake and stores the
+IdP credential material itself, so `sso_connections` holds no secret
+material at all. Documents that this phase's entry criteria required a
+customer-identified integration target, which doesn't exist pre-launch
+— SSO was chosen deliberately rather than sourced from feedback.
+Updated [database-schema.md](../architecture/database-schema.md) with
+the new table. No new environment variable was needed (reuses the
+already-configured `CLERK_SECRET_KEY`), so
+[environment-variables.md](../development/environment-variables.md) is
+unchanged. Updated [phase-tracker.md](phase-tracker.md): Phase 18
+marked `Complete` with implementation detail, built on
+`feature/phase-18-integrations`. Updated
+[milestones.md](milestones.md)'s Milestone 5 status. Rewrote
+[current-project-status.md](current-project-status.md)'s snapshot
+accordingly.
+
 ## 2026-08-02 — Phase 17 documentation and status update
 
 Rewrote [billing-architecture.md](../architecture/billing-architecture.md)

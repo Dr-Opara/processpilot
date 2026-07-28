@@ -139,13 +139,14 @@ erDiagram
 | `notification_preferences`      | `20260801000001_...`                                       |         Yes         | `member_id is null` = organization default for that type; two partial unique indexes enforce one default row and one override row per member per type.                                                                                                 |
 | `subscriptions`                 | `20260802000001_billing_entitlements`                      |         Yes         | Phase 17. See [billing-architecture.md](billing-architecture.md). Read-optimized mirror of Stripe state — written only by the webhook handler, never an app-initiated action.                                                                          |
 | `billing_webhook_events`        | `20260802000001_...`                                       |      Nullable       | Stripe-event counterpart to `webhook_events` — same partial-unique-on-processed idempotency pattern.                                                                                                                                                   |
+| `sso_connections`               | `20260803000001_sso_connections`                           |         Yes         | Phase 18. See [integration-architecture.md](integration-architecture.md). No IdP secret material — Clerk's Enterprise Connections API stores that; this is a label only.                                                                               |
 
 This table is known incomplete above this point — it stopped being
 updated after Phase 4 and does not yet list every Phase 5–10 table
 (`processes`, `workflows`, `tasks`, `forms`, `evidence`,
 `approval_policies`, `sla_definitions`, etc. all exist and are
 documented in their own phase's architecture doc, just not backfilled
-into this summary table). Phase 11 through Phase 17's rows above are
+into this summary table). Phase 11 through Phase 18's rows above are
 complete; a full backfill of the missing phases is tracked against
 [Phase 29](../project/phase-tracker.md#phase-29-final-product-and-design-audit)'s
 documentation-audit pass, not fixed retroactively here.

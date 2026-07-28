@@ -1386,3 +1386,17 @@ export interface BillingWebhookEventRow {
   processed_at: string | null;
   error_message: string | null;
 }
+
+/** Phase 18 (Integrations) — see docs/architecture/integration-architecture.md. No IdP secret material is stored here; see the migration's header comment. */
+export interface SsoConnectionRow {
+  id: string;
+  organization_id: string;
+  clerk_connection_id: string;
+  name: string;
+  provider: string;
+  domain: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}

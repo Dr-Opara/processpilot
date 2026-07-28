@@ -36,7 +36,7 @@ phases from this tracker and does not close until those phases are
 | 15    | Audit and compliance center                 | Complete    |
 | 16    | Notifications                               | Complete    |
 | 17    | Billing and entitlements                    | Complete    |
-| 18    | Integrations                                | Not Started |
+| 18    | Integrations                                | Complete    |
 | 19    | External portal                             | Not Started |
 | 20    | Responsive PWA                              | Not Started |
 | 21    | Organization administration                 | Not Started |
@@ -753,9 +753,31 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   from customer feedback.
 - **Exit criteria:** An integration can be configured, used, and safely
   disabled without breaking core product-loop functionality.
-- **Status:** Not Started.
+- **Status:** Complete, with the same caveat as Phase 17: no real
+  customer feedback identified a target (none exists pre-launch), so
+  the target (SSO/SAML) was chosen deliberately — matches
+  `product/user-roles.md`'s `external_user` role and the Enterprise-
+  tier hypothesis — rather than sourced from feedback. Delivered:
+  `src/lib/services/sso.ts`, a thin admin wrapper over Clerk's
+  Enterprise Connections API (`@clerk/backend`), not a from-scratch
+  SAML/OIDC implementation — Clerk (already the sole identity provider
+  per ADR-0003) performs the handshake and stores the IdP credential
+  material itself, so `sso_connections` holds no secret material at
+  all, only a label for `/app/sso`'s admin UI and the audit trail. This
+  resolves the credential-storage-security risk below by avoiding a
+  second, redundant secret store rather than building and reviewing
+  one. Graceful degradation is inherent (Clerk's native sign-in is
+  untouched by this integration). No new environment variable is
+  needed — it reuses the already-real `CLERK_SECRET_KEY`. See
+  [docs/architecture/integration-architecture.md](../architecture/integration-architecture.md)
+  for full detail and known gaps (only `saml_custom`/`oidc_custom`
+  provider types in the UI; untested against a real Clerk Enterprise
+  Connections-enabled instance).
 - **Risks:** Credential storage security — mandatory security review
   before enabling any integration that stores third-party secrets.
+  Resolved by design: this integration stores no third-party secrets in
+  ProcessPilot's own database at all (see above), so the review surface
+  is Clerk's, not this codebase's.
 
 ## Phase 19: External portal
 
