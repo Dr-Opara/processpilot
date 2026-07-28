@@ -258,6 +258,22 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   for full detail and known gaps (only `saml_custom`/`oidc_custom`
   provider types in the UI; untested against a real Clerk Enterprise
   Connections-enabled instance).
+- Public API, webhooks, and integration catalog (Phase 18 continuation,
+  complete — a much larger follow-up scope added on explicit
+  instruction): versioned public REST API (`/api/v1/processes`,
+  `/api/v1/workflows`) authenticated by organization-scoped, hashed API
+  keys with scopes/rate-limiting/usage logging; outbound webhooks
+  (HMAC-signed, retried/dead-lettered through the existing
+  `background_jobs` worker, replayable, SSRF-guarded); inbound webhooks
+  with one real signature-verified adapter (Slack); a 7-provider
+  catalog (Slack implemented, the other 6 explicit unimplemented
+  placeholders, never faked); AES-256-GCM credential encryption
+  (`src/lib/crypto/secret-box.ts`). Admin UI: `/app/integrations`,
+  `/app/integrations/api-keys`, `/app/integrations/webhooks`. No real
+  `INTEGRATION_ENCRYPTION_KEY`/`SLACK_*` credentials exist in this
+  environment. See
+  [public-api.md](../architecture/public-api.md) for full detail and a
+  long, explicit known-gaps list.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the

@@ -12,6 +12,7 @@ import {
 import { resolveDueAt } from "@/lib/services/sla";
 import { createSystemException } from "@/lib/services/exceptions";
 import { createNotification } from "@/lib/services/notifications";
+import { triggerWebhookEvent } from "@/lib/services/webhooks";
 import type {
   ExceptionSource,
   ExceptionType,
@@ -425,6 +426,11 @@ async function maybeCompleteWorkflow(
     resourceType: AuditResourceType.Workflow,
     resourceId: workflowId,
     source: "app",
+  });
+  await triggerWebhookEvent(sql, organizationId, "workflow.completed", {
+    workflowId,
+    processId: workflow.process_id,
+    completedAt: new Date().toISOString(),
   });
 
   if (workflow.parent_task_id) {

@@ -773,8 +773,44 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   for full detail and known gaps (only `saml_custom`/`oidc_custom`
   provider types in the UI; untested against a real Clerk Enterprise
   Connections-enabled instance).
+
+  **Continuation (public API, webhooks, and the wider integration
+  catalog):** on explicit follow-up instruction, this phase was
+  extended well beyond its original SSO-only scope. Delivered: a
+  versioned public REST API (`/api/v1/processes`, `/api/v1/workflows`)
+  authenticated by organization-scoped, sha256-hashed API keys with
+  scopes/expiry/rotation/revocation, a 60-req/60s rate limit, and a
+  usage log; outbound webhooks (HMAC-signed deliveries, retry/backoff/
+  dead-lettering reusing the existing `background_jobs` worker rather
+  than a new queue, replay, an SSRF guard on subscription URLs) wired
+  to one real trigger (`workflow.completed`); inbound webhooks
+  (provider-generalized idempotency table, one real signature-verified
+  adapter — Slack, implementing its actual "v0" HMAC scheme and
+  `url_verification` handshake); a 7-provider integration catalog
+  (Slack fully implemented via Clerk-independent OAuth2 against
+  Slack's real Web API; the other 6 — Teams, M365, Google Workspace,
+  Jira, ServiceNow, Zapier — are named, documented, explicitly
+  unimplemented catalog placeholders, never fake successes); AES-256-
+  GCM application-layer encryption for every stored credential/secret
+  (`src/lib/crypto/secret-box.ts`); admin UI at `/app/integrations`,
+  `/app/integrations/api-keys`, `/app/integrations/webhooks`. No real
+  `INTEGRATION_ENCRYPTION_KEY`/`SLACK_CLIENT_ID`/`SLACK_CLIENT_SECRET`/
+  `SLACK_SIGNING_SECRET` exist in this environment — every credential-
+  dependent action fails safely with a clear "not configured" error.
+  See [docs/architecture/public-api.md](../architecture/public-api.md)
+  for full detail and a longer known-gaps list (only two read-only API
+  endpoints; only one of six defined webhook event types is actually
+  wired to a trigger; no event-to-workflow mapping configuration; no
+  generated OpenAPI file; SSRF guard is a literal-IP check, not DNS-
+  rebinding-proof).
+
 - **Risks:** Credential storage security — mandatory security review
   before enabling any integration that stores third-party secrets.
+  For SSO, resolved by design (no secrets stored locally at all — see
+  above). For the API-key/webhook/OAuth-credential continuation,
+  mitigated by AES-256-GCM encryption at rest and sha256-only API-key
+  storage, but a real security review of this larger surface has not
+  been performed and is recommended before production use.
   Resolved by design: this integration stores no third-party secrets in
   ProcessPilot's own database at all (see above), so the review surface
   is Clerk's, not this codebase's.

@@ -19,6 +19,14 @@ describe("toSafeErrorResponse", () => {
       status: 409,
       body: { error: "already exists" },
     });
+    expect(toSafeErrorResponse(new AppError("bad_request", "invalid input"))).toEqual({
+      status: 400,
+      body: { error: "invalid input" },
+    });
+    expect(toSafeErrorResponse(new AppError("rate_limited", "too many requests"))).toEqual({
+      status: 429,
+      body: { error: "too many requests" },
+    });
   });
 
   it("never leaks a raw driver/unknown error message to the caller", () => {

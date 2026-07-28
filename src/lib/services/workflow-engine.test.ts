@@ -10,6 +10,9 @@ vi.mock("@/lib/services/exceptions", () => ({
 vi.mock("@/lib/services/notifications", () => ({
   createNotification: vi.fn().mockResolvedValue({}),
 }));
+vi.mock("@/lib/services/webhooks", () => ({
+  triggerWebhookEvent: vi.fn().mockResolvedValue(undefined),
+}));
 
 import { enqueueJob } from "@/lib/jobs/enqueue";
 import { createSystemException } from "@/lib/services/exceptions";

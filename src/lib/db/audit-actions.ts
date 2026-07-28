@@ -197,6 +197,18 @@ export const AuditAction = {
   SsoConnectionCreated: "sso_connection.created",
   SsoConnectionUpdated: "sso_connection.updated",
   SsoConnectionDeleted: "sso_connection.deleted",
+
+  // Phase 18 continuation (public API, webhooks, integration catalog).
+  // Never include encrypted_credentials, raw API keys, or webhook
+  // secrets in any of these events' metadata.
+  IntegrationConnected: "integration_connection.connected",
+  IntegrationDisconnected: "integration_connection.disconnected",
+  ApiKeyCreated: "api_key.created",
+  ApiKeyRevoked: "api_key.revoked",
+  WebhookSubscriptionCreated: "webhook_subscription.created",
+  WebhookSubscriptionUpdated: "webhook_subscription.updated",
+  WebhookSubscriptionDeleted: "webhook_subscription.deleted",
+  WebhookDeliveryReplayed: "webhook_delivery.replayed",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -234,6 +246,10 @@ export const AuditResourceType = {
   AuditExport: "audit_export",
   Subscription: "subscription",
   SsoConnection: "sso_connection",
+  IntegrationConnection: "integration_connection",
+  ApiKey: "api_key",
+  WebhookSubscription: "webhook_subscription",
+  WebhookDelivery: "webhook_delivery",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];
