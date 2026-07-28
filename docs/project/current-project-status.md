@@ -5,36 +5,37 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-08-05.
+**Last updated:** 2026-08-06.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–19.
-- **Current phase:** Phase 19 — External portal, completing on
-  `feature/phase-19-external-portal`; Phase 20 (Responsive PWA) is next.
+  is progressing via Phases 16–20.
+- **Current phase:** Phase 20 — Responsive PWA, completing on
+  `feature/phase-20-responsive-pwa`; Phase 21 (Organization
+  administration) is next.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, and 19**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, and 20**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
   AI copilot, analytics, audit and compliance center, notifications,
-  billing and entitlements, integrations, external portal) are `Complete`
-  per the phase tracker — Phase 9 merged via PR #12 (commit `5427118`);
-  Phase 10 merged via PR #13; Phase 11 merged via PR #14; Phase 12
-  merged via PR #15; Phase 13 merged via PR #16; Phase 14 merged via PR
-  #17; Phase 15 merged via PR #18; Phase 16 merged via PR #19; Phase 17
-  merged via PR #20; Phase 18 merged via the
+  billing and entitlements, integrations, external portal, responsive
+  PWA) are `Complete` per the phase tracker — Phase 9 merged via PR #12
+  (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR
+  #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14
+  merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged via PR
+  #19; Phase 17 merged via PR #20; Phase 18 merged via the
   `feature/phase-18-integrations` and
-  `feature/phase-18-integrations-api-webhooks` PRs; Phase 19's
-  implementation is complete on `feature/phase-19-external-portal`,
-  pending its PR merge.
+  `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
+  PR #23; Phase 20's implementation is complete on
+  `feature/phase-20-responsive-pwa`, pending its PR merge.
   Phase 4 (database and
   tenant isolation) remains recorded as `In Progress` in the tracker; this
   document does not re-audit that status.
@@ -296,6 +297,20 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   yet; privilege-escalation coverage is unit-test-level only, same
   unverified-against-live-Postgres posture as every other RLS claim in
   this environment).
+- Responsive layout and installable PWA (Phase 20, complete): a
+  primary navigation shell that didn't previously exist at all
+  (`src/lib/app-nav.ts`, `src/components/app/AppNav.tsx`) — role-aware,
+  a persistent sidebar at the `md` breakpoint and a zero-JS `<details>`
+  disclosure below it, omitted entirely for `external_user` sessions; a
+  card-view responsive collapse for the My Work task list
+  (`/app/tasks`); an installable PWA service worker
+  (`public/app-sw.js`, scoped to `/app/`) with an offline fallback page
+  and an offline-status banner (`src/components/app/AppPwaClient.tsx`).
+  See [responsive-pwa.md](../architecture/responsive-pwa.md) for full
+  detail and known gaps (no offline mutation queueing; only the My Work
+  list got the card-view treatment, not the ~25 other, more
+  administrative table views; no real mobile-device/Lighthouse
+  verification in this environment).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -319,7 +334,14 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - A dedicated minimal external-session UI shell (Phase 19 lists it as a
   deliverable; external users currently see the same `/app` layout as
   any other member, correctly scoped by RLS but not yet redirected
-  straight to their one assigned task). Responsive PWA (later phase).
+  straight to their one assigned task, and now correctly see no
+  primary navigation at all per Phase 20).
+- True offline task completion (queued mutations replayed on
+  reconnect) — Phase 20 deliberately shipped installability and
+  graceful offline degradation only, not a background-sync queue.
+- Card-view responsive treatment for the ~25 administrative table
+  views (Processes, Members, Audit, Analytics, etc.) beyond the My
+  Work task list Phase 20 covered.
 - Live-verified AI output — the AI copilot's code is complete and
   tested against deterministic mocked providers, but no real
   `ANTHROPIC_API_KEY` has been supplied in this environment yet, so

@@ -37,11 +37,20 @@ this document covers the layout structure, not the nav item list itself.
 
 - Desktop-first information density (tables, multi-column dashboards)
   collapses to a mobile-appropriate single-column, card-based
-  presentation at narrow viewports — full responsive implementation is
-  Phase 20, but Phase 1's shell should not preclude it (avoid
-  fixed-pixel layouts that can't reflow).
-- Primary navigation collapses to a bottom bar or drawer below a defined
-  breakpoint (set during Phase 1 implementation).
+  presentation at narrow viewports. Implemented Phase 20 for the
+  employee-critical flow (My Work task list,
+  `src/app/app/(protected)/tasks/page.tsx`: a `<table>` at `md` and
+  above, a stacked card list below); the remaining, more
+  administrative table views (Processes, Members, Audit, etc.) still
+  render as a horizontally-scrollable table at every viewport — see
+  [responsive-pwa.md](../docs/architecture/responsive-pwa.md)'s known
+  gaps.
+- Primary navigation (`src/components/app/AppNav.tsx`) is a persistent
+  sidebar at the `md` breakpoint and a `<details>`-based disclosure
+  (zero client JavaScript) in the header below it, filtered to what the
+  current member can see
+  (`src/lib/app-nav.ts`'s `visibleNavItems()`). `external_user` sessions
+  render no primary navigation at all, per "Role-aware rendering" above.
 
 ## Related documents
 

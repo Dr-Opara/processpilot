@@ -3,17 +3,33 @@ import Link from "next/link";
 import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
 import { requireAuth } from "@/lib/auth";
 import { DASHBOARD_PATH } from "@/lib/app-host";
+import { getCurrentMembership } from "@/lib/authz";
 import { getUnreadNotificationCount } from "@/lib/services/notifications";
+import { visibleNavItems } from "@/lib/app-nav";
+import { AppNav } from "@/components/app/AppNav";
+import { AppPwaClient } from "@/components/app/AppPwaClient";
 
 export default async function ProtectedAppLayout({ children }: { children: React.ReactNode }) {
   // Redirects to sign-in if there's no session — every route under this
   // group is gated here, server-side, before any children render.
   await requireAuth();
 
-  // Best-effort — a member with no organization yet (e.g. mid-onboarding)
-  // has nothing to count, and the bell degrades to 0 rather than
-  // breaking every protected page's layout.
-  const unreadCount = await getUnreadNotificationCount().catch(() => 0);
+  // Both best-effort — a member with no organization yet (e.g.
+  // mid-onboarding) has nothing to count/navigate, and the shell degrades
+  // gracefully (no nav, unread count 0) rather than breaking every
+  // protected page's layout.
+  const [unreadCount, membership] = await Promise.all([
+    getUnreadNotificationCount().catch(() => 0),
+    getCurrentMembership().catch(() => null),
+  ]);
+
+  // external_user sessions render a minimal, resource-specific shell —
+  // no primary navigation — per design/application-layout.md.
+  const isExternalUser = membership?.roleKeys.includes("external_user") ?? false;
+  const navItems =
+    membership && !isExternalUser
+      ? visibleNavItems(membership.permissions, membership.scopedPermissions)
+      : [];
 
   return (
     <div className="min-h-screen bg-paper text-ink">
@@ -44,7 +60,11 @@ export default async function ProtectedAppLayout({ children }: { children: React
           <UserButton />
         </div>
       </header>
-      <main className="px-4 py-8 sm:px-6">{children}</main>
+      <AppPwaClient />
+      <div className="flex flex-col md:flex-row">
+        {navItems.length > 0 && <AppNav items={navItems} />}
+        <main className="min-w-0 flex-1 px-4 py-8 sm:px-6">{children}</main>
+      </div>
     </div>
   );
 }
