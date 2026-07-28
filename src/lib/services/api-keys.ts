@@ -34,7 +34,16 @@ function toTenantContext(membership: {
 export const API_KEY_SCOPES = ["processes:read", "workflows:read", "webhooks:inbound"] as const;
 export type ApiKeyScope = (typeof API_KEY_SCOPES)[number];
 
+// rawKey is a 192-bit cryptographically random token (randomBytes(24)
+// below), not a user-chosen, guessable password — a slow KDF (bcrypt/
+// scrypt/argon2) exists specifically to defend against brute-forcing a
+// *low-entropy* human-chosen secret. A 192-bit random value has no
+// meaningful brute-force surface regardless of hash speed; sha256 is
+// the same approach Stripe/GitHub/AWS-style API-key storage uses. A
+// slow KDF here would only add a real, unnecessary latency/DoS cost to
+// every authenticated API request (this hash runs on every call).
 export function hashApiKey(rawKey: string): string {
+  // codeql[js/insufficient-password-hash]: see the function-level comment above — this hashes a high-entropy random token, not a password.
   return createHash("sha256").update(rawKey).digest("hex");
 }
 

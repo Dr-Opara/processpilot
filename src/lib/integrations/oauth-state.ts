@@ -24,6 +24,10 @@ export function createOAuthState(organizationId: string, provider: string): stri
   const nonce = randomBytes(8).toString("hex");
   const timestamp = Date.now().toString();
   const payload = `${organizationId}.${provider}.${timestamp}.${nonce}`;
+  // This is an HMAC integrity signature over a CSRF-state payload, not
+  // password/credential storage — see verifyOAuthState() below, which
+  // recomputes this same signature to check it.
+  // codeql[js/insufficient-password-hash]: HMAC-SHA256 is the correct, standard primitive for signing; a slow KDF would be actively wrong here.
   const signature = createHmac("sha256", getSecret()).update(payload).digest("hex");
   return Buffer.from(`${payload}.${signature}`).toString("base64url");
 }
@@ -49,6 +53,9 @@ export function verifyOAuthState(
   const [organizationId, provider, timestamp, nonce, signature] = parts;
 
   const payload = `${organizationId}.${provider}.${timestamp}.${nonce}`;
+  // Same HMAC integrity signature as createOAuthState() above — see
+  // that function's comment for why this isn't password hashing.
+  // codeql[js/insufficient-password-hash]: HMAC-SHA256 is the correct, standard primitive for signing; a slow KDF would be actively wrong here.
   const expectedSignature = createHmac("sha256", getSecret()).update(payload).digest("hex");
   const signatureBuffer = Buffer.from(signature, "hex");
   const expectedBuffer = Buffer.from(expectedSignature, "hex");
