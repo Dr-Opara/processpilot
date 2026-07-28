@@ -6,6 +6,24 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-05 — Phase 19: External portal
+
+Added [external-portal.md](../architecture/external-portal.md)
+documenting resource-scoped, invitation-based access for the
+`external_user` role: why no new RLS policy was needed (Phases 8/9's
+own-resource clauses already cover it once an external user becomes a
+task's assignee), the `external_access_grants` data model and its
+partial-unique-index "one live grant per task" invariant, the invite/
+activate/revoke/expire lifecycle, and the deliberate decision not to
+seat-gate external invites pending an open pricing question. Updated
+[phase-tracker.md](phase-tracker.md)'s Phase 19 entry to `Complete` and
+[current-project-status.md](current-project-status.md) accordingly.
+Known gaps carried forward explicitly: no dedicated minimal
+external-session UI shell yet, and privilege-escalation coverage is
+unit-test-level only (same unverified-against-live-Postgres posture as
+every other RLS claim in this environment, since no Supabase project
+has been provisioned).
+
 ## 2026-08-04 — Phase 18 continuation: public API, webhooks, and integration catalog
 
 Added [public-api.md](../architecture/public-api.md) documenting the

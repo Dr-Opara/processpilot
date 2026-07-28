@@ -151,6 +151,9 @@ export default async function TaskDetailPage({
         <a href={`/app/workflows/${workflow.id}`} className="text-cobalt">
           {workflow.title}
         </a>
+        <a href={`/app/tasks/${task.id}/external-access`} className="text-sm text-cobalt">
+          External access
+        </a>
       </Stack>
 
       {error && <Alert title="Action could not be completed" description={error} />}

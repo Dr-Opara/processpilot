@@ -209,6 +209,13 @@ export const AuditAction = {
   WebhookSubscriptionUpdated: "webhook_subscription.updated",
   WebhookSubscriptionDeleted: "webhook_subscription.deleted",
   WebhookDeliveryReplayed: "webhook_delivery.replayed",
+
+  // Phase 19 (External portal).
+  ExternalAccessGranted: "external_access.granted",
+  ExternalAccessActivated: "external_access.activated",
+  ExternalAccessRevoked: "external_access.revoked",
+  // source: "system" — recorded by the external-access-expiration-check background job.
+  ExternalAccessExpired: "external_access.expired",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -250,6 +257,7 @@ export const AuditResourceType = {
   ApiKey: "api_key",
   WebhookSubscription: "webhook_subscription",
   WebhookDelivery: "webhook_delivery",
+  ExternalAccessGrant: "external_access_grant",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

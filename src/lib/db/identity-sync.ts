@@ -2,6 +2,7 @@ import "server-only";
 import type postgres from "postgres";
 import { recordAuditEvent } from "./audit";
 import { AuditAction, AuditResourceType } from "./audit-actions";
+import { activateExternalAccessGrant } from "@/lib/services/external-access";
 import type {
   OrganizationInvitationRow,
   OrganizationMemberRow,
@@ -283,6 +284,10 @@ async function applyPendingInvitation(
     correlationId,
     source: "webhook",
   });
+
+  // A no-op for every invitation that isn't an external_user grant —
+  // see external-access.ts's header comment.
+  await activateExternalAccessGrant(sql, organizationId, invitation.id, memberId, correlationId);
 }
 
 export async function syncMembershipRemoved(
