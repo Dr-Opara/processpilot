@@ -37,6 +37,8 @@ export interface CurrentMembership {
    * requirePermission(permission, { scope }) to check a specific resource.
    */
   scopedPermissions: string[];
+  /** Keys of every role this member holds — nav/UI rendering only (e.g. detecting `external_user`); never authoritative for access control. */
+  roleKeys: string[];
 }
 
 export async function getCurrentProfile(): Promise<ProfileRow> {
@@ -88,12 +90,25 @@ export async function getCurrentMembership(): Promise<CurrentMembership> {
     throw new AppError("forbidden", "Membership is not active in this organization.");
   }
 
-  const [permissions, scopedPermissions] = await Promise.all([
+  const [permissions, scopedPermissions, roleKeyRows] = await Promise.all([
     resolvePermissions(sql, member.id, "unscoped"),
     resolvePermissions(sql, member.id, "scoped"),
+    sql<{ key: string }[]>`
+      select distinct r.key
+      from member_role_assignments mra
+      join roles r on r.id = mra.role_id
+      where mra.organization_member_id = ${member.id}
+    `,
   ]);
 
-  return { profile, organization, member, permissions, scopedPermissions };
+  return {
+    profile,
+    organization,
+    member,
+    permissions,
+    scopedPermissions,
+    roleKeys: roleKeyRows.map((row) => row.key),
+  };
 }
 
 async function resolvePermissions(

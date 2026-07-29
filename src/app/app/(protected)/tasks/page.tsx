@@ -62,36 +62,56 @@ export default async function TaskInboxPage({
       )}
 
       {!loadError && tasks.length > 0 && (
-        <ScrollArea>
-          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-border text-muted">
-                <th className="py-2 pr-4 font-medium">Task</th>
-                <th className="py-2 pr-4 font-medium">Type</th>
-                <th className="py-2 pr-4 font-medium">Status</th>
-                <th className="py-2 pr-4 font-medium">Due</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task.id} className="border-b border-border/60">
-                  <td className="py-3 pr-4">
-                    <a href={`/app/tasks/${task.id}`} className="font-medium text-cobalt">
-                      {task.label}
-                    </a>
-                  </td>
-                  <td className="py-3 pr-4">{task.node_type}</td>
-                  <td className="py-3 pr-4">
-                    <StatusBadge status={taskBadgeStatus(task.status)}>{task.status}</StatusBadge>
-                  </td>
-                  <td className="py-3 pr-4">
-                    {task.due_at ? new Date(task.due_at).toLocaleString() : "—"}
-                  </td>
+        <>
+          <Stack className="gap-2 md:hidden">
+            {tasks.map((task) => (
+              <a
+                key={task.id}
+                href={`/app/tasks/${task.id}`}
+                className="flex flex-col gap-1 rounded-md border border-border p-4"
+              >
+                <span className="font-medium text-cobalt">{task.label}</span>
+                <span className="text-xs text-muted">{task.node_type}</span>
+                <div className="flex items-center justify-between pt-1">
+                  <StatusBadge status={taskBadgeStatus(task.status)}>{task.status}</StatusBadge>
+                  <span className="text-xs text-muted">
+                    {task.due_at ? `Due ${new Date(task.due_at).toLocaleString()}` : "No due date"}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </Stack>
+          <ScrollArea className="hidden md:block">
+            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-muted">
+                  <th className="py-2 pr-4 font-medium">Task</th>
+                  <th className="py-2 pr-4 font-medium">Type</th>
+                  <th className="py-2 pr-4 font-medium">Status</th>
+                  <th className="py-2 pr-4 font-medium">Due</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </ScrollArea>
+              </thead>
+              <tbody>
+                {tasks.map((task) => (
+                  <tr key={task.id} className="border-b border-border/60">
+                    <td className="py-3 pr-4">
+                      <a href={`/app/tasks/${task.id}`} className="font-medium text-cobalt">
+                        {task.label}
+                      </a>
+                    </td>
+                    <td className="py-3 pr-4">{task.node_type}</td>
+                    <td className="py-3 pr-4">
+                      <StatusBadge status={taskBadgeStatus(task.status)}>{task.status}</StatusBadge>
+                    </td>
+                    <td className="py-3 pr-4">
+                      {task.due_at ? new Date(task.due_at).toLocaleString() : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollArea>
+        </>
       )}
     </Stack>
   );

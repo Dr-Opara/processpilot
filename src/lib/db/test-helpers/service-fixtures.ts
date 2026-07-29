@@ -76,6 +76,7 @@ export function makeMembership(
     member?: Partial<OrganizationMemberRow>;
     permissions?: string[];
     scopedPermissions?: string[];
+    roleKeys?: string[];
   } = {},
 ): CurrentMembership {
   return {
@@ -84,5 +85,6 @@ export function makeMembership(
     member: makeOrganizationMember(overrides.member),
     permissions: overrides.permissions ?? [],
     scopedPermissions: overrides.scopedPermissions ?? [],
+    roleKeys: overrides.roleKeys ?? [],
   };
 }

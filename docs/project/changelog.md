@@ -6,6 +6,23 @@ documentation changelog, not an application release changelog — see
 [product/changelog.md](../../product/changelog.md) for changes to
 `product/`.
 
+## 2026-08-06 — Phase 20: Responsive PWA
+
+Added [responsive-pwa.md](../architecture/responsive-pwa.md) documenting
+this phase's scope: a previously-missing primary navigation shell
+(`src/lib/app-nav.ts`, `src/components/app/AppNav.tsx` — role-aware,
+collapses to a header disclosure below `md`, omitted entirely for
+`external_user` sessions), a card-view responsive collapse for the My
+Work task list, and an installable PWA service worker
+(`public/app-sw.js`, scoped to `/app/`) with an offline fallback page
+and offline-status banner. Deliberately does not add offline
+mutation queueing — that scope decision, and the ~25 administrative
+table views that did not get the same card-view treatment, are
+recorded as known gaps rather than silently omitted. Updated
+[application-layout.md](../../design/application-layout.md)'s
+"Responsive behavior" section and
+[phase-tracker.md](phase-tracker.md)'s Phase 20 entry to `Complete`.
+
 ## 2026-08-05 — Phase 19: External portal
 
 Added [external-portal.md](../architecture/external-portal.md)

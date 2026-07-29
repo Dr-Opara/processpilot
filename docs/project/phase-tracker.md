@@ -38,7 +38,7 @@ phases from this tracker and does not close until those phases are
 | 17    | Billing and entitlements                    | Complete    |
 | 18    | Integrations                                | Complete    |
 | 19    | External portal                             | Complete    |
-| 20    | Responsive PWA                              | Not Started |
+| 20    | Responsive PWA                              | Complete    |
 | 21    | Organization administration                 | Not Started |
 | 22    | Security hardening                          | Not Started |
 | 23    | Reliability and observability               | Not Started |
@@ -850,7 +850,24 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Employee-facing flows (My Work, task completion, form
   submission, evidence upload) work correctly on mobile viewports and pass
   accessibility checks at that viewport.
-- **Status:** Not Started.
+- **Status:** Complete. Primary navigation (previously missing
+  entirely — the app shell had no way to move between sections except a
+  hand-typed URL) was built as part of this phase since mobile usability
+  requires it; role-aware, collapses to a header disclosure below `md`.
+  My Work (the exit criterion's task list) got a card-view responsive
+  collapse; task completion/form submission/evidence upload were
+  already reflow-friendly without changes. Installable PWA (manifest
+  pre-existed; added a scoped `/app/` service worker with an offline
+  fallback page and an offline-status banner). Offline scope was
+  decided at phase start per this entry's own risk note: no
+  background-sync queue for offline mutations, only graceful
+  degradation (clear "you're offline, changes won't be saved" —
+  documented, not silently assumed). See
+  [responsive-pwa.md](../architecture/responsive-pwa.md) for full
+  detail and known gaps, including the ~25 other table-based
+  (administrative, not frontline-employee) views that did not get the
+  same card-view treatment, and the lack of real mobile-device/
+  Lighthouse verification in this environment.
 - **Risks:** Offline behavior for evidence upload (unreliable frontline
   connectivity) — scope of true offline support decided at phase start,
   not assumed here.
