@@ -52,6 +52,9 @@ export default async function IntegrationsPage({
           <Link href={{ pathname: "/app/integrations/webhooks" }} className="text-cobalt">
             Webhooks
           </Link>
+          <Link href={{ pathname: "/app/integrations/scim" }} className="text-cobalt">
+            SCIM
+          </Link>
         </Cluster>
       </Cluster>
 
