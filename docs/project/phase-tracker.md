@@ -1030,6 +1030,7 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 
 ## Related documents
 
+- [Backlog](backlog.md)
 - [Milestones](milestones.md)
 - [Project roadmap](roadmap.md)
 - [Current project status](current-project-status.md)
