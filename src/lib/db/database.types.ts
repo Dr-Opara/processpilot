@@ -1510,3 +1510,67 @@ export interface ExternalAccessGrantRow {
   accepted_at: string | null;
   revoked_at: string | null;
 }
+
+/** Phase 21 (Advanced organization administration) — see docs/architecture/organization-administration.md. */
+export interface RoleTemplateRow {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  created_at: string;
+}
+
+export interface RoleTemplatePermissionRow {
+  role_template_id: string;
+  permission_id: string;
+  scope: RolePermissionScope;
+}
+
+export interface ApprovedDomainRow {
+  id: string;
+  organization_id: string;
+  domain: string;
+  verification_token: string;
+  verified_at: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface TeamRoleAssignmentRow {
+  id: string;
+  organization_id: string;
+  team_id: string;
+  role_id: string;
+  created_by: string | null;
+  created_at: string;
+}
+
+export type OrganizationDeletionRequestStatus = "pending" | "cancelled" | "completed";
+
+export interface OrganizationDeletionRequestRow {
+  id: string;
+  organization_id: string;
+  requested_by: string;
+  reason: string | null;
+  status: OrganizationDeletionRequestStatus;
+  scheduled_delete_at: string;
+  cancelled_by: string | null;
+  cancelled_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export type ScimTokenStatus = "active" | "revoked";
+
+export interface ScimTokenRow {
+  id: string;
+  organization_id: string;
+  name: string;
+  token_prefix: string;
+  token_hash: string;
+  status: ScimTokenStatus;
+  last_used_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  revoked_at: string | null;
+}

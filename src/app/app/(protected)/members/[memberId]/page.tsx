@@ -8,6 +8,9 @@ import { Alert } from "@/components/ui/Alert";
 import { getCurrentMembership } from "@/lib/authz";
 import { getMemberProfile } from "@/lib/services/members";
 import { listRoles } from "@/lib/services/roles";
+import { listDepartments } from "@/lib/services/departments";
+import { listLocations } from "@/lib/services/locations";
+import { listTeams } from "@/lib/services/teams";
 import { memberStatusBadgeStatus } from "@/lib/services/member-display";
 import { AppError } from "@/lib/errors";
 import {
@@ -17,6 +20,7 @@ import {
   suspendMemberAction,
   transferOwnershipAction,
 } from "../actions";
+import { delegateAdministratorAction } from "../delegated-admin-actions";
 
 export default async function MemberDetailPage({
   params,
@@ -36,15 +40,19 @@ export default async function MemberDetailPage({
     throw err;
   }
 
-  const [roles, currentMembership] = await Promise.all([
+  const [roles, currentMembership, departments, locations, teams] = await Promise.all([
     listRoles().catch(() => []),
     getCurrentMembership().catch(() => null),
+    listDepartments({ status: "active" }).catch(() => []),
+    listLocations({ status: "active" }).catch(() => []),
+    listTeams({ status: "active" }).catch(() => []),
   ]);
 
   const isSelf = currentMembership?.member.id === memberId;
   const canTransferOwnership = Boolean(
     currentMembership?.permissions.includes("organization.manage"),
   );
+  const canDelegateAdmin = Boolean(currentMembership?.permissions.includes("role.manage"));
   const displayName =
     [profile.firstName, profile.lastName].filter(Boolean).join(" ") || profile.email;
 
@@ -164,6 +172,70 @@ export default async function MemberDetailPage({
             <input type="hidden" name="newOwnerMemberId" value={memberId} />
             <Button type="submit" variant="secondary">
               Transfer ownership to {displayName}
+            </Button>
+          </form>
+        </Stack>
+      )}
+
+      {canDelegateAdmin && !isSelf && profile.member.status === "active" && (
+        <Stack className="gap-3">
+          <Heading as="h2">Delegate administration</Heading>
+          <Text className="text-muted text-xs">
+            Grants a role scoped to one department, location, or team, and records {displayName} as
+            its owner/manager. You can only delegate a role whose permissions you already hold.
+          </Text>
+          <form
+            action={delegateAdministratorAction.bind(null, memberId)}
+            className="flex flex-wrap items-end gap-3"
+          >
+            <Stack className="min-w-[200px] gap-1">
+              <Label htmlFor="delegateRoleId">Role</Label>
+              <Select id="delegateRoleId" name="roleId" required defaultValue="">
+                <option value="" disabled>
+                  Select a role
+                </option>
+                {roles.map(({ role }) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </Select>
+            </Stack>
+            <Stack className="min-w-[200px] gap-1">
+              <Label htmlFor="delegateDepartmentId">Department</Label>
+              <Select id="delegateDepartmentId" name="departmentId" defaultValue="">
+                <option value="">—</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
+                  </option>
+                ))}
+              </Select>
+            </Stack>
+            <Stack className="min-w-[200px] gap-1">
+              <Label htmlFor="delegateLocationId">Location</Label>
+              <Select id="delegateLocationId" name="locationId" defaultValue="">
+                <option value="">—</option>
+                {locations.map((location) => (
+                  <option key={location.id} value={location.id}>
+                    {location.name}
+                  </option>
+                ))}
+              </Select>
+            </Stack>
+            <Stack className="min-w-[200px] gap-1">
+              <Label htmlFor="delegateTeamId">Team</Label>
+              <Select id="delegateTeamId" name="teamId" defaultValue="">
+                <option value="">—</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              </Select>
+            </Stack>
+            <Button type="submit" variant="secondary">
+              Delegate
             </Button>
           </form>
         </Stack>

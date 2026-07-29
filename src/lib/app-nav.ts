@@ -26,6 +26,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
   { label: "Audit", href: "/app/audit", requiredPermission: "audit.view" },
   { label: "Integrations", href: "/app/integrations", requiredPermission: "integration.manage" },
   { label: "People", href: "/app/members", requiredPermission: "member.manage" },
+  { label: "Roles", href: "/app/roles", requiredPermission: "role.manage" },
   { label: "Billing", href: "/app/billing", requiredPermission: "billing.manage" },
 ];
 

@@ -36,6 +36,9 @@ export default async function MembersPage({
           <Text className="text-muted">People with access to this organization.</Text>
         </Stack>
         <Cluster className="gap-2">
+          <Button href="/app/members/export" variant="secondary">
+            Export CSV
+          </Button>
           <Button href="/app/members/import" variant="secondary">
             Import CSV
           </Button>

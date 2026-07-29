@@ -216,6 +216,27 @@ export const AuditAction = {
   ExternalAccessRevoked: "external_access.revoked",
   // source: "system" — recorded by the external-access-expiration-check background job.
   ExternalAccessExpired: "external_access.expired",
+
+  // Phase 21 (Advanced organization administration).
+  CustomRoleCreated: "role.created",
+  CustomRoleUpdated: "role.updated",
+  CustomRoleArchived: "role.archived",
+  DelegatedAdminAssigned: "delegated_admin.assigned",
+  TeamRoleAssigned: "team_role_assignment.assigned",
+  TeamRoleUnassigned: "team_role_assignment.unassigned",
+  MembersExported: "member.exported",
+  ApprovedDomainAdded: "approved_domain.added",
+  ApprovedDomainVerified: "approved_domain.verified",
+  ApprovedDomainRemoved: "approved_domain.removed",
+  BrandingUpdated: "organization.branding_updated",
+  SecuritySettingsUpdated: "organization.security_settings_updated",
+  DataRetentionSettingsUpdated: "organization.data_retention_settings_updated",
+  OrganizationDeletionRequested: "organization.deletion_requested",
+  OrganizationDeletionCancelled: "organization.deletion_cancelled",
+  // source: "system" — recorded by the organization-deletion-sweep background job.
+  OrganizationDeletionCompleted: "organization.deletion_completed",
+  ScimTokenCreated: "scim_token.created",
+  ScimTokenRevoked: "scim_token.revoked",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];
@@ -258,6 +279,11 @@ export const AuditResourceType = {
   WebhookSubscription: "webhook_subscription",
   WebhookDelivery: "webhook_delivery",
   ExternalAccessGrant: "external_access_grant",
+  Role: "role",
+  TeamRoleAssignment: "team_role_assignment",
+  ApprovedDomain: "approved_domain",
+  ScimToken: "scim_token",
+  OrganizationDeletionRequest: "organization_deletion_request",
 } as const;
 
 export type AuditResourceTypeValue = (typeof AuditResourceType)[keyof typeof AuditResourceType];

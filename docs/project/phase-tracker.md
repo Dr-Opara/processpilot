@@ -39,7 +39,7 @@ phases from this tracker and does not close until those phases are
 | 18    | Integrations                                | Complete    |
 | 19    | External portal                             | Complete    |
 | 20    | Responsive PWA                              | Complete    |
-| 21    | Organization administration                 | Not Started |
+| 21    | Organization administration                 | Complete    |
 | 22    | Security hardening                          | Not Started |
 | 23    | Reliability and observability               | Not Started |
 | 24    | Complete QA                                 | Not Started |
@@ -885,9 +885,43 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Custom roles cannot exceed the granting admin's own
   permissions (tested); branding settings apply consistently across the
   application shell.
-- **Status:** Not Started.
+- **Status:** Complete. Most of this phase's requirement list (org
+  profile/settings, locations/departments/teams/hierarchy, members/
+  invitations/suspension/removal, ownership transfer, bulk member
+  import, administrative audit history, usage/entitlement visibility)
+  was already delivered in Phases 5, 15, and 17 — this phase's real
+  scope was the remaining gaps: custom roles and role templates
+  (`src/lib/services/custom-roles.ts`, `/app/roles`), a security fix to
+  `role_permissions_insert`'s RLS policy that closed a two-step
+  self-escalation bypass of enforcement rule 5, group-based (team) role
+  assignment (`team-role-assignments.ts`), delegated administration
+  (`delegated-admins.ts`), bulk member export
+  (`member-export.ts`), real DNS-TXT-verified approved domains
+  (`approved-domains.ts`), branding/security/data-retention preference
+  storage (`organization-settings-extended.ts`), SCIM-ready list-only
+  provisioning scaffolding (`scim.ts`, `/api/scim/v2/Users`), and a
+  cancellable, 14-day-grace-period, flag-gated tenant-safe organization
+  deletion workflow (`organization-deletion.ts`). `npm run phase:commit`
+  (format, lint, typecheck, unit tests, production build) is green. See
+  [organization-administration.md](../architecture/organization-administration.md)
+  for full detail, the security-fix rationale, and honesty notes on what
+  is enforced versus stored-only.
+- **Known gaps carried forward:** Team-role fan-out doesn't auto-apply
+  to members added to a team after the initial grant. Session-timeout
+  and data-retention preferences are stored but not enforced anywhere.
+  SCIM is list-only and never validated against a real identity
+  provider. Organization-deletion finalization is not implemented — the
+  env-flag-gated sweep intentionally throws rather than deleting
+  anything, pending a dedicated security review. No new cases were
+  added to the live-Postgres `tenant-isolation.integration.test.ts`
+  suite for this phase's new tables, consistent with Phases 18/19's own
+  documented posture (that suite has not run against a real Supabase
+  project in this environment for any recent phase).
 - **Risks:** Custom-role privilege escalation — same class of risk as
-  Phase 19, requires equivalent test rigor.
+  Phase 19, addressed by both the RLS-layer self-escalation check (new
+  in this phase, for `role_permissions_insert`) and an application-layer
+  duplicate check, each covered by unit tests
+  (`custom-roles.test.ts`).
 
 ## Phase 22: Security hardening
 
