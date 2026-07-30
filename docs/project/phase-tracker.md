@@ -1154,9 +1154,40 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   support tooling.
 - **Exit criteria:** Every support-console access to customer data is
   audited, scoped, and time-boxed; verified by test.
-- **Status:** Not Started.
+- **Status:** Complete. See
+  [platform-administration.md](../architecture/platform-administration.md)
+  for the full design. Platform-admin status is read from a
+  `PLATFORM_ADMIN_EMAILS` environment-variable allowlist — structurally
+  separate from every organization's own role/permission system, so it
+  can never be granted through a tenant role. Delivered: organization
+  search/detail lookup (member count, subscription status, suspension
+  status, recent tenant audit activity), user lookup by email across
+  organizations, organization suspension/reactivation (reusing
+  `organizations.archived_at`, the same gate `getCurrentOrganization()`
+  already enforces), support notes, a platform health overview (reusing
+  Phase 23's queue/provider health checks), and a full
+  `platform_admin_audit_log` audit trail — every write recorded in the
+  same transaction as the action it audits. Three new tables
+  (`platform_admin_audit_log`, `platform_suspensions`,
+  `platform_support_notes`), none granted to the `authenticated` role.
+  13 unit tests cover both the allowlist/authorization logic and a
+  forbidden-propagates-from-every-function negative-authorization case.
+  `npm run phase:commit` and `npm audit --audit-level=high` (0
+  vulnerabilities) are both green.
+- **Known gaps carried forward:** Impersonation (customer-session
+  access) was not implemented — the phase brief allowed it only if
+  strongly justified with approval/audit/expiration/customer-visible
+  indication, and no such mechanism exists in this codebase; adding it
+  later requires its own dedicated security review. No pagination on
+  organization/audit-log listings (capped at 200/500 respectively). No
+  dedicated break-glass "emergency access" path beyond the standard
+  allowlist. RLS cross-tenant proof for the two new tenant-owned tables
+  remains unverified against a live database engine, consistent with
+  every prior phase's documented posture.
 - **Risks:** This is itself a privileged cross-tenant access path —
-  requires the same security rigor as Phase 19/21.
+  requires the same security rigor as Phase 19/21. Mitigated by the
+  environment-variable-allowlist design (no application-level grant
+  path exists) and full audit coverage.
 
 ## Phase 28: Demo workspace
 

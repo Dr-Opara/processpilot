@@ -164,7 +164,7 @@ describe("supabase/migrations schema coverage", () => {
     tablesWithAuthenticatedRevoke,
   } = parseSchema(sql);
 
-  it("found the expected 82 tables from the domain model", () => {
+  it("found the expected 85 tables from the domain model", () => {
     // A change to this count is not itself wrong — it's a prompt to
     // confirm the new/removed table was intentional and update this
     // expectation deliberately, not silently drift. 17 (Phase 4) + 2
@@ -195,8 +195,9 @@ describe("supabase/migrations schema coverage", () => {
     // column to the existing audit_events). + 6 (Phase 21: role_templates,
     // role_template_permissions, approved_domains, team_role_assignments,
     // organization_deletion_requests, scim_tokens).
-    // + 1 (Phase 22: scim_token_usage_log).
-    expect(tables.size).toBe(82);
+    // + 1 (Phase 22: scim_token_usage_log). + 3 (Phase 27:
+    // platform_admin_audit_log, platform_suspensions, platform_support_notes).
+    expect(tables.size).toBe(85);
   });
 
   it("enables Row-Level Security on every table", () => {

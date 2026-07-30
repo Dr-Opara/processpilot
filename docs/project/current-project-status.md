@@ -5,20 +5,19 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-08-06.
+**Last updated:** 2026-07-30.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–26 (Phase 24, Complete QA, was skipped in
+  is progressing via Phases 16–27 (Phase 24, Complete QA, was skipped in
   sequence per explicit direction and remains `Not Started` — see the
   phase tracker's own note on this gap).
-- **Current phase:** Phase 26 — Production Infrastructure and
-  Deployment, completing on
-  `feature/phase-26-production-infrastructure`; Phase 27 (Internal
-  Support and Platform Administration) is next. Phase 26's own exit
+- **Current phase:** Phase 27 — Internal Support and Platform
+  Administration, complete on `feature/phase-27-platform-admin`; Phase 28
+  (Production-Safe SaaS Demo Workspace) is next. Phase 26's own exit
   criterion (a real deployment/rollback cycle) remains blocked pending
   real Vercel/Supabase/Clerk production account provisioning — see the
   phase tracker.
@@ -27,7 +26,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, and 26**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, and 27**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
@@ -35,23 +34,21 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   billing and entitlements, integrations, external portal, responsive
   PWA, advanced organization administration, security hardening,
   reliability and observability, legal/privacy/trust/commercial
-  readiness) are `Complete` per the phase tracker — Phase 9 merged via
-  PR #12 (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged
-  via PR #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16;
-  Phase 14 merged via PR #17; Phase 15 merged via PR #18; Phase 16
-  merged via PR #19; Phase 17 merged via PR #20; Phase 18 merged via the
-  `feature/phase-18-integrations` and
+  readiness, production infrastructure and deployment, internal support
+  and platform administration) are `Complete` per the phase tracker —
+  Phase 9 merged via PR #12 (commit `5427118`); Phase 10 merged via PR
+  #13; Phase 11 merged via PR #14; Phase 12 merged via PR #15; Phase 13
+  merged via PR #16; Phase 14 merged via PR #17; Phase 15 merged via PR
+  #18; Phase 16 merged via PR #19; Phase 17 merged via PR #20; Phase 18
+  merged via the `feature/phase-18-integrations` and
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
   PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
   Phase 22 merged via PR #27; Phase 23 merged via PR #29; Phase 24
   (Complete QA) remains `Not Started`; Phase 25 merged via PR #30;
-  Phase 26's implementation is complete on
-  `feature/phase-26-production-infrastructure`, pending
-  its PR merge. Phase 4 (database and tenant isolation) remains recorded
-  as `In
-Progress` in
-  the tracker; this document does not re-audit that
-  status.
+  Phase 26 merged via PR #31; Phase 27's implementation is complete on
+  `feature/phase-27-platform-admin`, pending its PR merge. Phase 4
+  (database and tenant isolation) remains recorded as `In Progress` in
+  the tracker; this document does not re-audit that status.
 
 ## What's built
 
@@ -59,7 +56,7 @@ Progress` in
   [product/information-architecture.md](../../product/information-architecture.md).
 - Authentication: Clerk sign-up/sign-in, organization creation and
   invitation at `/app/*`, server-side session gating via `requireAuth()`.
-- Database schema: 62 tables in
+- Database schema: 85 tables in
   [docs/architecture/database-schema.md](../architecture/database-schema.md),
   committed as SQL migrations with Row-Level Security enabled and at
   least one policy on every table — statically enforced by
@@ -324,6 +321,20 @@ Progress` in
   list got the card-view treatment, not the ~25 other, more
   administrative table views; no real mobile-device/Lighthouse
   verification in this environment).
+- Internal support and platform administration (Phase 27, complete):
+  a cross-tenant admin surface for ProcessPilot's own staff, structurally
+  separate from every organization's role/permission system —
+  platform-admin status is read from a `PLATFORM_ADMIN_EMAILS`
+  environment-variable allowlist, never a database grant
+  (`src/lib/platform-admin.ts`). Organization search/detail lookup, user
+  lookup by email, organization suspension/reactivation (reusing
+  `organizations.archived_at`), support notes, a platform health
+  overview (reusing Phase 23's queue/provider health checks), and a full
+  `platform_admin_audit_log` audit trail (`src/lib/services/
+platform-admin.ts`). Routes: `/app/platform-admin/*`. See
+  [platform-administration.md](../architecture/platform-administration.md)
+  for full detail and known gaps (no impersonation; no pagination beyond
+  a fixed cap; no dedicated break-glass path).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
