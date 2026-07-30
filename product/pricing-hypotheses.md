@@ -5,6 +5,16 @@ should appear on the public marketing site as a live price until validated
 with design partners and explicitly promoted out of this document. See
 [product principles — real numbers or no numbers](product-principles.md).
 
+**Public marketing pricing has been committed and promoted out of this
+document.** The public pricing page (`src/content/pricing.ts`) now shows
+real launch pricing for Team ($99/month), Business ($249/month), and
+Enterprise (custom, starting at $750/month). This document's working
+model and open questions remain relevant to the internal billing
+entitlement mechanism (`src/lib/billing/plans.ts`), which is still
+unvalidated/hypothesis-labeled pending a real Stripe product/price
+catalog — see
+[billing architecture](../docs/architecture/billing-architecture.md).
+
 ## Working model: per-seat + tier, with usage guardrails
 
 A hybrid of the two most common B2B SaaS models, chosen because

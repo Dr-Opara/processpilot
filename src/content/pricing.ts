@@ -1,23 +1,32 @@
 export interface PricingPlan {
   name: string;
-  audience: string;
-  priceHypothesis: string;
+  /** Prominent monthly price, e.g. "$99/month" or "Custom pricing" for negotiated plans. */
+  price: string;
+  /** Short line under the price: user limit for Team/Business, indicative starting price for Enterprise. */
+  priceDetail: string;
+  /** Annual price shown directly below the monthly price. Omitted for Enterprise (custom terms). */
+  annualPrice?: string;
   description: string;
   features: string[];
   cta: { label: string; href: string };
   highlighted?: boolean;
+  badge?: string;
 }
 
 export const pricingPlans: PricingPlan[] = [
   {
     name: "Team",
-    audience: "Single-location teams up to roughly 50 people",
-    priceHypothesis: "Starting-price hypothesis — contact sales to confirm",
+    price: "$99/month",
+    priceDetail: "Up to 10 users",
+    annualPrice: "$990/year — save two months",
     description:
-      "For a single team that wants its core procedures out of static documents and into a guided workflow.",
+      "For small teams ready to move their procedures out of static documents and into guided, accountable workflows.",
     features: [
+      "Up to 10 users",
       "Up to 10 published workflows",
-      "Core knowledge, process builder, and execution",
+      "Core knowledge management",
+      "Visual process builder",
+      "Workflow execution and approvals",
       "Standard training assignments",
       "Email support",
     ],
@@ -25,34 +34,47 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: "Business",
-    audience: "Multi-location or multi-department companies",
-    priceHypothesis: "Starting-price hypothesis — contact sales to confirm",
+    price: "$249/month",
+    priceDetail: "Up to 30 users",
+    annualPrice: "$2,490/year — save two months",
     description:
-      "For companies running the same process across multiple locations or departments, with exceptions to manage.",
+      "For growing companies managing processes across multiple departments, teams, or locations.",
     features: [
+      "Everything in Team",
+      "Up to 30 users",
       "Unlimited published workflows",
-      "Exceptions, analytics, and audit center",
-      "Location- and department-level rules",
+      "Exceptions and CAPA management",
+      "Analytics and audit center",
+      "Department- and location-level rules",
+      "Advanced training and reporting",
       "Priority support",
     ],
     cta: { label: "Request a demo", href: "/request-demo" },
     highlighted: true,
+    badge: "Most Popular",
   },
   {
     name: "Enterprise",
-    audience: "Enterprise and regulated organizations",
-    priceHypothesis: "Contact sales",
+    price: "Custom pricing",
+    priceDetail: "Starting at $750/month",
     description:
-      "For organizations that need enterprise security controls, dedicated implementation support, and custom usage terms.",
+      "For enterprise and regulated organizations requiring advanced security, implementation support, and customized operating terms.",
     features: [
       "Everything in Business",
-      "SSO roadmap access and advanced access controls",
+      "SSO and advanced access controls",
+      "Custom roles and permission models",
       "Dedicated implementation support",
-      "Custom data retention and usage terms",
+      "Custom data-retention terms",
+      "Custom integrations",
+      "Enterprise security review",
+      "Negotiated usage and support terms",
     ],
     cta: { label: "Contact sales", href: "/request-demo" },
   },
 ];
+
+export const pricingNote =
+  "All plans include secure cloud hosting, product updates, and standard onboarding resources. Taxes may apply.";
 
 export const pricingConsiderations = [
   {

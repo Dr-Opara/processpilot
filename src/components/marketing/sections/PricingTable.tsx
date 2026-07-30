@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import { Container, Section, Stack } from "@/components/ui/Layout";
 import { Text } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
-import { pricingPlans } from "@/content/pricing";
+import { pricingNote, pricingPlans } from "@/content/pricing";
 
 export function PricingTable() {
   return (
@@ -19,10 +19,22 @@ export function PricingTable() {
               }`}
             >
               <Stack className="gap-2">
-                <Text className="text-lg font-semibold text-ink">{plan.name}</Text>
-                <Text className="text-sm text-muted">{plan.audience}</Text>
+                <div className="flex items-center justify-between gap-2">
+                  <Text className="text-lg font-semibold text-ink">{plan.name}</Text>
+                  {plan.badge ? (
+                    <span className="rounded-full bg-cobalt px-3 py-1 text-xs font-semibold text-surface">
+                      {plan.badge}
+                    </span>
+                  ) : null}
+                </div>
               </Stack>
-              <Text className="text-sm font-medium text-cobalt">{plan.priceHypothesis}</Text>
+              <Stack className="gap-1">
+                <Text className="text-3xl font-semibold text-ink">{plan.price}</Text>
+                <Text className="text-sm text-muted">{plan.priceDetail}</Text>
+                {plan.annualPrice ? (
+                  <Text className="text-sm font-medium text-cobalt">{plan.annualPrice}</Text>
+                ) : null}
+              </Stack>
               <Text className="text-sm text-muted">{plan.description}</Text>
               <ul className="space-y-2 border-t border-border/70 pt-4">
                 {plan.features.map((feature) => (
@@ -42,6 +54,7 @@ export function PricingTable() {
             </Stack>
           ))}
         </div>
+        <Text className="mt-8 text-center text-sm text-muted">{pricingNote}</Text>
       </Container>
     </Section>
   );
