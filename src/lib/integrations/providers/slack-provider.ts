@@ -4,6 +4,7 @@ import type {
   IntegrationCredentials,
   VerifyConnectionResult,
 } from "@/lib/integrations/adapter";
+import { externalRequestSignal } from "@/lib/observability/timeouts";
 
 /**
  * The one fully-implemented integration adapter in this phase's
@@ -69,6 +70,7 @@ export class SlackProvider implements IntegrationAdapter {
     const response = await fetch("https://slack.com/api/oauth.v2.access", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      signal: externalRequestSignal(),
       body: new URLSearchParams({
         client_id: clientId,
         client_secret: clientSecret,
@@ -93,6 +95,7 @@ export class SlackProvider implements IntegrationAdapter {
       const response = await fetch("https://slack.com/api/auth.test", {
         method: "POST",
         headers: { Authorization: `Bearer ${credentials.accessToken}` },
+        signal: externalRequestSignal(),
       });
       const result = (await response.json()) as { ok: boolean; team?: string; error?: string };
       if (!result.ok) return { ok: false, error: result.error ?? "Slack rejected the token." };

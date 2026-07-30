@@ -60,6 +60,16 @@ const SECURITY_HEADERS = [
   },
 ];
 
+// Phase 23 (caching): every authenticated/tenant-scoped surface is
+// explicitly marked non-cacheable by any shared/proxy cache — the
+// default Next.js caching behavior is safe for the public marketing
+// routes (left untouched, on Next's own static-optimization defaults)
+// but every one of these carries organization-scoped data that must
+// never be served from a shared CDN/browser-disk cache to a different
+// user. See docs/architecture/performance-and-caching.md.
+const NO_STORE_HEADER = { key: "Cache-Control", value: "private, no-store" };
+const PRIVATE_SOURCES = ["/app/:path*", "/api/v1/:path*", "/api/scim/:path*", "/api/jobs/:path*"];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
@@ -69,6 +79,10 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: SECURITY_HEADERS,
       },
+      ...PRIVATE_SOURCES.map((source) => ({
+        source,
+        headers: [NO_STORE_HEADER],
+      })),
     ];
   },
 };

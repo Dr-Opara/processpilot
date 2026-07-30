@@ -1,3 +1,5 @@
+import { captureException } from "@/lib/observability/error-reporting";
+
 /**
  * Normalized, safe-to-return error shape for every server-side
  * authorization/data-access failure. Route handlers and server actions
@@ -61,6 +63,6 @@ export function toSafeErrorResponse(error: unknown): SafeErrorResponse {
     return { status: toHttpStatus(error.code), body: { error: error.message } };
   }
 
-  console.error("Unhandled server error", error);
+  captureException(error, { route: "toSafeErrorResponse" });
   return { status: 500, body: { error: "Something went wrong. Please try again." } };
 }

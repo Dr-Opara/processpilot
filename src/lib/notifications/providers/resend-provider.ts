@@ -1,6 +1,7 @@
 import "server-only";
 import { getEmailFromAddress, getEmailProviderApiKey } from "@/lib/notifications/availability";
 import type { EmailMessage, EmailProvider, EmailSendResult } from "@/lib/notifications/adapter";
+import { externalRequestSignal } from "@/lib/observability/timeouts";
 
 /**
  * The initial concrete EmailProvider — calls Resend's HTTP API
@@ -23,6 +24,7 @@ export class ResendProvider implements EmailProvider {
         Authorization: `Bearer ${getEmailProviderApiKey()}`,
         "Content-Type": "application/json",
       },
+      signal: externalRequestSignal(),
       body: JSON.stringify({
         from: getEmailFromAddress(),
         to: [message.to],
