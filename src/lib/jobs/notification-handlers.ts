@@ -1,6 +1,7 @@
 import "server-only";
 import { getAdminSql } from "@/lib/db/client-admin";
 import { registerJobHandler } from "@/lib/jobs/registry";
+import { isDemoOrganization } from "@/lib/demo";
 import { isEmailConfigured } from "@/lib/notifications/availability";
 import { getEmailProvider } from "@/lib/notifications/get-provider";
 import { renderNotificationEmail } from "@/lib/notifications/templates";
@@ -51,6 +52,19 @@ registerJobHandler("deliver-notification-email", async ({ job }) => {
     select * from notifications where id = ${delivery.notification_id}
   `;
   if (!notification) return;
+
+  const [organization] = await sql<{ is_demo: boolean }[]>`
+    select is_demo from organizations where id = ${job.organization_id}
+  `;
+  if (isDemoOrganization(organization ?? { is_demo: false })) {
+    await sql`
+      update notification_deliveries set
+        status = 'skipped_demo_workspace', attempt_count = attempt_count + 1,
+        error_message = 'The demo workspace never sends real email.'
+      where id = ${deliveryId}
+    `;
+    return;
+  }
 
   if (!isEmailConfigured()) {
     await sql`

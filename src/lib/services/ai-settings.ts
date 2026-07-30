@@ -2,6 +2,7 @@ import "server-only";
 import { getCurrentMembership, requirePermission } from "@/lib/authz";
 import { withTenantContext } from "@/lib/db/tenant-context";
 import { isAiConfigured } from "@/lib/ai/availability";
+import { isDemoOrganization } from "@/lib/demo";
 
 /**
  * Organization-level AI copilot toggle, on top of `feature_flags`
@@ -29,6 +30,10 @@ function toTenantContext(membership: {
 export async function isAiCopilotEnabledForOrg(): Promise<boolean> {
   if (!isAiConfigured()) return false;
   const membership = await getCurrentMembership();
+  // The demo workspace never calls a real external AI provider — same
+  // "no real external actions" boundary as email and webhooks (see
+  // src/lib/demo.ts).
+  if (isDemoOrganization(membership.organization)) return false;
   return withTenantContext(toTenantContext(membership), async (tx) => {
     const [flag] = await tx<{ enabled: boolean }[]>`
       select enabled from feature_flags where organization_id = ${membership.organization.id} and key = ${AI_COPILOT_FLAG_KEY}

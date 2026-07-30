@@ -62,6 +62,15 @@ describe("isAiCopilotEnabledForOrg", () => {
 
     expect(await isAiCopilotEnabledForOrg()).toBe(false);
   });
+
+  it("is false for the demo organization, even with a real credential and no explicit disable", async () => {
+    process.env.ANTHROPIC_API_KEY = "sk-ant-api03-real-looking-value";
+    vi.mocked(getCurrentMembership).mockResolvedValue(
+      makeMembership({ organization: { is_demo: true } }),
+    );
+
+    expect(await isAiCopilotEnabledForOrg()).toBe(false);
+  });
 });
 
 describe("setAiCopilotEnabled", () => {

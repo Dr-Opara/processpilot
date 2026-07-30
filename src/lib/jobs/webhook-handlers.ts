@@ -1,6 +1,7 @@
 import "server-only";
 import { getAdminSql } from "@/lib/db/client-admin";
 import { registerJobHandler } from "@/lib/jobs/registry";
+import { isDemoOrganization } from "@/lib/demo";
 import { decryptWebhookSecret } from "@/lib/services/webhooks";
 import { signWebhookPayload } from "@/lib/webhooks/signing";
 import { assertResolvesToPublicAddress } from "@/lib/webhooks/ssrf-guard";
@@ -34,6 +35,19 @@ registerJobHandler("deliver-webhook", async ({ job }) => {
   // claim on an already-resolved delivery is a no-op. 'pending' and
   // 'failed' are both still eligible to (re)send.
   if (!delivery || delivery.status === "delivered" || delivery.status === "dead_letter") return;
+
+  const [organization] = await sql<{ is_demo: boolean }[]>`
+    select is_demo from organizations where id = ${job.organization_id}
+  `;
+  if (isDemoOrganization(organization ?? { is_demo: false })) {
+    await sql`
+      update webhook_deliveries set
+        status = 'dead_letter', attempt_count = attempt_count + 1, last_attempt_at = now(),
+        last_error = 'The demo workspace never delivers real outbound webhooks.'
+      where id = ${deliveryId}
+    `;
+    return;
+  }
 
   const [subscription] = await sql<WebhookSubscriptionRow[]>`
     select * from webhook_subscriptions where id = ${delivery.subscription_id}

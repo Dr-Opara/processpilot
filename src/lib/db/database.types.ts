@@ -37,6 +37,7 @@ export interface OrganizationRow {
   updated_at: string;
   created_by: string | null;
   archived_at: string | null;
+  is_demo: boolean;
 }
 
 export type OnboardingStep =
@@ -1324,7 +1325,12 @@ export interface NotificationRow {
 }
 
 export type NotificationDeliveryStatus =
-  "pending" | "sent" | "failed" | "skipped_not_configured" | "skipped_preference";
+  | "pending"
+  | "sent"
+  | "failed"
+  | "skipped_not_configured"
+  | "skipped_preference"
+  | "skipped_demo_workspace";
 
 export interface NotificationDeliveryRow {
   id: string;

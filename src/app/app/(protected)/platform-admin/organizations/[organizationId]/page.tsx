@@ -9,8 +9,11 @@ import { getOrganizationDetailForPlatformAdmin } from "@/lib/services/platform-a
 import { AppError } from "@/lib/errors";
 import {
   addSupportNoteAction,
+  markOrganizationAsDemoAction,
   reactivateOrganizationAction,
+  resetDemoWorkspaceAction,
   suspendOrganizationAction,
+  unmarkOrganizationAsDemoAction,
 } from "../../actions";
 
 export default async function PlatformAdminOrganizationDetailPage({
@@ -128,6 +131,43 @@ export default async function PlatformAdminOrganizationDetailPage({
                 </Button>
               </Cluster>
             </form>
+          </Stack>
+
+          <Stack className="gap-3">
+            <Heading as="h2">Demo workspace</Heading>
+            {detail.organization.is_demo ? (
+              <Stack className="gap-2">
+                <Text className="text-sm text-muted">
+                  This organization is the flagged demo workspace. Resetting restores the seeded
+                  baseline content; it does not purge ad-hoc content created during a demo session.
+                </Text>
+                <Cluster className="gap-2">
+                  <form action={resetDemoWorkspaceAction.bind(null, organizationId)}>
+                    <Button type="submit" variant="secondary">
+                      Reset demo workspace
+                    </Button>
+                  </form>
+                  <form action={unmarkOrganizationAsDemoAction.bind(null, organizationId)}>
+                    <Button type="submit" variant="secondary">
+                      Unmark as demo workspace
+                    </Button>
+                  </form>
+                </Cluster>
+              </Stack>
+            ) : (
+              <Stack className="gap-2">
+                <Text className="text-sm text-muted">
+                  Flagging this organization as the demo workspace seeds it with deterministic,
+                  clearly-synthetic content and blocks real email/webhook/AI-provider calls from it.
+                  Only one organization can be flagged at a time.
+                </Text>
+                <form action={markOrganizationAsDemoAction.bind(null, organizationId)}>
+                  <Button type="submit" variant="secondary">
+                    Mark as demo workspace
+                  </Button>
+                </form>
+              </Stack>
+            )}
           </Stack>
 
           <Stack className="gap-3">
