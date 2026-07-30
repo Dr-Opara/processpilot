@@ -8,7 +8,7 @@ describe("redact", () => {
   it("redacts keys that look like secrets, recursively", () => {
     const result = redact({
       organizationId: "org-1",
-      apiKey: "pp_live_abc123",
+      apiKey: "not-a-real-secret-value",
       nested: { token: "raw-token-value", safe: "keep-me" },
     }) as Record<string, unknown>;
 
