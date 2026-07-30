@@ -331,7 +331,7 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   `organizations.archived_at`), support notes, a platform health
   overview (reusing Phase 23's queue/provider health checks), and a full
   `platform_admin_audit_log` audit trail (`src/lib/services/
-  platform-admin.ts`). Routes: `/app/platform-admin/*`. See
+platform-admin.ts`). Routes: `/app/platform-admin/*`. See
   [platform-administration.md](../architecture/platform-administration.md)
   for full detail and known gaps (no impersonation; no pagination beyond
   a fixed cap; no dedicated break-glass path).

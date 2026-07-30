@@ -155,8 +155,7 @@ server-side check is what actually enforces the boundary regardless.
   impersonation is needed later, it requires its own dedicated security
   review (session-boundary handling, expiry, and a customer-visible
   banner) rather than a quick addition to this surface.
-- **No pagination** on `listOrganizationsForPlatformAdmin()` (capped at
-  200) or `listPlatformAdminAuditLog()` (capped at 500) — acceptable at
+- **No pagination** on `listOrganizationsForPlatformAdmin()` (capped at 200) or `listPlatformAdminAuditLog()` (capped at 500) — acceptable at
   current scale, not built for arbitrary growth.
 - **No dedicated "emergency access" workflow** beyond the standard
   allowlist — the phase brief's "emergency access" item is satisfied by
