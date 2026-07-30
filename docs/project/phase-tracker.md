@@ -14,41 +14,41 @@ phases from this tracker and does not close until those phases are
 
 ## Summary
 
-| Phase | Name                                            | Status      |
-| ----- | ----------------------------------------------- | ----------- |
-| -1    | Cloud/CI foundation                             | Complete    |
-| 0     | Product and engineering foundation              | In Progress |
-| 1     | Repository and design foundation                | In Progress |
-| 2     | Marketing website                               | In Progress |
-| 3     | Authentication and organizations                | In Progress |
-| 4     | Database and tenant isolation                   | In Progress |
-| 5     | Business onboarding and employee management     | Complete    |
-| 6     | Knowledge management                            | Complete    |
-| 7     | Process builder                                 | Complete    |
-| 8     | Workflow execution engine                       | Complete    |
-| 8.5   | MVP staging and design-partner validation       | Not Started |
-| 9     | Forms and evidence                              | Complete    |
-| 10    | Approvals and escalations                       | Complete    |
-| 11    | Exception management                            | Complete    |
-| 12    | Training and certifications                     | Complete    |
-| 13    | AI ingestion and copilot                        | Complete    |
-| 14    | Analytics                                       | Complete    |
-| 15    | Audit and compliance center                     | Complete    |
-| 16    | Notifications                                   | Complete    |
-| 17    | Billing and entitlements                        | Complete    |
-| 18    | Integrations                                    | Complete    |
-| 19    | External portal                                 | Complete    |
-| 20    | Responsive PWA                                  | Complete    |
-| 21    | Organization administration                     | Complete    |
-| 22    | Security hardening                              | Complete    |
-| 23    | Reliability and observability                   | Complete    |
-| 24    | Complete QA                                     | Not Started |
-| 25    | Legal, Privacy, Trust, and Commercial Readiness | Complete    |
-| 26    | Deployment                                      | Not Started |
-| 27    | Internal support console                        | Not Started |
-| 28    | Demo workspace                                  | Not Started |
-| 29    | Final product and design audit                  | Not Started |
-| 30    | Release candidate                               | Not Started |
+| Phase | Name                                            | Status                            |
+| ----- | ----------------------------------------------- | --------------------------------- |
+| -1    | Cloud/CI foundation                             | Complete                          |
+| 0     | Product and engineering foundation              | In Progress                       |
+| 1     | Repository and design foundation                | In Progress                       |
+| 2     | Marketing website                               | In Progress                       |
+| 3     | Authentication and organizations                | In Progress                       |
+| 4     | Database and tenant isolation                   | In Progress                       |
+| 5     | Business onboarding and employee management     | Complete                          |
+| 6     | Knowledge management                            | Complete                          |
+| 7     | Process builder                                 | Complete                          |
+| 8     | Workflow execution engine                       | Complete                          |
+| 8.5   | MVP staging and design-partner validation       | Not Started                       |
+| 9     | Forms and evidence                              | Complete                          |
+| 10    | Approvals and escalations                       | Complete                          |
+| 11    | Exception management                            | Complete                          |
+| 12    | Training and certifications                     | Complete                          |
+| 13    | AI ingestion and copilot                        | Complete                          |
+| 14    | Analytics                                       | Complete                          |
+| 15    | Audit and compliance center                     | Complete                          |
+| 16    | Notifications                                   | Complete                          |
+| 17    | Billing and entitlements                        | Complete                          |
+| 18    | Integrations                                    | Complete                          |
+| 19    | External portal                                 | Complete                          |
+| 20    | Responsive PWA                                  | Complete                          |
+| 21    | Organization administration                     | Complete                          |
+| 22    | Security hardening                              | Complete                          |
+| 23    | Reliability and observability                   | Complete                          |
+| 24    | Complete QA                                     | Not Started                       |
+| 25    | Legal, Privacy, Trust, and Commercial Readiness | Complete                          |
+| 26    | Production Infrastructure and Deployment        | Complete (blocked exit criterion) |
+| 27    | Internal support console                        | Not Started                       |
+| 28    | Demo workspace                                  | Not Started                       |
+| 29    | Final product and design audit                  | Not Started                       |
+| 30    | Release candidate                               | Not Started                       |
 
 ## Phase -1: Cloud/CI foundation
 
@@ -1098,7 +1098,7 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   phase's work (every document is correctly labeled as not yet
   reviewed).
 
-## Phase 26: Deployment
+## Phase 26: Production Infrastructure and Deployment
 
 - **Goal:** Finalize production deployment configuration per
   [docs/architecture/deployment-architecture.md](../architecture/deployment-architecture.md).
@@ -1109,8 +1109,38 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Entry criteria:** Security, QA, and legal readiness complete.
 - **Exit criteria:** A production deployment and rollback have both been
   successfully executed at least once.
-- **Status:** Not Started.
-- **Risks:** None beyond standard deployment-cutover risk.
+- **Status:** Complete for everything achievable without a real
+  production account — genuinely **blocked** on the exit criterion
+  itself (a real deployment/rollback cycle), which requires
+  provisioning real Vercel/Supabase/Clerk production projects and a
+  registered domain, none of which exist in this environment. Delivered:
+  domain rename to `useprocesspilot.com` across every code fallback
+  (`getSiteUrl()`, notification email links, billing/integration return
+  URLs) and content reference; rewrote
+  [deployment-architecture.md](../architecture/deployment-architecture.md)
+  as a real production-readiness document rather than a Phase-0
+  placeholder; new
+  [dns-records.md](../operations/dns-records.md),
+  [deployment-runbook.md](../operations/deployment-runbook.md),
+  [post-deployment-verification-checklist.md](../operations/post-deployment-verification-checklist.md),
+  and
+  [production-configuration-matrix.md](../operations/production-configuration-matrix.md)
+  (the itemized real/configured-unverified/not-provisioned breakdown for
+  every system this app depends on); added the two Phase 22/23 env vars
+  that were missing from `environment-variables.md`
+  (`SENTRY_DSN`, `ORGANIZATION_DELETION_ENABLED`) plus
+  `NEXT_PUBLIC_SITE_URL`. `npm run phase:commit` is green.
+- **Known gaps carried forward:** No real production Vercel/Supabase/
+  Clerk project exists. No domain is registered/pointed at Vercel. No
+  real migration-sequence application, backup, or restore drill has
+  been performed against a production-like database. No real
+  deployment or rollback has ever been executed — this phase's own exit
+  criterion remains unmet pending real account provisioning, which is
+  outside engineering's ability to complete without someone actually
+  purchasing/configuring those accounts.
+- **Risks:** None beyond standard deployment-cutover risk — materialized
+  as the phase's exit criterion itself being credential-gated, not a
+  design or implementation defect.
 
 ## Phase 27: Internal support console
 

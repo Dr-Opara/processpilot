@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 // dynamic rendering just for this. No custom domain is configured yet
 // (see middleware.ts), so the only cost of a fixed path today is a
 // redundant "/app" segment remaining in the URL if this is ever reached
-// through a real app.processpilot.com host — cosmetic, not functional.
+// through a real app.useprocesspilot.com host — cosmetic, not functional.
 const SIGN_IN_URL = "/app/sign-in";
 const SIGN_UP_URL = "/app/sign-up";
 

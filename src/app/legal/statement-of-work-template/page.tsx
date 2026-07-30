@@ -67,7 +67,7 @@ export default function StatementOfWorkTemplatePage() {
               </Stack>
 
               <Text className="text-sm text-muted">
-                To scope an engagement, contact services@processpilot.com.
+                To scope an engagement, contact services@useprocesspilot.com.
               </Text>
             </Stack>
           </Container>

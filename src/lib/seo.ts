@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_NAME = "ProcessPilot";
 
 export function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.processpilot.com";
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.useprocesspilot.com";
 }
 
 export function buildMetadata({

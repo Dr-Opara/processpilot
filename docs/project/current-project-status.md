@@ -12,19 +12,22 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–25 (Phase 24, Complete QA, was skipped in
+  is progressing via Phases 16–26 (Phase 24, Complete QA, was skipped in
   sequence per explicit direction and remains `Not Started` — see the
   phase tracker's own note on this gap).
-- **Current phase:** Phase 25 — Legal, Privacy, Trust, and Commercial
-  Readiness, completing on
-  `feature/phase-25-legal-operational-readiness`; Phase 26 (Production
-  Infrastructure and Deployment) is next.
+- **Current phase:** Phase 26 — Production Infrastructure and
+  Deployment, completing on
+  `feature/phase-26-production-infrastructure`; Phase 27 (Internal
+  Support and Platform Administration) is next. Phase 26's own exit
+  criterion (a real deployment/rollback cycle) remains blocked pending
+  real Vercel/Supabase/Clerk production account provisioning — see the
+  phase tracker.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, and 25**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, and 26**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
@@ -41,8 +44,9 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
   PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
   Phase 22 merged via PR #27; Phase 23 merged via PR #29; Phase 24
-  (Complete QA) remains `Not Started`; Phase 25's implementation is
-  complete on `feature/phase-25-legal-operational-readiness`, pending
+  (Complete QA) remains `Not Started`; Phase 25 merged via PR #30;
+  Phase 26's implementation is complete on
+  `feature/phase-26-production-infrastructure`, pending
   its PR merge. Phase 4 (database and tenant isolation) remains recorded
   as `In
 Progress` in

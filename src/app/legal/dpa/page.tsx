@@ -49,7 +49,7 @@ const sections = [
   {
     heading: "How to request an executed DPA",
     body: [
-      "This page is a template, not an executable or binding document. To request a DPA specific to your organization, contact legal@processpilot.com — a signed agreement requires review by both parties' counsel.",
+      "This page is a template, not an executable or binding document. To request a DPA specific to your organization, contact legal@useprocesspilot.com — a signed agreement requires review by both parties' counsel.",
     ],
   },
 ];

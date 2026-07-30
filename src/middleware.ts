@@ -2,7 +2,7 @@ import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 /**
- * The authenticated app lives at app.processpilot.com per
+ * The authenticated app lives at app.useprocesspilot.com per
  * product/information-architecture.md and ADR-0002 (one Next.js app
  * serves both domains). No custom domain is configured yet, so this only
  * rewrites when a request's host actually starts with "app." (real

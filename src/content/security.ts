@@ -72,4 +72,4 @@ export const securityControls: SecurityControl[] = [
 export const certificationDisclaimer =
   'ProcessPilot has not undergone a SOC 2, ISO 27001, HIPAA, FedRAMP, HITRUST, GDPR, or PCI certification or independent third-party audit. The controls on this page describe what is actually implemented in the product; "Partial" and "Planned" items are labeled as such, not claimed as complete.';
 
-export const securityContactEmail = "security@processpilot.com";
+export const securityContactEmail = "security@useprocesspilot.com";

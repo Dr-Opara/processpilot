@@ -80,7 +80,7 @@ export default function DesignSystemPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" placeholder="ada@processpilot.com" />
+                  <Input id="email" placeholder="ada@useprocesspilot.com" />
                 </div>
               </div>
             </Stack>

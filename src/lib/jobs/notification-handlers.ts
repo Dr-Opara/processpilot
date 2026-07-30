@@ -6,7 +6,7 @@ import { getEmailProvider } from "@/lib/notifications/get-provider";
 import { renderNotificationEmail } from "@/lib/notifications/templates";
 import type { NotificationDeliveryRow, NotificationRow } from "@/lib/db/database.types";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.processpilot.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.useprocesspilot.com";
 
 /**
  * The Phase 16 background job — sends one notification_deliveries row's
