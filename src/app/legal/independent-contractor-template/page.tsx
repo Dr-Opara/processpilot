@@ -65,7 +65,7 @@ export default function IndependentContractorTemplatePage() {
               </Stack>
 
               <Text className="text-sm text-muted">
-                To discuss an independent contract engagement, contact services@processpilot.com.
+                To discuss an independent contract engagement, contact services@useprocesspilot.com.
               </Text>
             </Stack>
           </Container>

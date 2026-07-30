@@ -67,7 +67,7 @@ const sections = [
   },
   {
     heading: "Contact",
-    body: ["Questions about these terms can be sent to legal@processpilot.com."],
+    body: ["Questions about these terms can be sent to legal@useprocesspilot.com."],
   },
 ];
 

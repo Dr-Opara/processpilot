@@ -9,7 +9,7 @@ import {
 import type { PlanKey } from "@/lib/billing/plans";
 
 function absoluteUrl(path: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.processpilot.com";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.useprocesspilot.com";
   return `${base}${path}`;
 }
 

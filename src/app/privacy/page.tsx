@@ -55,7 +55,7 @@ const sections = [
     heading: "Your rights and choices",
     body: [
       "Access and correction: organization members can view and correct their own profile information from within the application; organization admins can manage member records.",
-      "Export: an organization admin can request an export of the organization's audit history from the audit center, and can request a broader data export by contacting privacy@processpilot.com.",
+      "Export: an organization admin can request an export of the organization's audit history from the audit center, and can request a broader data export by contacting privacy@useprocesspilot.com.",
       "Deletion: an organization owner can request organization deletion from Organization Settings, which starts a 14-day grace period during which the request can be cancelled before anything is removed.",
       "Individual member removal (without deleting the whole organization) is available to organization admins from the People section.",
     ],
@@ -75,7 +75,7 @@ const sections = [
   {
     heading: "Contact",
     body: [
-      "Questions about this policy, or requests regarding your data, can be sent to privacy@processpilot.com.",
+      "Questions about this policy, or requests regarding your data, can be sent to privacy@useprocesspilot.com.",
     ],
   },
 ];
