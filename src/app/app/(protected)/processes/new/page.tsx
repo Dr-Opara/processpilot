@@ -1,6 +1,7 @@
 import { Heading, Text } from "@/components/ui/Typography";
 import { Stack } from "@/components/ui/Layout";
 import { Alert } from "@/components/ui/Alert";
+import { getCurrentMembership } from "@/lib/authz";
 import { listDepartments } from "@/lib/services/departments";
 import { listMembers } from "@/lib/services/members";
 import { listRoles } from "@/lib/services/roles";
@@ -18,6 +19,7 @@ export default async function NewProcessPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const membership = await getCurrentMembership();
   const [
     departments,
     membersResult,
@@ -66,7 +68,7 @@ export default async function NewProcessPage({
         approvalPolicies={approvalPolicies}
         slaDefinitions={slaDefinitions}
         cancelHref="/app/processes"
-        draftKey="process-canvas-draft:new"
+        draftKey={`process-canvas-draft:${membership.member.id}:new`}
       />
     </Stack>
   );

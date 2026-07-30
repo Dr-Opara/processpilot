@@ -3,6 +3,10 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/db/client-admin", () => ({ getAdminSql: vi.fn() }));
 vi.mock("@/lib/services/webhooks", () => ({ decryptWebhookSecret: vi.fn(() => "whsec_test") }));
+vi.mock("node:dns/promises", () => {
+  const lookup = vi.fn().mockResolvedValue([{ address: "203.0.113.5", family: 4 }]);
+  return { lookup, default: { lookup } };
+});
 
 import { getAdminSql } from "@/lib/db/client-admin";
 import { getJobHandler } from "@/lib/jobs/registry";

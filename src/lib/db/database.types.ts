@@ -1574,3 +1574,13 @@ export interface ScimTokenRow {
   created_at: string;
   revoked_at: string | null;
 }
+
+export interface ScimTokenUsageLogRow {
+  id: string;
+  scim_token_id: string;
+  organization_id: string;
+  method: string;
+  path: string;
+  status_code: number;
+  created_at: string;
+}

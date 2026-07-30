@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { verifyScimToken, listScimUsers } from "@/lib/services/scim";
+import {
+  checkScimRateLimit,
+  listScimUsers,
+  recordScimUsage,
+  verifyScimToken,
+} from "@/lib/services/scim";
 
 /**
  * GET /api/scim/v2/Users — minimal SCIM 2.0 Users list resource. See
@@ -7,7 +12,9 @@ import { verifyScimToken, listScimUsers } from "@/lib/services/scim";
  * this is (list-only, no filter/PATCH/Groups/ServiceProviderConfig).
  * Bearer-token authenticated by a dedicated scim_tokens row, never a
  * ProcessPilot session or public API key — a SCIM client is a different
- * trust boundary from either.
+ * trust boundary from either. Rate-limited (Phase 22) the same way
+ * /api/v1/* is — a 60-req/60s fixed window per token, counted from
+ * scim_token_usage_log.
  */
 function scimError(status: number, detail: string) {
   return NextResponse.json(
@@ -26,11 +33,30 @@ export async function GET(request: Request) {
   const auth = await verifyScimToken(rawToken);
   if (!auth) return scimError(401, "Invalid or revoked SCIM token.");
 
+  const { limited } = await checkScimRateLimit(auth.tokenId);
+  if (limited) {
+    await recordScimUsage(
+      auth.tokenId,
+      auth.organizationId,
+      request.method,
+      "/api/scim/v2/Users",
+      429,
+    );
+    return scimError(429, "Rate limit exceeded — try again shortly.");
+  }
+
   const url = new URL(request.url);
   const startIndex = Math.max(Number(url.searchParams.get("startIndex")) || 1, 1);
   const count = Math.min(Math.max(Number(url.searchParams.get("count")) || 20, 1), 100);
 
   const { users, totalResults } = await listScimUsers(auth.organizationId, { startIndex, count });
+  await recordScimUsage(
+    auth.tokenId,
+    auth.organizationId,
+    request.method,
+    "/api/scim/v2/Users",
+    200,
+  );
 
   return NextResponse.json({
     schemas: ["urn:ietf:params:scim:api:messages:2.0:ListResponse"],
