@@ -1584,3 +1584,33 @@ export interface ScimTokenUsageLogRow {
   status_code: number;
   created_at: string;
 }
+
+/** Phase 27 (Internal support and platform administration) — see docs/architecture/platform-administration.md. */
+export interface PlatformAdminAuditLogRow {
+  id: string;
+  actor_profile_id: string;
+  action: string;
+  target_organization_id: string | null;
+  target_profile_id: string | null;
+  reason: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface PlatformSuspensionRow {
+  id: string;
+  organization_id: string;
+  suspended_by: string;
+  suspended_at: string;
+  reason: string;
+  reactivated_by: string | null;
+  reactivated_at: string | null;
+}
+
+export interface PlatformSupportNoteRow {
+  id: string;
+  organization_id: string;
+  author_profile_id: string;
+  note: string;
+  created_at: string;
+}
