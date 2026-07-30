@@ -1226,33 +1226,145 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   required elsewhere — mitigated further by every external side effect
   being explicitly gated rather than implicitly assumed safe.
 
-## Phase 29: Final product and design audit
+## Phase 29: Final product, brand, UX, and design audit
 
 - **Goal:** End-to-end audit of product, architecture, and design
-  documentation against the shipped product before release candidate.
+  documentation against the shipped product before release candidate;
+  verify brand/UX consistency and accessibility across the whole
+  application and marketing site.
 - **Deliverables:** Updated `product/`, `docs/architecture/`, and
   `design/` documents reflecting actual shipped behavior; contradiction
-  resolution across all documentation.
-- **Dependencies:** Phase 24 (QA complete).
+  resolution across all documentation; automated accessibility coverage
+  (`design/accessibility.md` has required this since Phase 1, but no
+  such check existed until this phase); a site-wide broken-internal-link
+  sweep; a written audit report.
+- **Additional scope (per the revised roadmap):** Once Phase 31/31A ship,
+  verify the site presents ProcessPilot Technologies in order — SaaS
+  products and solutions/pricing, then specialized professional
+  services, then selected client engagements — with products remaining
+  the dominant visual and navigational identity throughout; verify
+  professional-services content never reads as a general IT
+  consultancy/MSP (no "IT services," "managed IT," "staff augmentation"
+  wording — confirmed absent from the site as of this phase, since
+  Phase 31/31A haven't shipped yet); verify named client engagements
+  (e.g. Federal Maritime Commission, Massed Compute) are labeled
+  "Independent Project Engagement," never presented as SaaS customers
+  unless independently verified.
+- **Dependencies:** Phase 24 (QA complete — not yet run; see this
+  tracker's own note on that gap).
 - **Entry criteria:** Feature-complete, QA-passed product.
 - **Exit criteria:** No contradiction between documentation and shipped
   behavior; this phase tracker accurately reflects reality.
-- **Status:** Not Started.
-- **Risks:** Documentation debt accumulated across 29 phases — budget
-  meaningful time, do not treat as a rubber-stamp pass.
+- **Status:** Complete for everything achievable before Phase 31/31A
+  exist. See
+  [final-audit-2026-07.md](final-audit-2026-07.md) for the full report.
+  Delivered: a real axe-core/Playwright WCAG 2.1 AA scan across every
+  public route (`e2e/accessibility.spec.ts` — `design/accessibility.md`
+  had required this since Phase 1; it did not exist until now), which
+  found and fixed one real, systemic contrast violation (the `warning`
+  status-badge color); a site-wide internal-link sweep
+  (`e2e/link-audit.spec.ts`), which found and fixed one real, sitewide
+  broken link (the footer's unconditional "Design system" link, which
+  404s whenever `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM` is unset); reconciled
+  `product/roadmap.md` (stale since before Phase 21) and this tracker's
+  own Phase 29/30 entries and Phase 31/31A entries against the revised
+  roadmap. The professional-services/client-engagement positioning
+  checks above are structurally satisfied by building Phase 31/31A to
+  their own spec correctly the first time, and should be re-verified
+  once those phases ship — not re-audited from scratch here.
+- **Known gaps carried forward:** `docs/architecture/database-schema.md`
+  has explicitly disclosed itself as "known incomplete above [Phase 4]"
+  since Phase 4 and remains so — bringing it fully current is a large,
+  separate undertaking (70+ tables) out of proportion to this pass;
+  flagged here rather than silently left stale. The axe/link-audit
+  scans cover the public marketing site only, not the authenticated
+  `/app/*` shell (no real Clerk credentials are guaranteed in every
+  environment this runs in). Phase 24 (Complete QA) remains `Not
+Started`, unchanged by this phase.
+- **Risks:** Documentation debt accumulated across 29 phases — budgeted
+  real time this phase rather than treated as a rubber-stamp pass;
+  remaining debt is explicitly enumerated above rather than hidden.
 
-## Phase 30: Release candidate
+## Phase 30: Product and corporate release readiness
 
-- **Goal:** Final gate before general availability.
-- **Deliverables:** Release-candidate build, go/no-go review against every
-  exit criterion in this tracker.
-- **Dependencies:** All prior phases.
+- **Goal:** Final gate before general availability — evaluated as two
+  separate verdicts per the revised roadmap: **product readiness**
+  (the SaaS application — pricing, trials, billing, onboarding,
+  infrastructure, support) and **corporate-website readiness**
+  (professional-services content, client-engagement pages, publication
+  permissions, legal disclaimers, contact flows). The product can reach
+  GA while corporate-website content (especially named-client pages)
+  remains unpublished or anonymized pending publication approval.
+- **Deliverables:** Release-candidate build, go/no-go review against
+  every exit criterion in this tracker, split into the two verdicts
+  above.
+- **Dependencies:** All prior phases, including Phase 31/31A for the
+  corporate-website verdict specifically.
 - **Entry criteria:** Phase 29 complete.
-- **Exit criteria:** Explicit go decision recorded; product promoted to
-  paid GA per [product/release-plan.md](../../product/release-plan.md).
+- **Exit criteria:** Explicit go decision recorded for the product;
+  explicit go/deferred decision recorded for the corporate website;
+  product promoted to paid GA per
+  [product/release-plan.md](../../product/release-plan.md) independently
+  of the corporate-website verdict.
 - **Status:** Not Started.
-- **Risks:** None beyond standard release risk, mitigated by every prior
-  phase's exit criteria already having been met.
+- **Risks:** None beyond standard release risk for the product track.
+  The corporate-website track's risk is external (client publication
+  approval), not engineering-controlled — see Phase 31A.
+
+## Phase 31: Corporate product and services website
+
+- **Goal:** Build the public corporate website presenting ProcessPilot
+  Technologies primarily as a SaaS product company and secondarily as a
+  specialized-services provider — never as a general IT
+  company/MSP/help-desk/staffing firm/generic consultancy. Navigation
+  and homepage order: Products → Solutions/Pricing → Professional
+  Services → Client Engagements → Company, with products remaining the
+  dominant visual and navigational identity throughout.
+- **Deliverables:** Company statement ("ProcessPilot Technologies builds
+  secure, AI-powered SaaS products... We also support selected clients
+  through specialized AI, cybersecurity, governance, and federal-program
+  engagements."); Professional Services pages (AI Services, Cybersecurity
+  Services, Compliance and Governance) with distinct CTAs ("Discuss a
+  Project" / "Request a Consultation") separate from product CTAs
+  ("Explore ProcessPilot" / "View Pricing" / "Start Free Trial");
+  navigation and SEO/metadata reflecting the products-first hierarchy.
+- **Dependencies:** Phase 29 (audit baseline).
+- **Entry criteria:** Positioning requirement and navigation structure
+  agreed (see this tracker's revision history).
+- **Exit criteria:** Products appear before Professional Services in
+  every surface (nav, homepage, sitemap priority, visual hierarchy);
+  no wording implying a general IT-services company.
+- **Status:** Not Started.
+- **Risks:** Positioning drift toward "services company" over time —
+  mitigated by making the products-first ordering a tested invariant
+  (Phase 29's audit tooling), not just a one-time design decision.
+
+## Phase 31A: Independent client engagements
+
+- **Goal:** Present selected named client engagements (e.g. Federal
+  Maritime Commission, Massed Compute) accurately, without implying
+  SaaS-customer status unless independently verified.
+- **Deliverables:** Each engagement classified as an "Independent
+  Contract Project," with structured fields for relationship type
+  (`saas_customer` / `professional_services_client` /
+  `independent_contract_engagement` — reusing
+  [`src/content/legal.ts`](../../src/content/legal.ts)'s
+  `ClientRelationshipType`, already defined in Phase 25), SaaS-customer
+  status, services provided, and publication approval status. Named
+  client pages default to unpublished; an anonymized description is
+  allowed before publication approval exists. One organization may
+  later be classified as both a SaaS customer and a professional-services
+  client — the fields are independent, not mutually exclusive.
+- **Dependencies:** Phase 31 (site structure Client Engagements pages
+  live in).
+- **Entry criteria:** Phase 31 navigation/positioning complete.
+- **Exit criteria:** No named-client page implies unverified SaaS usage;
+  every published engagement page has recorded publication approval.
+- **Status:** Not Started.
+- **Risks:** Publication of client-specific content without the named
+  client's approval — this is one of this program's explicit stop
+  conditions (client publication permission), not something to
+  implement past without an explicit approval record.
 
 ## Related documents
 

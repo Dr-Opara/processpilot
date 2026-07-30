@@ -10,7 +10,7 @@
 | `color-signal-orange` | `#F05A34` | Primary actions, primary brand accent — use deliberately, not decoratively |
 | `color-cobalt`        | `#3157D5` | Links, secondary actions, informational emphasis                           |
 | `color-success`       | `#287A56` | Completed, published, approved, passing states                             |
-| `color-warning`       | `#B7791F` | Pending review, approaching deadline, needs attention                      |
+| `color-warning`       | `#8A5A10` | Pending review, approaching deadline, needs attention                      |
 | `color-danger`        | `#C33B3B` | Exception, rejected, overdue, destructive action                           |
 | `color-border`        | `#DDDCD7` | Dividers, input borders, card edges                                        |
 | `color-muted`         | `#676B73` | Secondary/caption text, metadata, timestamps                               |

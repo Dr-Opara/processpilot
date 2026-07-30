@@ -39,13 +39,23 @@ responsive PWA. This horizon makes the product sellable and usable by
 audiences beyond the core internal org (external users, mobile-first
 usage) and financially operable (billing).
 
-## Horizon 6 — Hardening and launch (Phases 21–30)
+## Horizon 6 — Hardening and launch (Phases 21–31A)
 
 Organization administration depth, security hardening, reliability and
-observability, complete QA, legal and trust readiness, deployment,
-internal support console, demo workspace, final audit, release candidate.
-This horizon is about correctness, trust, and operability at commercial
-scale, not new end-user surface area.
+observability, complete QA, legal/privacy/trust and commercial
+readiness, production infrastructure and deployment, internal support
+and platform administration, a production-safe SaaS demo workspace,
+final product/brand/UX audit, product and corporate release readiness,
+the corporate product-and-services website, and independent client
+engagements. This horizon is about correctness, trust, and operability
+at commercial scale for the core product (Phases 21–30), plus — as a
+deliberately separate, secondary track — the public-facing corporate
+website that presents ProcessPilot Technologies primarily as a SaaS
+product company and secondarily as a specialized-services provider
+(Phases 31–31A; see
+[docs/project/phase-tracker.md](../docs/project/phase-tracker.md) for
+the corporate-website phases' own scope and the product/corporate
+release-readiness split).
 
 ## How the roadmap is used
 

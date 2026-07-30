@@ -11,7 +11,7 @@ export default {
         signal: "#F05A34",
         cobalt: "#3157D5",
         success: "#287A56",
-        warning: "#B7791F",
+        warning: "#8A5A10",
         danger: "#C33B3B",
         border: "#DDDCD7",
         muted: "#676B73",
