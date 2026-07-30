@@ -70,6 +70,29 @@ describe("deliver-notification-email handler", () => {
     );
   });
 
+  it("marks the delivery skipped_demo_workspace, without throwing, for the demo organization", async () => {
+    vi.mocked(isEmailConfigured).mockReturnValue(true);
+    const fakeSql = wireAdminSql([
+      { match: (t) => t.includes("from notification_deliveries"), respond: () => [delivery] },
+      { match: (t) => t.includes("from notifications"), respond: () => [notification] },
+      {
+        match: (t) => t.includes("select is_demo from organizations"),
+        respond: () => [{ is_demo: true }],
+      },
+      { match: (t) => t.includes("update notification_deliveries"), respond: () => [] },
+    ]);
+
+    await getJobHandler("deliver-notification-email")!({ job: job() });
+
+    expect(
+      fakeSql.calls.some(
+        (c) =>
+          c.text.includes("update notification_deliveries") &&
+          c.text.includes("skipped_demo_workspace"),
+      ),
+    ).toBe(true);
+  });
+
   it("marks the delivery skipped_not_configured, without throwing, when email isn't configured", async () => {
     vi.mocked(isEmailConfigured).mockReturnValue(false);
     const fakeSql = wireAdminSql([

@@ -1201,9 +1201,30 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Exit criteria:** Demo workspace resets cleanly and never leaks into or
   from real customer tenants (multi-tenancy rules apply to the demo
   organization exactly as any other).
-- **Status:** Not Started.
+- **Status:** Complete. See
+  [demo-workspace.md](../architecture/demo-workspace.md) for the full
+  design. A single organization can be flagged `organizations.is_demo`
+  (platform-admin-only, at most one at a time, enforced by a unique
+  partial index) — otherwise an ordinary tenant, same RLS and tables as
+  any customer. Delivered: idempotent seeded baseline content
+  (departments, a location, a published knowledge document, a published
+  process); a reset action that restores that baseline; hard guards on
+  every real-external-side-effect boundary (email delivery, outbound
+  webhooks, the AI copilot, Stripe checkout/billing-portal) so the demo
+  workspace can never trigger a real external action; a demo-mode banner
+  and a small dismissible guided-tour checklist in the app shell;
+  platform-admin UI to mark/unmark/reset. `npm run phase:commit` and
+  `npm audit --audit-level=high` (0 vulnerabilities) are both green.
+- **Known gaps carried forward:** Reset restores the seeded baseline
+  only — it does not purge ad-hoc content (workflows/tasks/etc.) a demo
+  session created, the same unreviewed-cascade-delete risk Phase 21's
+  organization-deletion finalization was deliberately deferred for. No
+  public, unauthenticated self-serve demo access — a prospect currently
+  needs a real Clerk membership in the demo organization. No scheduled/
+  automatic reset (platform-admin-triggered only).
 - **Risks:** None beyond standard tenant-isolation coverage, already
-  required elsewhere.
+  required elsewhere — mitigated further by every external side effect
+  being explicitly gated rather than implicitly assumed safe.
 
 ## Phase 29: Final product and design audit
 

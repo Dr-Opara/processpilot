@@ -23,7 +23,7 @@ import type {
  * remain visible regardless of what happens to any one organization.
  */
 
-async function recordPlatformAdminAction(
+export async function recordPlatformAdminAction(
   sql: postgres.Sql | postgres.TransactionSql,
   input: {
     actorProfileId: string;

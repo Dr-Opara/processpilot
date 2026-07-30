@@ -6,6 +6,7 @@ import { getAdminSql } from "@/lib/db/client-admin";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
 import { isBillingConfigured } from "@/lib/billing/availability";
+import { isDemoOrganization } from "@/lib/demo";
 import { getBillingProvider } from "@/lib/billing/get-provider";
 import {
   getStripePriceId,
@@ -155,6 +156,9 @@ export async function createCheckoutSessionUrl(
   cancelUrl: string,
 ): Promise<string> {
   const membership = await requirePermission("billing.manage");
+  if (isDemoOrganization(membership.organization)) {
+    throw new AppError("forbidden", "The demo workspace never initiates real Stripe checkout.");
+  }
   const priceId = getStripePriceId(planKey);
   if (!priceId) {
     throw new AppError(
@@ -175,6 +179,9 @@ export async function createCheckoutSessionUrl(
 
 export async function createBillingPortalUrl(returnUrl: string): Promise<string> {
   const membership = await requirePermission("billing.manage");
+  if (isDemoOrganization(membership.organization)) {
+    throw new AppError("forbidden", "The demo workspace has no real Stripe billing portal.");
+  }
   const customerId = await getOrCreateStripeCustomerId(membership);
   const session = await getBillingProvider().createBillingPortalSession({ customerId, returnUrl });
   return session.url;

@@ -12,21 +12,21 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–27 (Phase 24, Complete QA, was skipped in
+  is progressing via Phases 16–28 (Phase 24, Complete QA, was skipped in
   sequence per explicit direction and remains `Not Started` — see the
   phase tracker's own note on this gap).
-- **Current phase:** Phase 27 — Internal Support and Platform
-  Administration, complete on `feature/phase-27-platform-admin`; Phase 28
-  (Production-Safe SaaS Demo Workspace) is next. Phase 26's own exit
-  criterion (a real deployment/rollback cycle) remains blocked pending
-  real Vercel/Supabase/Clerk production account provisioning — see the
-  phase tracker.
+- **Current phase:** Phase 28 — Production-Safe SaaS Demo Workspace,
+  complete on `feature/phase-28-demo-workspace`; Phase 29 (Final Product,
+  Brand, UX, and Design Audit) is next. Phase 26's own exit criterion (a
+  real deployment/rollback cycle) remains blocked pending real Vercel/
+  Supabase/Clerk production account provisioning — see the phase
+  tracker.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, and 27**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, and 28**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
@@ -35,20 +35,22 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   PWA, advanced organization administration, security hardening,
   reliability and observability, legal/privacy/trust/commercial
   readiness, production infrastructure and deployment, internal support
-  and platform administration) are `Complete` per the phase tracker —
-  Phase 9 merged via PR #12 (commit `5427118`); Phase 10 merged via PR
-  #13; Phase 11 merged via PR #14; Phase 12 merged via PR #15; Phase 13
-  merged via PR #16; Phase 14 merged via PR #17; Phase 15 merged via PR
-  #18; Phase 16 merged via PR #19; Phase 17 merged via PR #20; Phase 18
-  merged via the `feature/phase-18-integrations` and
+  and platform administration, the production-safe SaaS demo workspace)
+  are `Complete` per the phase tracker — Phase 9 merged via PR #12
+  (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR
+  #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14
+  merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged via PR
+  #19; Phase 17 merged via PR #20; Phase 18 merged via the
+  `feature/phase-18-integrations` and
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
   PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
   Phase 22 merged via PR #27; Phase 23 merged via PR #29; Phase 24
   (Complete QA) remains `Not Started`; Phase 25 merged via PR #30;
-  Phase 26 merged via PR #31; Phase 27's implementation is complete on
-  `feature/phase-27-platform-admin`, pending its PR merge. Phase 4
-  (database and tenant isolation) remains recorded as `In Progress` in
-  the tracker; this document does not re-audit that status.
+  Phase 26 merged via PR #31; Phase 27 merged via PR #32; Phase 28's
+  implementation is complete on `feature/phase-28-demo-workspace`,
+  pending its PR merge. Phase 4 (database and tenant isolation) remains
+  recorded as `In Progress` in the tracker; this document does not
+  re-audit that status.
 
 ## What's built
 
@@ -335,6 +337,19 @@ platform-admin.ts`). Routes: `/app/platform-admin/*`. See
   [platform-administration.md](../architecture/platform-administration.md)
   for full detail and known gaps (no impersonation; no pagination beyond
   a fixed cap; no dedicated break-glass path).
+- Production-safe SaaS demo workspace (Phase 28, complete): a single,
+  platform-admin-flagged organization (`organizations.is_demo`, at most
+  one at a time) used for sales/prospect walkthroughs — an ordinary
+  tenant in every other respect. Idempotent seeded baseline content
+  (departments, a location, a published knowledge document, a published
+  process); every real-external-side-effect boundary (email, outbound
+  webhooks, the AI copilot, Stripe checkout/billing-portal) is
+  explicitly gated off for it; a demo-mode banner and dismissible guided
+  tour in the app shell. See
+  [demo-workspace.md](../architecture/demo-workspace.md) for full detail
+  and known gaps (reset restores the seeded baseline only, not ad-hoc
+  session content; no public unauthenticated demo access; no scheduled
+  reset).
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the

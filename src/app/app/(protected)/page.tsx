@@ -3,19 +3,22 @@ import { Heading, Text } from "@/components/ui/Typography";
 import { Stack } from "@/components/ui/Layout";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
+import { getCurrentMembership } from "@/lib/authz";
+import { DemoGuidedTour } from "@/components/app/DemoGuidedTour";
 
 export default async function DashboardPage() {
   const { orgId, orgSlug } = await auth();
   const user = await currentUser();
+  const membership = await getCurrentMembership().catch(() => null);
 
   return (
     <Stack className="mx-auto max-w-2xl gap-6">
+      {membership?.organization.is_demo && <DemoGuidedTour />}
       <Stack className="gap-1">
         <Heading as="h1">Welcome{user?.firstName ? `, ${user.firstName}` : ""}</Heading>
         <Text className="text-muted">
-          This is a placeholder dashboard proving sign-in, session verification, and organization
-          context work end to end. The real product surface (My Work, Processes, Knowledge, and so
-          on, per product/information-architecture.md) is built starting in Phase 5.
+          Use the navigation to get started with My Work, Processes, Knowledge, Workflows, and the
+          rest of ProcessPilot&apos;s product surface.
         </Text>
       </Stack>
 

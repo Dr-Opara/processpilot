@@ -76,6 +76,31 @@ describe("deliver-webhook handler", () => {
     expect(fakeSql.calls.some((c) => c.text.includes("update webhook_deliveries"))).toBe(false);
   });
 
+  it("marks the delivery dead_letter, without calling fetch, for the demo organization", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const fakeSql = wireAdminSql([
+      { match: (t) => t.includes("from webhook_deliveries"), respond: () => [delivery] },
+      {
+        match: (t) => t.includes("select is_demo from organizations"),
+        respond: () => [{ is_demo: true }],
+      },
+      { match: (t) => t.includes("update webhook_deliveries"), respond: () => [] },
+    ]);
+
+    await getJobHandler("deliver-webhook")!({ job: job() });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      fakeSql.calls.some(
+        (c) =>
+          c.text.includes("update webhook_deliveries") &&
+          c.text.includes("dead_letter") &&
+          c.text.includes("demo workspace"),
+      ),
+    ).toBe(true);
+  });
+
   it("marks the delivery dead_letter when the subscription is disabled", async () => {
     const fakeSql = wireAdminSql([
       { match: (t) => t.includes("from webhook_deliveries"), respond: () => [delivery] },

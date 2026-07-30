@@ -8,6 +8,7 @@ import { getUnreadNotificationCount } from "@/lib/services/notifications";
 import { visibleNavItems } from "@/lib/app-nav";
 import { AppNav } from "@/components/app/AppNav";
 import { AppPwaClient } from "@/components/app/AppPwaClient";
+import { DemoModeBanner } from "@/components/app/DemoModeBanner";
 
 export default async function ProtectedAppLayout({ children }: { children: React.ReactNode }) {
   // Redirects to sign-in if there's no session — every route under this
@@ -31,8 +32,11 @@ export default async function ProtectedAppLayout({ children }: { children: React
       ? visibleNavItems(membership.permissions, membership.scopedPermissions)
       : [];
 
+  const isDemoWorkspace = membership?.organization.is_demo ?? false;
+
   return (
     <div className="min-h-screen bg-paper text-ink">
+      {isDemoWorkspace && <DemoModeBanner />}
       <header className="flex items-center justify-between border-b border-border/70 bg-surface px-4 py-3 sm:px-6">
         <Link href={DASHBOARD_PATH} aria-label="ProcessPilot">
           <Image

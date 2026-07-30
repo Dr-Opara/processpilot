@@ -155,6 +155,16 @@ describe("getAiUsageForCurrentPeriod", () => {
 });
 
 describe("createCheckoutSessionUrl", () => {
+  it("refuses to initiate real Stripe checkout for the demo organization", async () => {
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["billing.manage"], organization: { is_demo: true } }),
+    );
+
+    await expect(
+      createCheckoutSessionUrl("starter", "https://x/success", "https://x/cancel"),
+    ).rejects.toThrow(/demo workspace/i);
+  });
+
   it("throws when no Stripe price is configured for the plan", async () => {
     vi.mocked(requirePermission).mockResolvedValue(
       makeMembership({ permissions: ["billing.manage"] }),
@@ -194,6 +204,14 @@ describe("createCheckoutSessionUrl", () => {
 });
 
 describe("createBillingPortalUrl", () => {
+  it("refuses to open a real Stripe billing portal for the demo organization", async () => {
+    vi.mocked(requirePermission).mockResolvedValue(
+      makeMembership({ permissions: ["billing.manage"], organization: { is_demo: true } }),
+    );
+
+    await expect(createBillingPortalUrl("https://x/return")).rejects.toThrow(/demo workspace/i);
+  });
+
   it("throws when billing isn't configured", async () => {
     vi.mocked(requirePermission).mockResolvedValue(
       makeMembership({ permissions: ["billing.manage"] }),

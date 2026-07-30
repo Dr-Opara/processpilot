@@ -6,6 +6,11 @@ import {
   reactivateOrganization,
   suspendOrganization,
 } from "@/lib/services/platform-admin";
+import {
+  markOrganizationAsDemo,
+  resetDemoWorkspace,
+  unmarkOrganizationAsDemo,
+} from "@/lib/services/demo-workspace";
 import { runFormAction } from "@/lib/form-actions";
 
 export async function suspendOrganizationAction(
@@ -38,6 +43,30 @@ export async function addSupportNoteAction(
       organizationId,
       note: String(formData.get("note") ?? ""),
     });
+    revalidatePath(`/app/platform-admin/organizations/${organizationId}`);
+    return `/app/platform-admin/organizations/${organizationId}`;
+  });
+}
+
+export async function markOrganizationAsDemoAction(organizationId: string): Promise<void> {
+  await runFormAction(`/app/platform-admin/organizations/${organizationId}`, async () => {
+    await markOrganizationAsDemo(organizationId);
+    revalidatePath(`/app/platform-admin/organizations/${organizationId}`);
+    return `/app/platform-admin/organizations/${organizationId}`;
+  });
+}
+
+export async function unmarkOrganizationAsDemoAction(organizationId: string): Promise<void> {
+  await runFormAction(`/app/platform-admin/organizations/${organizationId}`, async () => {
+    await unmarkOrganizationAsDemo(organizationId);
+    revalidatePath(`/app/platform-admin/organizations/${organizationId}`);
+    return `/app/platform-admin/organizations/${organizationId}`;
+  });
+}
+
+export async function resetDemoWorkspaceAction(organizationId: string): Promise<void> {
+  await runFormAction(`/app/platform-admin/organizations/${organizationId}`, async () => {
+    await resetDemoWorkspace();
     revalidatePath(`/app/platform-admin/organizations/${organizationId}`);
     return `/app/platform-admin/organizations/${organizationId}`;
   });
