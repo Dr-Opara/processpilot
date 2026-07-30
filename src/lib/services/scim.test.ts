@@ -18,7 +18,7 @@ import {
   type FakeQueryHandler,
 } from "@/lib/db/test-helpers/fake-sql";
 import { makeMembership } from "@/lib/db/test-helpers/service-fixtures";
-import { createScimToken, listScimUsers, verifyScimToken } from "./scim";
+import { checkScimRateLimit, createScimToken, listScimUsers, verifyScimToken } from "./scim";
 
 function wireTenantContext(handlers: FakeQueryHandler[] = []) {
   const fakeSql = createFakeSql(handlers);
@@ -96,5 +96,31 @@ describe("scim service", () => {
     expect(totalResults).toBe(1);
     const listCall = fakeSql.calls.find((c) => c.text.includes("from organization_members om"));
     expect(listCall?.values).toContain("org-1");
+  });
+
+  it("rate-limits a token at 60 requests within the rolling 60-second window", async () => {
+    wireAdminSql([
+      {
+        match: (t) => t.includes("select count(*) as count from scim_token_usage_log"),
+        respond: () => [{ count: "60" }],
+      },
+    ]);
+
+    const { limited } = await checkScimRateLimit("token-1");
+
+    expect(limited).toBe(true);
+  });
+
+  it("does not rate-limit a token below the threshold", async () => {
+    wireAdminSql([
+      {
+        match: (t) => t.includes("select count(*) as count from scim_token_usage_log"),
+        respond: () => [{ count: "5" }],
+      },
+    ]);
+
+    const { limited } = await checkScimRateLimit("token-1");
+
+    expect(limited).toBe(false);
   });
 });

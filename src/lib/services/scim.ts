@@ -8,7 +8,7 @@ import { withTenantContext } from "@/lib/db/tenant-context";
 import { getAdminSql } from "@/lib/db/client-admin";
 import { recordAuditEvent } from "@/lib/db/audit";
 import { AuditAction, AuditResourceType } from "@/lib/db/audit-actions";
-import type { ScimTokenRow } from "@/lib/db/database.types";
+import type { ScimTokenRow, ScimTokenUsageLogRow } from "@/lib/db/database.types";
 
 /**
  * SCIM-ready provisioning scaffolding — a real, minimal SCIM 2.0 Users
@@ -131,6 +131,35 @@ export async function verifyScimToken(rawToken: string): Promise<AuthenticatedSc
 
   await sql`update scim_tokens set last_used_at = now() where id = ${row.id}`;
   return { tokenId: row.id, organizationId: row.organization_id };
+}
+
+const SCIM_RATE_LIMIT_WINDOW_MS = 60_000;
+const SCIM_RATE_LIMIT_MAX_REQUESTS = 60;
+
+/** Same fixed-window shape as api-keys.ts's checkRateLimit() — protects against brute-force/abuse of the SCIM endpoint. */
+export async function checkScimRateLimit(tokenId: string): Promise<{ limited: boolean }> {
+  const sql = getAdminSql();
+  const [row] = await sql<{ count: string }[]>`
+    select count(*) as count from scim_token_usage_log
+    where scim_token_id = ${tokenId}
+      and created_at > now() - (${SCIM_RATE_LIMIT_WINDOW_MS}::text || ' milliseconds')::interval
+  `;
+  const count = Number(row?.count ?? 0);
+  return { limited: count >= SCIM_RATE_LIMIT_MAX_REQUESTS };
+}
+
+export async function recordScimUsage(
+  tokenId: string,
+  organizationId: string,
+  method: string,
+  path: string,
+  statusCode: number,
+): Promise<void> {
+  const sql = getAdminSql();
+  await sql<ScimTokenUsageLogRow[]>`
+    insert into scim_token_usage_log (scim_token_id, organization_id, method, path, status_code)
+    values (${tokenId}, ${organizationId}, ${method}, ${path}, ${statusCode})
+  `;
 }
 
 export interface ScimUser {

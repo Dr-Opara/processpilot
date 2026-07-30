@@ -3,6 +3,7 @@ import { getAdminSql } from "@/lib/db/client-admin";
 import { registerJobHandler } from "@/lib/jobs/registry";
 import { decryptWebhookSecret } from "@/lib/services/webhooks";
 import { signWebhookPayload } from "@/lib/webhooks/signing";
+import { assertResolvesToPublicAddress } from "@/lib/webhooks/ssrf-guard";
 import type { WebhookDeliveryRow, WebhookSubscriptionRow } from "@/lib/db/database.types";
 
 /**
@@ -52,6 +53,7 @@ registerJobHandler("deliver-webhook", async ({ job }) => {
   const isFinalAttempt = job.attempts >= job.max_attempts;
 
   try {
+    await assertResolvesToPublicAddress(subscription.target_url);
     const response = await fetch(subscription.target_url, {
       method: "POST",
       headers: {

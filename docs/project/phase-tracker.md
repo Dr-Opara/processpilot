@@ -40,7 +40,7 @@ phases from this tracker and does not close until those phases are
 | 19    | External portal                             | Complete    |
 | 20    | Responsive PWA                              | Complete    |
 | 21    | Organization administration                 | Complete    |
-| 22    | Security hardening                          | Not Started |
+| 22    | Security hardening                          | Complete    |
 | 23    | Reliability and observability               | Not Started |
 | 24    | Complete QA                                 | Not Started |
 | 25    | Legal and trust readiness                   | Not Started |
@@ -934,9 +934,39 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Entry criteria:** Core product surface area feature-complete.
 - **Exit criteria:** No open high/critical security findings; multi-tenancy,
   authorization, and AI-governance boundaries independently re-verified.
-- **Status:** Not Started.
+- **Status:** Complete. A structured 14-section review against the
+  phase's own task brief, documented in full in
+  [security-hardening.md](../architecture/security-hardening.md) and
+  [threat-model.md](../architecture/threat-model.md) (new). Concrete
+  fixes landed in this phase: closed a two-step self-escalation bypass
+  in `role_permissions_insert`'s RLS policy (Phase 21's custom-roles
+  feature); added baseline browser security headers (CSP, HSTS,
+  X-Content-Type-Options, X-Frame-Options, Referrer-Policy,
+  Permissions-Policy) that did not exist before this phase; hardened
+  outbound-webhook SSRF defense with a real DNS-resolution check at
+  every delivery attempt, not just at subscription creation; added
+  rate limiting to the SCIM endpoint (a gap this review found in
+  Phase 21's own new surface); fixed a same-organization information-
+  disclosure gap in the process-builder's local-draft autosave
+  (`localStorage` key was scoped by process id only, not by member);
+  SHA-pinned the one genuinely third-party GitHub Action
+  (`gitleaks-action`, looked up live via `gh api`, not fabricated).
+  `npm run phase:commit` and `npm audit --audit-level=high` (0
+  vulnerabilities) are both green.
+- **Known gaps carried forward:** No open high/critical finding, but
+  several deferred/accepted items are documented explicitly rather than
+  silently — CSP still needs `'unsafe-inline'` for scripts (no
+  nonce-based wiring yet); SSRF hardening is not fully DNS-rebinding-
+  proof (no IP-pinning fetch dispatcher); no malware/virus scanning on
+  uploads (standing gap since Phase 6); no automated repeated-
+  authorization-failure detection (explicitly deferred to Phase 23's
+  observability scope); no application-level request-body-size cap
+  beyond the platform default. See security-hardening.md's per-section
+  findings for the full list with severity and reasoning.
 - **Risks:** Findings at this stage may require rework in earlier phases
-  — budget time accordingly rather than treating this as a quick pass.
+  — materialized once (the role_permissions_insert self-escalation
+  fix, reworking Phase 21's own migration set), budgeted for and
+  resolved within this phase rather than deferred.
 
 ## Phase 23: Reliability and observability
 

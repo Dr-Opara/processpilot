@@ -12,32 +12,34 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–21.
-- **Current phase:** Phase 21 — Advanced organization administration,
-  completing on `feature/phase-21-organization-administration`; Phase 22
-  (Security hardening) is next.
+  is progressing via Phases 16–22.
+- **Current phase:** Phase 22 — Security hardening, completing on
+  `feature/phase-22-security-hardening`; Phase 23 (Reliability and
+  observability) is next.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, and 21**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, and 22**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
   AI copilot, analytics, audit and compliance center, notifications,
   billing and entitlements, integrations, external portal, responsive
-  PWA, advanced organization administration) are `Complete` per the
-  phase tracker — Phase 9 merged via PR #12 (commit `5427118`); Phase 10
-  merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged via PR
-  #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17; Phase 15
-  merged via PR #18; Phase 16 merged via PR #19; Phase 17 merged via PR
-  #20; Phase 18 merged via the `feature/phase-18-integrations` and
+  PWA, advanced organization administration, security hardening) are
+  `Complete` per the phase tracker — Phase 9 merged via PR #12 (commit
+  `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR #14;
+  Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14
+  merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged via PR
+  #19; Phase 17 merged via PR #20; Phase 18 merged via the
+  `feature/phase-18-integrations` and
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
-  PR #23; Phase 20 merged via PR #24; Phase 21's implementation is
-  complete on `feature/phase-21-organization-administration`, pending
-  its PR merge. Phase 4 (database and tenant isolation) remains recorded
-  as `In Progress` in the tracker; this document does not re-audit that
+  PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
+  Phase 22's implementation is complete on
+  `feature/phase-22-security-hardening`, pending its PR merge. Phase 4
+  (database and tenant isolation) remains recorded as `In Progress` in
+  the tracker; this document does not re-audit that
   status.
 
 ## What's built

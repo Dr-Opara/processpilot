@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Heading, Text } from "@/components/ui/Typography";
 import { Stack } from "@/components/ui/Layout";
 import { Alert } from "@/components/ui/Alert";
+import { getCurrentMembership } from "@/lib/authz";
 import { getProcess } from "@/lib/services/processes";
 import { listDepartments } from "@/lib/services/departments";
 import { listMembers } from "@/lib/services/members";
@@ -24,6 +25,7 @@ export default async function EditProcessPage({
 }) {
   const { processId } = await params;
   const { error } = await searchParams;
+  const membership = await getCurrentMembership();
 
   let detail;
   try {
@@ -84,7 +86,7 @@ export default async function EditProcessPage({
         approvalPolicies={approvalPolicies}
         slaDefinitions={slaDefinitions}
         cancelHref={`/app/processes/${processId}`}
-        draftKey={`process-canvas-draft:${processId}:${draft.id}`}
+        draftKey={`process-canvas-draft:${membership.member.id}:${processId}:${draft.id}`}
       />
     </Stack>
   );
