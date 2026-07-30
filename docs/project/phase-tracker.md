@@ -14,41 +14,41 @@ phases from this tracker and does not close until those phases are
 
 ## Summary
 
-| Phase | Name                                        | Status      |
-| ----- | ------------------------------------------- | ----------- |
-| -1    | Cloud/CI foundation                         | Complete    |
-| 0     | Product and engineering foundation          | In Progress |
-| 1     | Repository and design foundation            | In Progress |
-| 2     | Marketing website                           | In Progress |
-| 3     | Authentication and organizations            | In Progress |
-| 4     | Database and tenant isolation               | In Progress |
-| 5     | Business onboarding and employee management | Complete    |
-| 6     | Knowledge management                        | Complete    |
-| 7     | Process builder                             | Complete    |
-| 8     | Workflow execution engine                   | Complete    |
-| 8.5   | MVP staging and design-partner validation   | Not Started |
-| 9     | Forms and evidence                          | Complete    |
-| 10    | Approvals and escalations                   | Complete    |
-| 11    | Exception management                        | Complete    |
-| 12    | Training and certifications                 | Complete    |
-| 13    | AI ingestion and copilot                    | Complete    |
-| 14    | Analytics                                   | Complete    |
-| 15    | Audit and compliance center                 | Complete    |
-| 16    | Notifications                               | Complete    |
-| 17    | Billing and entitlements                    | Complete    |
-| 18    | Integrations                                | Complete    |
-| 19    | External portal                             | Complete    |
-| 20    | Responsive PWA                              | Complete    |
-| 21    | Organization administration                 | Complete    |
-| 22    | Security hardening                          | Complete    |
-| 23    | Reliability and observability               | Complete    |
-| 24    | Complete QA                                 | Not Started |
-| 25    | Legal and trust readiness                   | Not Started |
-| 26    | Deployment                                  | Not Started |
-| 27    | Internal support console                    | Not Started |
-| 28    | Demo workspace                              | Not Started |
-| 29    | Final product and design audit              | Not Started |
-| 30    | Release candidate                           | Not Started |
+| Phase | Name                                            | Status      |
+| ----- | ----------------------------------------------- | ----------- |
+| -1    | Cloud/CI foundation                             | Complete    |
+| 0     | Product and engineering foundation              | In Progress |
+| 1     | Repository and design foundation                | In Progress |
+| 2     | Marketing website                               | In Progress |
+| 3     | Authentication and organizations                | In Progress |
+| 4     | Database and tenant isolation                   | In Progress |
+| 5     | Business onboarding and employee management     | Complete    |
+| 6     | Knowledge management                            | Complete    |
+| 7     | Process builder                                 | Complete    |
+| 8     | Workflow execution engine                       | Complete    |
+| 8.5   | MVP staging and design-partner validation       | Not Started |
+| 9     | Forms and evidence                              | Complete    |
+| 10    | Approvals and escalations                       | Complete    |
+| 11    | Exception management                            | Complete    |
+| 12    | Training and certifications                     | Complete    |
+| 13    | AI ingestion and copilot                        | Complete    |
+| 14    | Analytics                                       | Complete    |
+| 15    | Audit and compliance center                     | Complete    |
+| 16    | Notifications                                   | Complete    |
+| 17    | Billing and entitlements                        | Complete    |
+| 18    | Integrations                                    | Complete    |
+| 19    | External portal                                 | Complete    |
+| 20    | Responsive PWA                                  | Complete    |
+| 21    | Organization administration                     | Complete    |
+| 22    | Security hardening                              | Complete    |
+| 23    | Reliability and observability                   | Complete    |
+| 24    | Complete QA                                     | Not Started |
+| 25    | Legal, Privacy, Trust, and Commercial Readiness | Complete    |
+| 26    | Deployment                                      | Not Started |
+| 27    | Internal support console                        | Not Started |
+| 28    | Demo workspace                                  | Not Started |
+| 29    | Final product and design audit                  | Not Started |
+| 30    | Release candidate                               | Not Started |
 
 ## Phase -1: Cloud/CI foundation
 
@@ -1037,22 +1037,66 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
 - **Risks:** None beyond standard scheduling risk of a full regression
   pass.
 
-## Phase 25: Legal and trust readiness
+## Phase 25: Legal, Privacy, Trust, and Commercial Readiness
 
 - **Goal:** Finalize legal (Privacy, Terms), compliance posture
   statements, and trust-center content referenced in
-  [product/information-architecture.md](../../product/information-architecture.md).
+  [product/information-architecture.md](../../product/information-architecture.md),
+  extended to also cover professional-services/independent-engagement
+  terms distinct from the SaaS agreement, and the operational procedures
+  a production launch depends on.
 - **Deliverables:** Reviewed legal pages, accurate (not fabricated)
   security/compliance claims, data-retention/deletion policy referenced
-  by [docs/architecture/data-ownership.md](../architecture/data-ownership.md).
+  by [docs/architecture/data-ownership.md](../architecture/data-ownership.md),
+  Professional Services Terms + SOW/Independent Contractor templates,
+  and a full set of operational procedure documents.
 - **Dependencies:** Phase 22 (security posture must be real before it's
   claimed publicly).
 - **Entry criteria:** Security hardening complete.
 - **Exit criteria:** Legal review complete; no compliance claim on the
   public site exceeds what has actually been verified.
-- **Status:** Not Started.
+- **Status:** Complete, with the explicit caveat every item below still
+  carries: **attorney review has not occurred** — every legal document
+  is honestly labeled `draft`, never `approved`. Delivered: rewritten
+  Terms of Service and Privacy Policy reflecting the real, built product
+  (replacing stale "no accounts exist yet" language left over from
+  Phase 2); new Acceptable Use Policy, Subprocessors page, SaaS Data
+  Processing Addendum template, Professional Services Terms, Statement
+  of Work template, and Independent Contractor Engagement template
+  (`src/content/legal.ts` centralizes version/effective-date/review-
+  status for all of them); a Trust Center hub (`/trust`); corrected the
+  `/security` page's controls from a permanently-stale "Planned" label
+  (unchanged since Phase 2, despite most of them having since been
+  built) to accurate Implemented/Partial/Planned status; terms-of-
+  service acceptance recording at onboarding completion
+  (`recordTermsAcceptance()`, audited); self-service "export my data"
+  (`/app/account`, bounded to the calling member's own profile/
+  membership/activity — a broader organization export remains admin-
+  assisted); 19 operational procedure documents under `docs/operations/`
+  (incident response, breach notification, business continuity,
+  disaster recovery, backup/restoration, support escalation, customer
+  complaints, service-status communication, ownership matrix, production
+  access, change management, release management, vendor inventory, data
+  classification, records of processing activities, security-
+  questionnaire library, publication-approval process, customer
+  offboarding) plus the phase's own readiness checklist. See
+  [docs/operations/legal-operational-readiness-checklist.md](../operations/legal-operational-readiness-checklist.md)
+  for the full completed/pending-review/deferred/blocked breakdown.
+  `npm run phase:commit` and `npm audit --audit-level=high` (0
+  vulnerabilities) are both green.
+- **Known gaps carried forward:** No attorney has reviewed any legal
+  document. No real production incident, DR drill, or backup-restore
+  test has been performed (Phase 26 dependency). The internal ownership
+  matrix names roles, not real people (no staffing exists). No signed
+  DPA or vendor security review exists with any actual subprocessor.
+  Organization-deletion finalization remains deliberately gated pending
+  a dedicated security review (Phase 21/22's own decision, unchanged).
+  Full self-service organization-wide data export is deferred in favor
+  of the audit-export + member-level export already built.
 - **Risks:** Requires external legal counsel — outside engineering's
-  direct control, tracked as a dependency risk.
+  direct control, tracked as a dependency risk, unchanged by this
+  phase's work (every document is correctly labeled as not yet
+  reviewed).
 
 ## Phase 26: Deployment
 

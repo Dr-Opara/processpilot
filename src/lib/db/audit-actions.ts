@@ -237,6 +237,10 @@ export const AuditAction = {
   OrganizationDeletionCompleted: "organization.deletion_completed",
   ScimTokenCreated: "scim_token.created",
   ScimTokenRevoked: "scim_token.revoked",
+
+  // Phase 25 (Legal, privacy, trust, and operational readiness).
+  TermsAccepted: "organization.terms_accepted",
+  DataExportRequested: "member.data_export_requested",
 } as const;
 
 export type AuditActionValue = (typeof AuditAction)[keyof typeof AuditAction];

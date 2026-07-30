@@ -154,6 +154,9 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
 export const legalLinks: NavLink[] = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
+  { label: "Acceptable Use", href: "/legal/acceptable-use" },
+  { label: "Subprocessors", href: "/legal/subprocessors" },
+  { label: "Trust Center", href: "/trust" },
 ];
 
 /**

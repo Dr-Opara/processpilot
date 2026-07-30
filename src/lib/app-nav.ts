@@ -28,6 +28,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
   { label: "People", href: "/app/members", requiredPermission: "member.manage" },
   { label: "Roles", href: "/app/roles", requiredPermission: "role.manage" },
   { label: "Billing", href: "/app/billing", requiredPermission: "billing.manage" },
+  { label: "My Account", href: "/app/account" },
 ];
 
 export function visibleNavItems(permissions: string[], scopedPermissions: string[]): AppNavItem[] {

@@ -11,7 +11,13 @@ import { listDepartments } from "@/lib/services/departments";
 import { listTeams } from "@/lib/services/teams";
 import { listMembers } from "@/lib/services/members";
 import { AppError } from "@/lib/errors";
-import { advanceOnboardingStepAction, saveCompanyProfileAction } from "./actions";
+import { Checkbox } from "@/components/ui/Checkbox";
+import Link from "next/link";
+import {
+  advanceOnboardingStepAction,
+  finishOnboardingAction,
+  saveCompanyProfileAction,
+} from "./actions";
 
 export default async function OnboardingPage({
   searchParams,
@@ -322,11 +328,20 @@ async function ReviewStep() {
           <Text className="text-muted">{members.total}</Text>
         </Cluster>
       </Stack>
-      <Cluster className="justify-end">
-        <form action={advanceOnboardingStepAction.bind(null, "finished")}>
-          <Button type="submit">Finish setup</Button>
-        </form>
-      </Cluster>
+      <form action={finishOnboardingAction} className="flex flex-col items-end gap-3">
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox name="acceptTerms" required />I have read and agree to the{" "}
+          <Link href="/terms" className="text-cobalt">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-cobalt">
+            Privacy Policy
+          </Link>
+          .
+        </label>
+        <Button type="submit">Finish setup</Button>
+      </form>
     </Stack>
   );
 }
