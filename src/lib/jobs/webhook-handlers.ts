@@ -4,6 +4,7 @@ import { registerJobHandler } from "@/lib/jobs/registry";
 import { decryptWebhookSecret } from "@/lib/services/webhooks";
 import { signWebhookPayload } from "@/lib/webhooks/signing";
 import { assertResolvesToPublicAddress } from "@/lib/webhooks/ssrf-guard";
+import { externalRequestSignal } from "@/lib/observability/timeouts";
 import type { WebhookDeliveryRow, WebhookSubscriptionRow } from "@/lib/db/database.types";
 
 /**
@@ -61,6 +62,7 @@ registerJobHandler("deliver-webhook", async ({ job }) => {
         "X-ProcessPilot-Event": delivery.event_type,
         "X-ProcessPilot-Signature": signature,
       },
+      signal: externalRequestSignal(),
       body,
     });
 

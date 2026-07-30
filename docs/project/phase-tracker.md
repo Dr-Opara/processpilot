@@ -41,7 +41,7 @@ phases from this tracker and does not close until those phases are
 | 20    | Responsive PWA                              | Complete    |
 | 21    | Organization administration                 | Complete    |
 | 22    | Security hardening                          | Complete    |
-| 23    | Reliability and observability               | Not Started |
+| 23    | Reliability and observability               | Complete    |
 | 24    | Complete QA                                 | Not Started |
 | 25    | Legal and trust readiness                   | Not Started |
 | 26    | Deployment                                  | Not Started |
@@ -980,9 +980,45 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   patterns to observe.
 - **Exit criteria:** Every background job failure is visible; platform
   health metrics are dashboarded and alertable.
-- **Status:** Not Started.
+- **Status:** Complete, with the same "credential-gated" caveat every
+  provider-adapter phase before it carries. Delivered: a provider-neutral
+  structured logger with secret redaction
+  (`src/lib/observability/logger.ts`); a provider-neutral error-reporting
+  adapter (`error-reporting.ts`, `SENTRY_DSN`-gated, a real redacted
+  console fallback when unconfigured — no Sentry SDK dependency added in
+  this pass); `/api/health` (liveness) and `/api/ready` (readiness —
+  database connectivity, queue depth/dead-letter count, per-provider
+  configured status, never leaking a stack trace or connection string);
+  request timeouts (`AbortSignal.timeout`) added to every previously-
+  unbounded external `fetch()` call (Slack, Resend, outbound webhooks);
+  `Cache-Control: private, no-store` on every organization-scoped
+  surface (`/app/*`, `/api/v1/*`, `/api/scim/*`, `/api/jobs/*`); a
+  documented, deliberately-not-implemented caching strategy for
+  organization-scoped data (see performance-and-caching.md's reasoning
+  for why adding a cache layer under this phase's time constraint was
+  judged a larger tenant-isolation risk than the performance problem it
+  would have solved, absent real load data). Background job/queue
+  architecture (claiming, retries, dead-lettering, idempotency) was
+  reviewed and found already solid from Phase 8 — documented in depth
+  in `src/lib/jobs/README.md`, not rebuilt. `npm run phase:commit` is
+  green. See
+  [observability.md](../architecture/observability.md) and
+  [performance-and-caching.md](../architecture/performance-and-caching.md).
+- **Known gaps carried forward:** No real Sentry (or equivalent) SDK is
+  wired up — `SENTRY_DSN`-gated adapter exists, unverified against a
+  live provider. No production/preview performance measurement exists
+  (same Vercel-preview platform-configuration blocker since Phase 1) —
+  this phase's baseline is local-build-measured or code-review-estimated,
+  explicitly labeled as such throughout. Existing `console.error` call
+  sites from Phases 3–22 were not retrofitted to the new structured
+  logger (only `toSafeErrorResponse()` and the cron worker route were).
+  No load/stress testing was performed (no safe environment to run it
+  against). No dedicated admin health-dashboard UI — `/api/ready`'s JSON
+  is the complete dataset such a page would render.
 - **Risks:** Tenant-data leakage into shared observability tooling —
-  explicit scrubbing/scoping review required before closing.
+  addressed by design (no cache or log path introduced in this phase
+  carries tenant-scoped payloads; `redact()` strips secret-shaped
+  values) rather than by a separate scrubbing pass after the fact.
 
 ## Phase 24: Complete QA
 

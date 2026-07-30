@@ -1,4 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
+
 import { AppError, toSafeErrorResponse } from "./errors";
 
 describe("toSafeErrorResponse", () => {

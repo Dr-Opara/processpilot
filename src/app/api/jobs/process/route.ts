@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { processDueJobs } from "@/lib/jobs/worker";
+import { captureException } from "@/lib/observability/error-reporting";
 import "@/lib/jobs/workflow-handlers";
 import "@/lib/jobs/evidence-handlers";
 import "@/lib/jobs/escalation-handlers";
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const result = await processDueJobs(workerId);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Background job worker tick failed", error);
+    captureException(error, { route: "/api/jobs/process" });
     return NextResponse.json({ error: "Worker tick failed" }, { status: 500 });
   }
 }
