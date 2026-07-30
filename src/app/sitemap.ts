@@ -16,6 +16,13 @@ const staticRoutes = [
   "/sign-in",
   "/privacy",
   "/terms",
+  "/legal/acceptable-use",
+  "/legal/subprocessors",
+  "/legal/dpa",
+  "/legal/professional-services-terms",
+  "/legal/statement-of-work-template",
+  "/legal/independent-contractor-template",
+  "/trust",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

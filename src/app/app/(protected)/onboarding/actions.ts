@@ -2,8 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { advanceOnboardingStep, updateCompanyProfile } from "@/lib/services/organizations";
+import { recordTermsAcceptance } from "@/lib/services/legal";
+import { AppError } from "@/lib/errors";
 import type { OnboardingStep } from "@/lib/db/database.types";
 import { runFormAction } from "@/lib/form-actions";
+
+export async function finishOnboardingAction(formData: FormData): Promise<void> {
+  await runFormAction("/app/onboarding", async () => {
+    if (formData.get("acceptTerms") !== "on") {
+      throw new AppError("bad_request", "You must accept the Terms of Service to continue.");
+    }
+    await recordTermsAcceptance();
+    await advanceOnboardingStep("finished");
+    revalidatePath("/app/onboarding");
+    return "/app/onboarding";
+  });
+}
 
 export async function advanceOnboardingStepAction(step: OnboardingStep): Promise<void> {
   await runFormAction("/app/onboarding", async () => {

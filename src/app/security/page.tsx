@@ -30,7 +30,7 @@ export default function SecurityPage() {
         <PageHero
           eyebrow="Security"
           headline="Security is a design principle, stated plainly"
-          intro="ProcessPilot is early in development. This page describes how the product is designed to handle access, isolation, and evidence — not audited or certified claims."
+          intro="This page describes how ProcessPilot actually handles access, isolation, and evidence today — implemented controls, partial controls, and what's still planned, each labeled honestly. Not an audited or certified claim."
           accent="warning"
         />
 
@@ -41,7 +41,7 @@ export default function SecurityPage() {
         <Section className="py-14 sm:py-16">
           <Container>
             <Stack className="gap-6">
-              <Heading as="h2">Planned and in-progress controls</Heading>
+              <Heading as="h2">Security controls</Heading>
               <div className="grid gap-6 sm:grid-cols-2">
                 {securityControls.map((control) => (
                   <Stack
@@ -50,7 +50,17 @@ export default function SecurityPage() {
                   >
                     <div className="flex items-center justify-between gap-3">
                       <Text className="font-semibold text-ink">{control.title}</Text>
-                      <StatusBadge status="warning">{control.status}</StatusBadge>
+                      <StatusBadge
+                        status={
+                          control.status === "Implemented"
+                            ? "success"
+                            : control.status === "Partial"
+                              ? "warning"
+                              : "neutral"
+                        }
+                      >
+                        {control.status}
+                      </StatusBadge>
                     </div>
                     <Text className="text-sm text-muted">{control.description}</Text>
                   </Stack>
@@ -65,8 +75,24 @@ export default function SecurityPage() {
             <Stack className="max-w-2xl gap-4">
               <Heading as="h2">Report a security concern</Heading>
               <Text className="text-muted">
-                If you believe you&apos;ve found a security issue, contact us directly rather than
-                filing a public report.
+                If you believe you&apos;ve found a security vulnerability, please report it
+                privately — email us directly or use{" "}
+                <a
+                  href="https://github.com/Dr-Opara/processpilot/security/advisories/new"
+                  className="text-cobalt"
+                >
+                  GitHub&apos;s private vulnerability reporting
+                </a>{" "}
+                rather than filing a public issue. Please include a description of the vulnerability
+                and its potential impact, steps to reproduce or a proof of concept, and any relevant
+                logs with secrets and credentials redacted. We aim to acknowledge reports within a
+                few business days. Good-faith security research conducted against your own
+                account/organization, without accessing another organization&apos;s data, will not
+                be treated as a violation of our{" "}
+                <a href="/legal/acceptable-use" className="text-cobalt">
+                  Acceptable Use Policy
+                </a>
+                .
               </Text>
               <a
                 href={`mailto:${securityContactEmail}`}
