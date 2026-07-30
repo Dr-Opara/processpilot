@@ -4,12 +4,12 @@ export const pricingFaqs: FaqItem[] = [
   {
     question: "Are these prices final?",
     answer:
-      "No. The figures shown are starting-price hypotheses for planning purposes, not published rates. Contact sales for a quote based on your team size and usage.",
+      "Yes, for Team and Business — the monthly and annual prices shown are our published launch rates. Enterprise pricing is custom and starts at $750/month; contact sales for a quote based on your rollout.",
   },
   {
-    question: "What counts toward employee count?",
+    question: "What counts toward the user limit?",
     answer:
-      "Employee count is based on people who will be assigned tasks or approvals inside ProcessPilot, not your total company headcount.",
+      "The user limit is based on people who will be assigned tasks or approvals inside ProcessPilot, not your total company headcount.",
   },
   {
     question: "Can we start on Team and move to Business later?",

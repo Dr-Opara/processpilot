@@ -33,7 +33,8 @@ export function PricingPreview() {
               >
                 <Stack className="gap-1">
                   <Text className="font-semibold text-ink">{plan.name}</Text>
-                  <Text className="text-sm text-muted">{plan.audience}</Text>
+                  <Text className="text-2xl font-semibold text-ink">{plan.price}</Text>
+                  <Text className="text-sm text-muted">{plan.priceDetail}</Text>
                 </Stack>
                 <ul className="space-y-2">
                   {plan.features.slice(0, 3).map((feature) => (

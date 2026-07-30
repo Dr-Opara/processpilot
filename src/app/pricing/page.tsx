@@ -13,7 +13,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Pricing",
   description:
-    "Three ProcessPilot plan concepts for single teams, multi-location businesses, and enterprise organizations.",
+    "ProcessPilot plans for single teams, multi-location businesses, and enterprise organizations.",
   path: "/pricing",
 });
 
@@ -25,7 +25,7 @@ export default function PricingPage() {
         <PageHero
           eyebrow="Pricing"
           headline="Plans that scale with locations and departments, not seats alone"
-          intro="Three plan concepts, from a single team's first workflow to an enterprise rollout across every location. Figures below are starting-price hypotheses, not published rates — contact sales to confirm."
+          intro="From a single team's first workflow to an enterprise rollout across every location. Start on Team or Business with a monthly or annual plan, or talk to sales about an Enterprise rollout."
           accent="cobalt"
         />
         <PricingTable />
