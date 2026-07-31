@@ -4,8 +4,12 @@ import { Heading, Text, Eyebrow } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import type { CtaLink } from "@/content/types";
 
+// "signal" (color-signal, #F05A34) is deliberately not offered here —
+// at Eyebrow's text-xs/uppercase size, it fails WCAG AA color-contrast
+// (3.1:1 against the paper background, below the 4.5:1 normal-text
+// minimum) even though it's fine at the larger sizes/UI components
+// design/colors.md documents it for.
 const accentText: Record<string, string> = {
-  signal: "text-signal",
   cobalt: "text-cobalt",
   success: "text-success",
   warning: "text-warning",
@@ -23,7 +27,7 @@ export function PageHero({
   eyebrow: string;
   headline: string;
   intro: string;
-  accent?: "signal" | "cobalt" | "success" | "warning";
+  accent?: "cobalt" | "success" | "warning";
   primary?: CtaLink;
   secondary?: CtaLink;
   className?: string;

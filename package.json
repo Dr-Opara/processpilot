@@ -44,6 +44,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@clerk/testing": "^2.2.10",
     "@playwright/test": "^1.55.0",
     "@testing-library/jest-dom": "^6.6.3",

@@ -11,7 +11,7 @@ export const processBuilderContent: ProductPageContent = {
   headline: "Turn a written procedure into a workflow someone can run",
   intro:
     "A policy document describes what should happen. Process builder turns that description into tasks, roles, approvals, and branches that people can actually follow.",
-  accent: "signal",
+  accent: "cobalt",
   layout: "capability-first",
   problem: {
     title: "Writing a workflow from scratch takes too long",

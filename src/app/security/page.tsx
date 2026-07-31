@@ -79,7 +79,7 @@ export default function SecurityPage() {
                 privately — email us directly or use{" "}
                 <a
                   href="https://github.com/Dr-Opara/processpilot/security/advisories/new"
-                  className="text-cobalt"
+                  className="text-cobalt underline"
                 >
                   GitHub&apos;s private vulnerability reporting
                 </a>{" "}
@@ -89,7 +89,7 @@ export default function SecurityPage() {
                 few business days. Good-faith security research conducted against your own
                 account/organization, without accessing another organization&apos;s data, will not
                 be treated as a violation of our{" "}
-                <a href="/legal/acceptable-use" className="text-cobalt">
+                <a href="/legal/acceptable-use" className="text-cobalt underline">
                   Acceptable Use Policy
                 </a>
                 .

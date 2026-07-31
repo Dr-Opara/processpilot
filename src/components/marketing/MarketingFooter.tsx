@@ -51,9 +51,11 @@ export function MarketingFooter() {
                 {link.label}
               </a>
             ))}
-            <Link href="/design-system" className="hover:text-ink">
-              Design system
-            </Link>
+            {process.env.NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM === "true" && (
+              <Link href="/design-system" className="hover:text-ink">
+                Design system
+              </Link>
+            )}
           </div>
         </Container>
       </div>
