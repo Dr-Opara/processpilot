@@ -1313,7 +1313,22 @@ Started`, unchanged by this phase.
   product promoted to paid GA per
   [product/release-plan.md](../../product/release-plan.md) independently
   of the corporate-website verdict.
-- **Status:** Not Started.
+- **Status:** Complete for the product track; corporate-website track
+  genuinely not applicable yet (Phase 31/31A haven't shipped — see that
+  section's own entries below). See
+  [release-readiness-2026-07.md](release-readiness-2026-07.md) for the
+  full capability classification and verdict.
+  **Product verdict: CONDITIONAL GO** — code-complete and internally
+  consistent through Phase 29, gated on seven concrete,
+  non-engineering items: provisioning real Vercel/Supabase/Clerk
+  production accounts and a domain (Phase 26's own unmet exit
+  criterion); running the live-Postgres RLS integration suite for real
+  (the single highest-severity unverified claim in the codebase — every
+  policy is correct by static check, never proven against a live
+  engine); supplying and verifying real AI/email/Stripe credentials;
+  committing real pricing; performing Phase 24 (Complete QA); executing
+  a real deploy/rollback cycle; and attorney review of every legal
+  document currently labeled draft. None of these are code defects.
 - **Risks:** None beyond standard release risk for the product track.
   The corporate-website track's risk is external (client publication
   approval), not engineering-controlled — see Phase 31A.

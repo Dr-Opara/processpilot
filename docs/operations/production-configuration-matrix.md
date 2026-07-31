@@ -1,7 +1,10 @@
-# Production Configuration Matrix (Phase 26)
+# Production Configuration Matrix (Phase 26, updated through Phase 30)
 
 The single source of truth for what's actually provisioned/verified vs.
-what remains configuration scaffolding, as of this phase. Status legend:
+what remains configuration scaffolding. Written in Phase 26; table row
+counts and RLS coverage kept current through Phase 30 — no infrastructure
+status itself changed between Phase 26 and Phase 30 (still no production
+Vercel/Supabase/Clerk project exists). Status legend:
 **Real** (implemented and verifiable in this environment without a
 production account), **Configured, unverified** (code path exists and
 is unit-tested, but not exercised against a real production credential),
@@ -14,7 +17,7 @@ doesn't have).
 | Vercel (development/preview)       | Real                               | Existing preview deployments have built and passed smoke tests throughout this project's history (see any merged phase's PR).                                                                                         |
 | Vercel (production project)        | Not provisioned                    | No production Vercel project/domain exists.                                                                                                                                                                           |
 | Domain (`useprocesspilot.com`)     | Not provisioned                    | Not registered/pointed at Vercel — see [dns-records.md](dns-records.md).                                                                                                                                              |
-| Supabase (database schema/RLS)     | Real, statically verified          | 82 tables, 100% RLS/policy/index coverage, verified by `schema-coverage.test.ts` on every CI run — no live database needed for this proof.                                                                            |
+| Supabase (database schema/RLS)     | Real, statically verified          | 85 tables, 100% RLS/policy/index coverage, verified by `schema-coverage.test.ts` on every CI run — no live database needed for this proof.                                                                            |
 | Supabase (live production project) | Not provisioned                    | No project is linked; live-Postgres integration tests and a real migration application have never run.                                                                                                                |
 | Clerk (development instance)       | Real                               | Used for local/preview auth; development-mode keys, per Vercel preview logs seen throughout this project.                                                                                                             |
 | Clerk (production instance)        | Not provisioned                    | No production Clerk instance/domain configured.                                                                                                                                                                       |
