@@ -1261,11 +1261,18 @@ phase:commit` (format, lint, typecheck, unit tests, production build) is
   Delivered: a real axe-core/Playwright WCAG 2.1 AA scan across every
   public route (`e2e/accessibility.spec.ts` — `design/accessibility.md`
   had required this since Phase 1; it did not exist until now), which
-  found and fixed one real, systemic contrast violation (the `warning`
-  status-badge color); a site-wide internal-link sweep
-  (`e2e/link-audit.spec.ts`), which found and fixed one real, sitewide
-  broken link (the footer's unconditional "Design system" link, which
-  404s whenever `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM` is unset); reconciled
+  found and fixed real, systemic contrast violations — the `warning`
+  status-badge color, and a `PageHero` accent color
+  (`accent: "signal"`) that failed AA at Eyebrow's text size on three
+  pages, fixed by both darkening/removing the offending color tokens and
+  fixing the underlying `Eyebrow` component bug that let a
+  caller-supplied color class silently lose to its own hardcoded
+  default — plus a color-only inline link on `/security` (`design/
+accessibility.md` rule 2, "never color-only"); a site-wide
+  internal-link sweep (`e2e/link-audit.spec.ts`), which found and fixed
+  one real, sitewide broken link (the footer's unconditional "Design
+  system" link, which 404s whenever `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM`
+  is unset); reconciled
   `product/roadmap.md` (stale since before Phase 21) and this tracker's
   own Phase 29/30 entries and Phase 31/31A entries against the revised
   roadmap. The professional-services/client-engagement positioning

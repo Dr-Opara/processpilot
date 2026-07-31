@@ -36,7 +36,7 @@ export interface ProductPageContent {
   eyebrow: string;
   headline: string;
   intro: string;
-  accent: "signal" | "cobalt" | "success" | "warning";
+  accent: "cobalt" | "success" | "warning";
   layout: "capability-first" | "workflow-first" | "governance-first";
   problem: {
     title: string;
@@ -75,7 +75,7 @@ export interface SolutionPageContent {
   eyebrow: string;
   headline: string;
   intro: string;
-  accent: "signal" | "cobalt" | "success" | "warning";
+  accent: "cobalt" | "success" | "warning";
   audience: string;
   challenges: {
     title: string;
@@ -104,7 +104,7 @@ export interface IndustryPageContent {
   eyebrow: string;
   headline: string;
   intro: string;
-  accent: "signal" | "cobalt" | "success" | "warning";
+  accent: "cobalt" | "success" | "warning";
   disclaimer: string;
   challenges: {
     title: string;

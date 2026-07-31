@@ -38,6 +38,34 @@ usage of `text-warning` is against a light tint background, so the
 global token change is correct and doesn't introduce a new inconsistency
 elsewhere.
 
+**Found and fixed (via the real CI run against a deployed Vercel
+preview, `.github/workflows/preview-checks.yml` — the local dev-server
+runs were too flaky to fully validate on their own):**
+
+- `PageHero`'s `accent="signal"` option rendered `Eyebrow` text
+  (`text-xs`/uppercase/semibold) in `color-signal` (`#F05A34`) at a
+  3.10:1 contrast ratio against the page background — below the 4.5:1
+  AA minimum for normal text, even though `color-signal` is fine at the
+  larger sizes/UI components `design/colors.md` documents it for.
+  Affected `/product/process-builder`, `/solutions/customer-operations`,
+  and `/industries/franchises` (every page using `accent: "signal"`).
+  Fixed two ways: (1) `Eyebrow` (`src/components/ui/Typography.tsx`)
+  previously appended a caller-supplied `className` alongside its own
+  hardcoded `text-cobalt`, leaving Tailwind's generated-stylesheet order
+  — not the more specific/intentional class — to decide which color
+  actually won; now a caller-supplied class replaces the default instead
+  of competing with it. (2) `"signal"` was removed from `PageHero`'s
+  accent palette entirely (`src/content/types.ts`,
+  `PageHero.tsx`) — it doesn't meet AA at this text size regardless of
+  the merge-order fix — and the three affected content files were
+  switched to `accent: "cobalt"`.
+- `/security`'s two inline links inside body-copy paragraphs
+  (`text-cobalt` with no other styling) failed axe's
+  `link-in-text-block` rule: a 1.13:1 contrast ratio against the
+  surrounding `text-muted` prose with no non-color distinguishing style
+  (no underline) — a direct violation of `design/accessibility.md` rule
+  2, "never color-only." Fixed by adding `underline` to both links.
+
 **Known gap:** the scan covers the public marketing site only, not the
 authenticated `/app/*` shell — no real Clerk credentials are guaranteed
 in every environment this runs in. Extending coverage to authenticated

@@ -11,7 +11,7 @@ export const franchisesContent: IndustryPageContent = {
   headline: "One brand standard, run the same way at every location",
   intro:
     "Franchise brands succeed when every location delivers the same experience. ProcessPilot gives franchisors one published standard and franchisees a clear, guided workflow to follow.",
-  accent: "signal",
+  accent: "cobalt",
   disclaimer:
     "ProcessPilot standardizes operating procedures. It does not review franchise agreements, royalty terms, or legal compliance obligations between franchisor and franchisee.",
   challenges: [

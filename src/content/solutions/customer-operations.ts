@@ -11,7 +11,7 @@ export const customerOperationsSolutionContent: SolutionPageContent = {
   headline: "Give every customer request the same reliable process",
   intro:
     "Customer operations teams need service requests handled consistently, escalations routed correctly, and a way to catch quality issues before they repeat.",
-  accent: "signal",
+  accent: "cobalt",
   audience: "customer operations and service delivery leaders",
   challenges: [
     {

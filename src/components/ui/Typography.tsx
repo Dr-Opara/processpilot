@@ -40,7 +40,16 @@ export function Eyebrow({
   children: React.ReactNode;
 }) {
   return (
-    <p className={clsx("text-xs font-semibold uppercase tracking-[0.3em] text-cobalt", className)}>
+    <p
+      className={clsx(
+        "text-xs font-semibold uppercase tracking-[0.3em]",
+        // A caller-supplied color class replaces, rather than competes
+        // with, the default — two color utility classes on one element
+        // previously left the winner to Tailwind's generated stylesheet
+        // order, not the more specific/intentional one.
+        className ?? "text-cobalt",
+      )}
+    >
       {children}
     </p>
   );
