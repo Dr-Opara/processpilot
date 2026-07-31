@@ -12,23 +12,21 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–30 (Phase 24, Complete QA, was skipped in
+  is progressing via Phases 16–31 (Phase 24, Complete QA, was skipped in
   sequence per explicit direction and remains `Not Started` — see the
   phase tracker's own note on this gap).
-- **Current phase:** Phase 30 — Product and Corporate Release Readiness,
-  complete for the product track on `feature/phase-30-release-readiness`
-  (verdict: **CONDITIONAL GO** — see
-  [release-readiness-2026-07.md](release-readiness-2026-07.md));
-  corporate-website track not applicable until Phase 31/31A ship, which
-  is next. Phase 26's own exit criterion (a real deployment/rollback
-  cycle) remains blocked pending real Vercel/Supabase/Clerk production
-  account provisioning — see the phase tracker.
+- **Current phase:** Phase 31 — Corporate Product and Services Website,
+  complete on `feature/phase-31-corporate-website`; Phase 31A
+  (Independent Client Engagements) is next. Phase 26's own exit
+  criterion (a real deployment/rollback cycle) remains blocked pending
+  real Vercel/Supabase/Clerk production account provisioning — see the
+  phase tracker.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, and 30**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, and 31**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
@@ -39,20 +37,21 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   readiness, production infrastructure and deployment, internal support
   and platform administration, the production-safe SaaS demo workspace,
   the final product/brand/UX/design audit, product and corporate release
-  readiness) are `Complete` per the phase tracker (Phase 30 complete for
-  its product track only — see above) — Phase 9 merged via PR #12
-  (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR
-  #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14
-  merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged via PR
-  #19; Phase 17 merged via PR #20; Phase 18 merged via the
-  `feature/phase-18-integrations` and
+  readiness, the corporate product and services website) are `Complete`
+  per the phase tracker (Phase 30 complete for its product track only —
+  see above) — Phase 9 merged via PR #12 (commit `5427118`); Phase 10
+  merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged via PR
+  #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17; Phase 15
+  merged via PR #18; Phase 16 merged via PR #19; Phase 17 merged via PR
+  #20; Phase 18 merged via the `feature/phase-18-integrations` and
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
   PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
   Phase 22 merged via PR #27; Phase 23 merged via PR #29; Phase 24
   (Complete QA) remains `Not Started`; Phase 25 merged via PR #30;
   Phase 26 merged via PR #31; Phase 27 merged via PR #32; Phase 28
-  merged via PR #33; Phase 29 merged via PR #34; Phase 30's
-  implementation is complete on `feature/phase-30-release-readiness`,
+  merged via PR #33; Phase 29 merged via PR #34; Phase 30 merged via PR
+  #35; Phase 31's implementation is complete on
+  `feature/phase-31-corporate-website`,
   pending its PR merge. Phase 4 (database and tenant isolation) remains
   recorded as `In Progress` in the tracker; this document does not
   re-audit that status.
@@ -378,6 +377,20 @@ platform-admin.ts`). Routes: `/app/platform-admin/*`. See
   [release-readiness-2026-07.md](release-readiness-2026-07.md) for the
   full report. The corporate-website track has no verdict yet — Phase
   31/31A haven't shipped.
+- Corporate product and services website (Phase 31, complete): the
+  exact required company positioning statement on `/company`;
+  `/services` (Professional Services index) plus `/services/ai`,
+  `/services/cybersecurity`, `/services/compliance-governance`, each
+  using a new `ServicePageContent` shape distinct from product/solution
+  pages, with services-specific CTAs ("Discuss a project" →
+  `/request-consultation`, a new lead form) rather than product CTAs;
+  `/engagements` (Client Engagements index) with the required intro
+  line and no fabricated engagement content (that's Phase 31A); nav,
+  homepage, and sitemap-priority ordering reworked so Products/
+  Solutions/Industries/Pricing always render before the new
+  Professional Services/Client Engagements entries, per the positioning
+  requirement. `e2e/routes.spec.ts`/`accessibility.spec.ts`/
+  `link-audit.spec.ts` extended to cover all six new routes.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the

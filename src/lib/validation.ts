@@ -38,6 +38,31 @@ export const requestDemoSchema = z.object({
 
 export type RequestDemoInput = z.infer<typeof requestDemoSchema>;
 
+export const serviceAreas = [
+  "AI services",
+  "Cybersecurity services",
+  "Compliance and governance",
+  "Not sure yet",
+] as const;
+
+/**
+ * Phase 31: a separate schema from requestDemoSchema, deliberately —
+ * this is a professional-services project inquiry, not a SaaS product
+ * demo request, even though the two forms share most fields.
+ */
+export const requestConsultationSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  workEmail,
+  organization: z.string().min(1, "Organization is required"),
+  serviceArea: z.enum(serviceAreas, {
+    error: "Select a service area",
+  }),
+  message: z.string().optional(),
+});
+
+export type RequestConsultationInput = z.infer<typeof requestConsultationSchema>;
+
 export const startTrialSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),

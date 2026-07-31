@@ -64,6 +64,25 @@ export default function Home() {
         <PricingPreview />
         <FaqAccordion items={homepageFaqs} />
 
+        {/* Deliberately last, smaller, and visually secondary to every
+            product section above — per the positioning requirement,
+            Products/Solutions/Pricing stay dominant and Professional
+            Services never competes with them for primary attention. */}
+        <Section className="border-t border-border/70 bg-[#fcfbf8] py-12">
+          <Container className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Stack className="max-w-xl gap-2">
+              <Text className="text-sm font-semibold text-ink">Also: Professional Services</Text>
+              <Text className="text-sm text-muted">
+                Independent AI, cybersecurity, and compliance/governance engagements — separate from
+                the ProcessPilot SaaS product.
+              </Text>
+            </Stack>
+            <Button href="/services" variant="secondary">
+              See professional services
+            </Button>
+          </Container>
+        </Section>
+
         <CtaBand
           title="See how your procedures would run in ProcessPilot"
           description="Walk through a live demo with your own process, or start a free trial and publish your first workflow today."

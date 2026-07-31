@@ -44,6 +44,17 @@ export default function CompanyPage() {
           accent="cobalt"
         />
 
+        <Section className="border-b border-border/70 bg-[#fcfbf8] py-10">
+          <Container>
+            <Text className="max-w-3xl text-lg leading-8 text-ink">
+              ProcessPilot Technologies builds secure, AI-powered SaaS products that help
+              organizations manage workflows, knowledge, compliance, training, and operational
+              performance. We also support selected clients through specialized AI, cybersecurity,
+              governance, and federal-program engagements.
+            </Text>
+          </Container>
+        </Section>
+
         <Section className="py-14 sm:py-16">
           <Container>
             <Stack className="gap-6">
@@ -72,6 +83,31 @@ export default function CompanyPage() {
               <Text className="text-muted">
                 If that sounds like your team, we&apos;d like to hear what your highest-friction
                 process is.
+              </Text>
+            </Stack>
+          </Container>
+        </Section>
+
+        <Section className="border-t border-border/70 py-14 sm:py-16">
+          <Container>
+            <Stack className="max-w-2xl gap-4">
+              <Heading as="h2">Beyond the product</Heading>
+              <Text className="text-muted">
+                Alongside ProcessPilot the SaaS product, we take on a small number of independent
+                professional-services engagements — AI, cybersecurity, and compliance/governance
+                projects — for clients who need that specific expertise, separate from any
+                subscription.
+              </Text>
+              <Text className="text-sm text-muted">
+                See{" "}
+                <a href="/services" className="text-cobalt underline">
+                  Professional Services
+                </a>{" "}
+                or{" "}
+                <a href="/engagements" className="text-cobalt underline">
+                  Client Engagements
+                </a>
+                .
               </Text>
             </Stack>
           </Container>

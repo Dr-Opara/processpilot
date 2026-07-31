@@ -25,18 +25,38 @@ const staticRoutes = [
   "/trust",
 ];
 
+// Phase 31: professional-services/client-engagement routes intentionally
+// carry lower sitemap priority than product/solutions/industries routes
+// — SEO signaling should reflect the same "products remain dominant"
+// positioning requirement as the nav and homepage, not just visual
+// hierarchy.
+const secondaryRoutes = [
+  "/services",
+  "/services/ai",
+  "/services/cybersecurity",
+  "/services/compliance-governance",
+  "/engagements",
+  "/request-consultation",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = getSiteUrl();
   const navRoutes = primaryNav.flatMap((group) => [
     group.href,
     ...group.items.map((item) => item.href),
   ]);
-  const routes = Array.from(new Set([...staticRoutes, ...navRoutes]));
+  const routes = Array.from(new Set([...staticRoutes, ...navRoutes, ...secondaryRoutes]));
+
+  function priorityFor(route: string): number {
+    if (route === "/") return 1;
+    if (secondaryRoutes.includes(route)) return 0.4;
+    return 0.7;
+  }
 
   return routes.map((route) => ({
     url: new URL(route, siteUrl).toString(),
     lastModified: new Date(),
     changeFrequency: route === "/" ? "weekly" : "monthly",
-    priority: route === "/" ? 1 : 0.7,
+    priority: priorityFor(route),
   }));
 }

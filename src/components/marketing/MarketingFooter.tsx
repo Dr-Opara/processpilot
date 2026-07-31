@@ -24,7 +24,7 @@ export function MarketingFooter() {
               in one place.
             </Text>
           </Stack>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
             {footerColumns.map((column) => (
               <Stack key={column.title} className="gap-3">
                 <Text className="text-sm font-semibold text-ink">{column.title}</Text>
