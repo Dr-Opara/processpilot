@@ -1356,10 +1356,38 @@ Started`, unchanged by this phase.
 - **Exit criteria:** Products appear before Professional Services in
   every surface (nav, homepage, sitemap priority, visual hierarchy);
   no wording implying a general IT-services company.
-- **Status:** Not Started.
+- **Status:** Complete. Delivered: the exact company positioning
+  statement on `/company`; `/services` (Professional Services index)
+  and three engagement pages (`/services/ai`,
+  `/services/cybersecurity`, `/services/compliance-governance`), each
+  using a new `ServicePageContent`/`ServicePageTemplate` shape distinct
+  from product/solution pages, with "Discuss a project" (→
+  `/request-consultation`, a new lead form separate from
+  `/request-demo`) and "Explore ProcessPilot" CTAs — never "Start free
+  trial"; `/engagements` (Client Engagements index) with the required
+  intro line and an honest "profiles are in preparation" note (no
+  fabricated engagement content — that's Phase 31A's job); navigation
+  reordered so Product/Solutions/Industries dropdowns and the Pricing
+  link all render before the new Professional Services dropdown and
+  Client Engagements link, in both desktop and mobile nav
+  (`MarketingHeader.tsx`); a secondary, visually subordinate
+  "Professional Services" band placed last on the homepage, after every
+  product section; sitemap priority for the new routes set below every
+  product/solutions/industries route (0.4 vs 0.7). `e2e/routes.spec.ts`,
+  `e2e/accessibility.spec.ts`, and `e2e/link-audit.spec.ts` extended to
+  cover all six new routes — all pass (WCAG 2.1 AA, no broken links).
+  `npm run phase:commit` and `npm audit --audit-level=high` (0
+  vulnerabilities) are both green.
+- **Known gaps carried forward:** No wording audit against real
+  competitor "IT services" copy has been performed beyond the grep-based
+  check from Phase 29 (still passes — no matches). Service-area content
+  describes offering scope only, deliberately avoiding any fabricated
+  claims about past engagement outcomes, team credentials, or client
+  counts — this is a content-honesty choice, not a missing feature.
 - **Risks:** Positioning drift toward "services company" over time —
   mitigated by making the products-first ordering a tested invariant
-  (Phase 29's audit tooling), not just a one-time design decision.
+  (nav/sitemap-priority structure plus `e2e/` coverage), not just a
+  one-time design decision.
 
 ## Phase 31A: Independent client engagements
 

@@ -114,10 +114,37 @@ export const primaryNav: NavGroup[] = [
       },
     ],
   },
+  {
+    // Positioned after every product/solutions/industries group, and
+    // rendered after Pricing in MarketingHeader.tsx — per the
+    // positioning requirement (docs/project/phase-tracker.md's Phase 31
+    // entry), Products/Solutions/Pricing always appear before
+    // Professional Services in the nav.
+    label: "Professional Services",
+    href: "/services",
+    items: [
+      {
+        label: "AI Services",
+        href: "/services/ai",
+        description: "Governed AI advisory and implementation engagements.",
+      },
+      {
+        label: "Cybersecurity Services",
+        href: "/services/cybersecurity",
+        description: "Security assessment and architecture review engagements.",
+      },
+      {
+        label: "Compliance and Governance",
+        href: "/services/compliance-governance",
+        description: "Governance framework and federal-program readiness engagements.",
+      },
+    ],
+  },
 ];
 
 export const resourcesNav: NavLink = { label: "Resources", href: "/resources" };
 export const pricingNav: NavLink = { label: "Pricing", href: "/pricing" };
+export const clientEngagementsNav: NavLink = { label: "Client Engagements", href: "/engagements" };
 
 export const footerColumns: { title: string; links: NavLink[] }[] = [
   {
@@ -131,6 +158,13 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
   {
     title: "Industries",
     links: primaryNav[2].items.map(({ label, href }) => ({ label, href })),
+  },
+  {
+    title: "Professional Services",
+    links: [
+      ...primaryNav[3].items.map(({ label, href }) => ({ label, href })),
+      { label: "Client Engagements", href: "/engagements" },
+    ],
   },
   {
     title: "Company",

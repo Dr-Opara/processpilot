@@ -99,6 +99,43 @@ export interface SolutionPageContent {
   };
 }
 
+/**
+ * Phase 31: ProcessPilot Technologies' professional-services offerings
+ * (AI, cybersecurity, compliance/governance engagements) — deliberately
+ * a separate content shape from ProductPageContent/SolutionPageContent,
+ * not a reuse of either. These are project engagements sold and
+ * delivered independently of the SaaS product (see
+ * src/content/legal.ts's ClientRelationshipType), so their CTAs
+ * ("Discuss a Project" / "Request a Consultation") and framing
+ * (`disclaimer`) are intentionally distinct from product CTAs
+ * ("Start Free Trial") — the positioning requirement that Products stay
+ * dominant depends on these pages never reading as another product
+ * surface.
+ */
+export interface ServicePageContent {
+  seo: SeoContent;
+  eyebrow: string;
+  headline: string;
+  intro: string;
+  accent: "cobalt" | "success" | "warning";
+  disclaimer: string;
+  offerings: {
+    title: string;
+    description: string;
+  }[];
+  engagementModel: {
+    title: string;
+    description: string;
+  }[];
+  related: RelatedLink[];
+  cta: {
+    title: string;
+    description: string;
+    primary: CtaLink;
+    secondary: CtaLink;
+  };
+}
+
 export interface IndustryPageContent {
   seo: SeoContent;
   eyebrow: string;

@@ -19,6 +19,20 @@ from awareness to trial/demo request.
 - **Pricing** — plan tiers and what's included; see
   [pricing hypotheses](pricing-hypotheses.md) (directional, not committed
   pricing).
+- **Professional Services** (`/services`, Phase 31) — ProcessPilot
+  Technologies' independent AI/cybersecurity/compliance-and-governance
+  engagements. Deliberately positioned after Products/Solutions/Pricing
+  in the nav, homepage, and sitemap priority — the company is primarily
+  a SaaS product company, secondarily a specialized-services provider
+  (see `/company`, which carries the exact company positioning
+  statement). Distinct CTAs ("Discuss a project" / consultation
+  request) from product CTAs, and its own Statement of Work/Professional
+  Services Terms, separate from the SaaS product's terms.
+- **Client Engagements** (`/engagements`, Phase 31/31A) — selected
+  named independent project engagements. An engagement here never
+  implies SaaS platform usage unless independently verified and
+  labeled; named-client content defaults to unpublished pending
+  publication approval.
 - **Security** — trust content: multi-tenancy model, data handling, SOC 2 /
   compliance posture as it becomes real (never fabricated — see
   [product principles](product-principles.md)).

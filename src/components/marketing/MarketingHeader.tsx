@@ -7,7 +7,22 @@ import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container, Stack } from "@/components/ui/Layout";
-import { primaryNav, resourcesNav, pricingNav, type NavGroup } from "@/content/site";
+import {
+  primaryNav,
+  resourcesNav,
+  pricingNav,
+  clientEngagementsNav,
+  type NavGroup,
+} from "@/content/site";
+
+// Products/Solutions/Industries render — and are read by a screen
+// reader, and appear in the mobile menu — before Pricing, which itself
+// renders before Professional Services, per the positioning
+// requirement (docs/project/phase-tracker.md's Phase 31 entry):
+// "Products remain the dominant visual and navigational identity
+// throughout."
+const productNavGroups = primaryNav.slice(0, 3);
+const servicesNavGroups = primaryNav.slice(3);
 
 function NavDropdown({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false);
@@ -95,14 +110,23 @@ export function MarketingHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
-          {primaryNav.map((group) => (
+          {productNavGroups.map((group) => (
             <NavDropdown key={group.label} group={group} />
           ))}
-          <a href={resourcesNav.href} className="text-sm font-medium text-muted hover:text-ink">
-            {resourcesNav.label}
-          </a>
           <a href={pricingNav.href} className="text-sm font-medium text-muted hover:text-ink">
             {pricingNav.label}
+          </a>
+          {servicesNavGroups.map((group) => (
+            <NavDropdown key={group.label} group={group} />
+          ))}
+          <a
+            href={clientEngagementsNav.href}
+            className="text-sm font-medium text-muted hover:text-ink"
+          >
+            {clientEngagementsNav.label}
+          </a>
+          <a href={resourcesNav.href} className="text-sm font-medium text-muted hover:text-ink">
+            {resourcesNav.label}
           </a>
         </nav>
 
@@ -135,7 +159,7 @@ export function MarketingHeader() {
       {mobileOpen ? (
         <div id="mobile-nav" className="border-t border-border bg-surface px-4 py-4 lg:hidden">
           <Stack className="gap-1">
-            {primaryNav.map((group) => {
+            {productNavGroups.map((group) => {
               const isExpanded = expandedGroup === group.label;
               return (
                 <div key={group.label} className="border-b border-border/60 py-2">
@@ -180,18 +204,69 @@ export function MarketingHeader() {
               );
             })}
             <a
-              href={resourcesNav.href}
-              className="border-b border-border/60 py-3 text-sm font-semibold text-ink"
-              onClick={() => setMobileOpen(false)}
-            >
-              {resourcesNav.label}
-            </a>
-            <a
               href={pricingNav.href}
               className="border-b border-border/60 py-3 text-sm font-semibold text-ink"
               onClick={() => setMobileOpen(false)}
             >
               {pricingNav.label}
+            </a>
+            {servicesNavGroups.map((group) => {
+              const isExpanded = expandedGroup === group.label;
+              return (
+                <div key={group.label} className="border-b border-border/60 py-2">
+                  <div className="flex items-center justify-between">
+                    <a
+                      href={group.href}
+                      className="text-sm font-semibold text-ink"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {group.label}
+                    </a>
+                    <button
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-controls={`mobile-group-${group.label}`}
+                      aria-label={`Toggle ${group.label} submenu`}
+                      onClick={() => setExpandedGroup(isExpanded ? null : group.label)}
+                      className="rounded-full p-1.5 text-muted"
+                    >
+                      <ChevronDown
+                        size={16}
+                        aria-hidden="true"
+                        className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  </div>
+                  {isExpanded ? (
+                    <div id={`mobile-group-${group.label}`} className="mt-2 grid gap-2 pl-2">
+                      {group.items.map((item) => (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          className="text-sm text-muted hover:text-ink"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+            <a
+              href={clientEngagementsNav.href}
+              className="border-b border-border/60 py-3 text-sm font-semibold text-ink"
+              onClick={() => setMobileOpen(false)}
+            >
+              {clientEngagementsNav.label}
+            </a>
+            <a
+              href={resourcesNav.href}
+              className="border-b border-border/60 py-3 text-sm font-semibold text-ink"
+              onClick={() => setMobileOpen(false)}
+            >
+              {resourcesNav.label}
             </a>
             <Link
               href={"/app/sign-in" as Route}

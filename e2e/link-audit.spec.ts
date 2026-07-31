@@ -39,6 +39,12 @@ const publicRoutes = [
   "/start-trial",
   "/privacy",
   "/terms",
+  "/services",
+  "/services/ai",
+  "/services/cybersecurity",
+  "/services/compliance-governance",
+  "/engagements",
+  "/request-consultation",
 ];
 
 for (const route of publicRoutes) {

@@ -53,6 +53,12 @@ const publicRoutes = [
   "/legal/professional-services-terms",
   "/legal/statement-of-work-template",
   "/legal/independent-contractor-template",
+  "/services",
+  "/services/ai",
+  "/services/cybersecurity",
+  "/services/compliance-governance",
+  "/engagements",
+  "/request-consultation",
 ];
 
 for (const route of publicRoutes) {
