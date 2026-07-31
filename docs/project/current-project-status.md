@@ -5,28 +5,30 @@ document is updated whenever a phase's status changes — it is a snapshot,
 not a plan; see [phase-tracker.md](phase-tracker.md) for entry/exit
 criteria and [milestones.md](milestones.md) for the outcome-level grouping.
 
-**Last updated:** 2026-07-30.
+**Last updated:** 2026-07-31.
 
 ## Where we are
 
 - **Current milestone:** [Milestone 2 — Core Platform](milestone-2-core-platform.md),
   In Progress. Milestone 3 (Execution governance) and Milestone 4
   (Intelligence) are both complete; Milestone 5 (Commercial readiness)
-  is progressing via Phases 16–29 (Phase 24, Complete QA, was skipped in
+  is progressing via Phases 16–30 (Phase 24, Complete QA, was skipped in
   sequence per explicit direction and remains `Not Started` — see the
   phase tracker's own note on this gap).
-- **Current phase:** Phase 29 — Final Product, Brand, UX, and Design
-  Audit, complete on `feature/phase-29-final-audit`; Phase 30 (Product
-  and Corporate Release Readiness) is next. Phase 26's own exit
-  criterion (a real deployment/rollback cycle) remains blocked pending
-  real Vercel/Supabase/Clerk production account provisioning — see the
-  phase tracker.
+- **Current phase:** Phase 30 — Product and Corporate Release Readiness,
+  complete for the product track on `feature/phase-30-release-readiness`
+  (verdict: **CONDITIONAL GO** — see
+  [release-readiness-2026-07.md](release-readiness-2026-07.md));
+  corporate-website track not applicable until Phase 31/31A ship, which
+  is next. Phase 26's own exit criterion (a real deployment/rollback
+  cycle) remains blocked pending real Vercel/Supabase/Clerk production
+  account provisioning — see the phase tracker.
 - **Milestone 1 (Foundation):** In Progress — Phases -1 through 3 all have
   shipped implementation; Phase -1 is `Complete`, Phases 0–3 remain
   `In Progress` pending a Vercel-preview visual/WCAG review step (blocked on
   a platform-configuration issue noted in the phase tracker, not on
   outstanding implementation work).
-- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, and 29**
+- **Phases 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, and 30**
   (business onboarding/employee management, knowledge management,
   process builder, workflow execution engine, forms and evidence,
   approvals/SLAs/escalations, exceptions/CAPA, training/certifications,
@@ -36,21 +38,24 @@ criteria and [milestones.md](milestones.md) for the outcome-level grouping.
   reliability and observability, legal/privacy/trust/commercial
   readiness, production infrastructure and deployment, internal support
   and platform administration, the production-safe SaaS demo workspace,
-  the final product/brand/UX/design audit) are `Complete` per the phase
-  tracker — Phase 9 merged via PR #12 (commit `5427118`); Phase 10
-  merged via PR #13; Phase 11 merged via PR #14; Phase 12 merged via PR
-  #15; Phase 13 merged via PR #16; Phase 14 merged via PR #17; Phase 15
-  merged via PR #18; Phase 16 merged via PR #19; Phase 17 merged via PR
-  #20; Phase 18 merged via the `feature/phase-18-integrations` and
+  the final product/brand/UX/design audit, product and corporate release
+  readiness) are `Complete` per the phase tracker (Phase 30 complete for
+  its product track only — see above) — Phase 9 merged via PR #12
+  (commit `5427118`); Phase 10 merged via PR #13; Phase 11 merged via PR
+  #14; Phase 12 merged via PR #15; Phase 13 merged via PR #16; Phase 14
+  merged via PR #17; Phase 15 merged via PR #18; Phase 16 merged via PR
+  #19; Phase 17 merged via PR #20; Phase 18 merged via the
+  `feature/phase-18-integrations` and
   `feature/phase-18-integrations-api-webhooks` PRs; Phase 19 merged via
   PR #23; Phase 20 merged via PR #24; Phase 21 merged via PR #26;
   Phase 22 merged via PR #27; Phase 23 merged via PR #29; Phase 24
   (Complete QA) remains `Not Started`; Phase 25 merged via PR #30;
   Phase 26 merged via PR #31; Phase 27 merged via PR #32; Phase 28
-  merged via PR #33; Phase 29's implementation is complete on
-  `feature/phase-29-final-audit`, pending its PR merge. Phase 4
-  (database and tenant isolation) remains recorded as `In Progress` in
-  the tracker; this document does not re-audit that status.
+  merged via PR #33; Phase 29 merged via PR #34; Phase 30's
+  implementation is complete on `feature/phase-30-release-readiness`,
+  pending its PR merge. Phase 4 (database and tenant isolation) remains
+  recorded as `In Progress` in the tracker; this document does not
+  re-audit that status.
 
 ## What's built
 
@@ -361,6 +366,18 @@ platform-admin.ts`). Routes: `/app/platform-admin/*`. See
   [final-audit-2026-07.md](final-audit-2026-07.md) for the full report,
   including the professional-services-positioning checks deferred until
   Phase 31/31A ship.
+- Product and corporate release readiness (Phase 30, complete for the
+  product track): a full capability classification (production
+  verified/credential-gated/staging-only/mocked/deferred/blocked/not
+  implemented) across every phase, and a formal
+  **CONDITIONAL GO** verdict for the product — code-complete and
+  internally consistent, gated on seven concrete, non-engineering items
+  (real production accounts, live-Postgres RLS proof, real provider
+  credentials, committed pricing, Phase 24 QA, a real deploy/rollback
+  cycle, attorney review). See
+  [release-readiness-2026-07.md](release-readiness-2026-07.md) for the
+  full report. The corporate-website track has no verdict yet — Phase
+  31/31A haven't shipped.
 - CI: format/lint/typecheck/unit-test/build gate (`ci.yml`), CodeQL +
   secret scanning + dependency review (`security.yml`), Playwright smoke
   tests against Vercel previews (`preview-checks.yml`), plus the
@@ -412,25 +429,28 @@ platform-admin.ts`). Routes: `/app/platform-admin/*`. See
 
 ## Immediate next steps
 
-1. Provision a Supabase project (dev + preview) — manual dashboard step,
-   see [supabase-setup.md](../development/supabase-setup.md). Blocks
-   applying the committed migrations, regenerating real database types,
-   and running the live-DB tenant-isolation tests for real.
-2. Supply a real `ANTHROPIC_API_KEY`, `EMAIL_PROVIDER_API_KEY`/
+Per [release-readiness-2026-07.md](release-readiness-2026-07.md)'s
+Phase 30 checklist (product track — see that report for full detail):
+
+1. Provision real Vercel/Supabase/Clerk production projects and a
+   registered domain (Phase 26's own unmet exit criterion).
+2. Apply the committed migrations to a real Postgres instance and run
+   `tenant-isolation.integration.test.ts` for real — the single
+   highest-severity unverified claim in the codebase.
+3. Supply real `ANTHROPIC_API_KEY`, `EMAIL_PROVIDER_API_KEY`/
    `EMAIL_FROM_ADDRESS`, and `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`
-   (Codespaces/CI/Vercel secrets, per
-   [environment-variables.md](../development/environment-variables.md))
-   to verify live AI output, email delivery, and billing for real, then
-   re-run the Phase 13, Phase 16, and Phase 17 test suites against them.
-3. Commit real pricing (promote `product/pricing-hypotheses.md` out of
-   "hypotheses" per its own open questions) and update
-   `src/lib/billing/plans.ts`'s `PLAN_ENTITLEMENTS` and the
-   `STRIPE_PRICE_ID_*` environment variables accordingly — see
+   (per [environment-variables.md](../development/environment-variables.md))
+   and verify each end-to-end.
+4. Commit real pricing (promote `product/pricing-hypotheses.md` out of
+   "hypotheses") and update `src/lib/billing/plans.ts`'s
+   `PLAN_ENTITLEMENTS` and `STRIPE_PRICE_ID_*` accordingly — see
    [billing-architecture.md](../architecture/billing-architecture.md).
-4. Verify SSO against a real Clerk organization with Enterprise
-   Connections enabled (may require a Clerk plan upgrade) before
-   relying on `/app/sso` in production.
-5. Begin Phase 19 (external portal) on `feature/phase-19-external-portal`.
+5. Perform Phase 24 (Complete QA) — still `Not Started`.
+6. Execute a real deployment and rollback cycle at least once.
+7. Obtain attorney review of every legal document currently labeled
+   draft.
+8. Begin Phase 31 (Corporate Product and Services Website) on
+   `feature/phase-31-corporate-website`.
 
 ## Known risks carried forward
 
@@ -440,9 +460,15 @@ platform-admin.ts`). Routes: `/app/platform-admin/*`. See
   live Postgres engine until a Supabase project exists; the live-DB
   `tenant-isolation.integration.test.ts` suite must actually run (not just
   compile) before Phase 4 can be considered proven, not just written.
-- Vercel preview/visual review has been blocked since Phase 1 by a
-  platform-configuration issue unrelated to application code — carried
-  forward, not yet resolved.
+- Vercel preview **deployment itself** is no longer blocked — every
+  phase since at least Phase 22 has shipped a passing "Smoke test
+  Vercel preview" CI check against a real, successfully deployed
+  preview URL (see any recent PR, e.g. #30–#34). What genuinely remains
+  outstanding is a **dedicated human visual/WCAG walkthrough** of that
+  preview for Phases 0–3 specifically, which has not been performed —
+  the phase tracker's Phase 0–3 entries should be re-evaluated against
+  this corrected understanding rather than assumed still blocked on
+  Vercel connectivity.
 
 ## Related documents
 
