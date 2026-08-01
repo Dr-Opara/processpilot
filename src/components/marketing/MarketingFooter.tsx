@@ -44,7 +44,9 @@ export function MarketingFooter() {
       </Container>
       <div className="border-t border-border/70">
         <Container className="flex flex-col gap-3 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <Text className="text-sm text-muted">© 2026 ProcessPilot. All rights reserved.</Text>
+          <Text className="text-sm text-muted">
+            © 2026 ProcessPilot Technologies LLC. All rights reserved.
+          </Text>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {legalLinks.map((link) => (
               <a key={link.href} href={link.href} className="hover:text-ink">
