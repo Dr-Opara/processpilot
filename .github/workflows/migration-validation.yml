@@ -1,0 +1,104 @@
+name: Migration validation
+
+# Applies supabase/migrations/*.sql, in order, to a throwaway Postgres
+# service container (an isolated CI service per this repo's remote-first
+# rules — never a locally-required database), then runs the live-DB
+# integration suites against it. This is the first time in this
+# project's history that the migration sequence and the RLS policies it
+# creates have been proven against a real running Postgres engine rather
+# than only statically (src/lib/db/schema-coverage.test.ts) or by code
+# review — see docs/operations/production-configuration-matrix.md's
+# "could not verify" list.
+#
+# This does not touch any real Supabase project. It never runs against
+# anything but this job's own ephemeral container, which is destroyed
+# when the job ends.
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/ci/**"
+      - "src/lib/db/**"
+      - "src/lib/jobs/**"
+      - ".github/workflows/migration-validation.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "supabase/migrations/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migration-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  migrate-and-verify:
+    name: Apply migrations and run live-DB tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SUPABASE_DB_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bootstrap Supabase-equivalent roles and storage stub
+        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/ci/bootstrap-roles.sql
+
+      - name: Apply migrations in order (clean database)
+        run: |
+          set -euo pipefail
+          for f in $(ls supabase/migrations/*.sql | sort); do
+            echo "::group::Applying $f"
+            psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+            echo "::endgroup::"
+          done
+
+      - name: Live tenant-isolation and background-job integration tests
+        run: npm run test:integration
+
+      - name: Generate types from the migrated schema
+        run: npx supabase gen types typescript --db-url "$SUPABASE_DB_URL" --schema public > /tmp/generated.database.types.ts
+
+      - name: Compare generated types against committed database.types.ts
+        run: |
+          if ! diff -u src/lib/db/database.types.ts /tmp/generated.database.types.ts > /tmp/types.diff; then
+            echo "::warning::src/lib/db/database.types.ts differs from the schema supabase/migrations/*.sql actually produces. See the uploaded 'generated-database-types' artifact and docs/development/database-migrations.md."
+            cat /tmp/types.diff
+          else
+            echo "database.types.ts matches the migrated schema exactly."
+          fi
+
+      - name: Upload freshly-generated types
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-database-types
+          path: /tmp/generated.database.types.ts
+          retention-days: 14

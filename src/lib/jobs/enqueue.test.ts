@@ -7,7 +7,7 @@ vi.mock("server-only", () => ({}));
 function fakeJobsSql() {
   return createFakeSql([
     {
-      match: (t) => t.includes("insert into background_jobs"),
+      match: (t) => t.includes("enqueue_background_job"),
       respond: (values) => [
         {
           id: "job-1",
@@ -81,7 +81,7 @@ describe("enqueueJob", () => {
     expect(job.max_attempts).toBe(3);
   });
 
-  it("uses an on-conflict upsert so re-enqueueing the same idempotency key doesn't error", async () => {
+  it("calls the enqueue_background_job() security-definer function so re-enqueueing the same idempotency key doesn't error", async () => {
     const fake = fakeJobsSql();
 
     await enqueueJob(asTransactionSql(fake), "org-1", {
@@ -90,7 +90,6 @@ describe("enqueueJob", () => {
       idempotencyKey: "notify:3",
     });
 
-    expect(fake.calls[0].text).toContain("on conflict");
-    expect(fake.calls[0].text).toContain("organization_id, idempotency_key");
+    expect(fake.calls[0].text).toContain("enqueue_background_job");
   });
 });

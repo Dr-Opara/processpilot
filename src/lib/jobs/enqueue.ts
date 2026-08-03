@@ -21,17 +21,22 @@ export async function enqueueJob(
   organizationId: string,
   input: EnqueueJobInput,
 ): Promise<BackgroundJobRow> {
+  // Calls enqueue_background_job() (supabase/migrations/
+  // 20260810000004_enqueue_background_job_function.sql) rather than a raw
+  // `insert ... on conflict do update` — PostgreSQL's RLS requires the
+  // ON CONFLICT arbiter's conflict-detection scan to satisfy the table's
+  // SELECT policy, which background_jobs' deliberately-restrictive
+  // SELECT policy (diagnostics only, gated on workflow.manage) fails for
+  // an ordinary enqueuer even on a genuinely fresh insert. The
+  // security-definer function enforces the one invariant that matters
+  // (organization_id must match the caller's own) itself, bypassing that
+  // RLS/ON CONFLICT interaction entirely.
   const [job] = await sql<BackgroundJobRow[]>`
-    insert into background_jobs (
-      organization_id, job_type, payload, idempotency_key, priority, scheduled_at, max_attempts
-    ) values (
+    select * from enqueue_background_job(
       ${organizationId}, ${input.jobType}, ${sql.json(input.payload as unknown as postgres.JSONValue)},
       ${input.idempotencyKey}, ${input.priority ?? 0}, ${input.scheduledAt ?? new Date()},
       ${input.maxAttempts ?? 5}
     )
-    on conflict (organization_id, idempotency_key)
-    do update set updated_at = background_jobs.updated_at
-    returning *
   `;
   return job;
 }
