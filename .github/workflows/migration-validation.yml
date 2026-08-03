@@ -80,6 +80,11 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Diagnostic - table privileges snapshot
+        run: |
+          psql "$SUPABASE_DB_URL" -c "select grantee, table_name, privilege_type from information_schema.role_table_grants where table_name = 'background_jobs' order by grantee, privilege_type;"
+          psql "$SUPABASE_DB_URL" -c "select rolname, rolsuper, rolinherit, rolbypassrls from pg_roles where rolname in ('postgres','authenticated','anon','service_role');"
+
       - name: Live tenant-isolation and background-job integration tests
         run: npm run test:integration
 

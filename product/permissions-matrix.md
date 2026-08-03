@@ -28,6 +28,7 @@ touches a protected resource — never through UI visibility alone. See
 | `process.edit`           | Edit draft processes.                                                     |
 | `process.review`         | Review processes submitted for approval.                                  |
 | `process.publish`        | Publish a new version of a process.                                       |
+| `process.manage`         | Archive/restore a process and edit its metadata (category, tags, scope, SLA, effective dates) — distinct from editing a draft version's content. |
 | `workflow.start`         | Start a new workflow instance from a published process.                   |
 | `workflow.assign`        | Assign a workflow or its tasks to members, teams, or external users.      |
 | `workflow.complete`      | Complete tasks within an assigned workflow.                               |
@@ -97,6 +98,7 @@ via a custom role if `role.manage` is used to do so.
 | process.edit           |                    | ✓                  | Scoped        |         |               |         |               |
 | process.review         |                    | ✓                  | Scoped        |         |               |         |               |
 | process.publish        |                    |                    | Scoped        |         |               |         |               |
+| process.manage         | ✓                  | ✓                  | Scoped        |         |               |         |               |
 | workflow.start         |                    | ✓                  | Scoped        | Scoped  |               |         |               |
 | workflow.assign        |                    | ✓                  | Scoped        | Scoped  |               |         |               |
 | workflow.complete      |                    |                    |               | Scoped  | ✓             |         | Scoped        |

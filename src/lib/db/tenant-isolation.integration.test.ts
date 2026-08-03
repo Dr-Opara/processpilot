@@ -391,6 +391,8 @@ describe.skipIf(!sql)("tenant isolation (live Supabase Postgres)", () => {
         "team.manage",
         "knowledge.view",
         "process.view",
+        "process.manage",
+        "form.view",
         "training.view",
         "analytics.view",
         "audit.view",
