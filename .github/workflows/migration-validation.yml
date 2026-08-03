@@ -80,41 +80,6 @@ jobs:
             echo "::endgroup::"
           done
 
-      - name: Diagnostic - table privileges snapshot
-        run: |
-          psql "$SUPABASE_DB_URL" -c "select grantee, table_name, privilege_type from information_schema.role_table_grants where table_name = 'background_jobs' order by grantee, privilege_type;"
-          psql "$SUPABASE_DB_URL" -c "select rolname, rolsuper, rolinherit, rolbypassrls from pg_roles where rolname in ('postgres','authenticated','anon','service_role');"
-
-      - name: Diagnostic - reproduce enqueueJob's ON CONFLICT DO UPDATE path directly
-        run: |
-          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
-          begin;
-          insert into organizations (clerk_org_id, name, slug) values ('diag_org', 'Diag Org', 'diag-org') returning id \gset org_
-          insert into profiles (clerk_user_id, email) values ('diag_user', 'diag@test.test') returning id \gset prof_
-          insert into organization_members (organization_id, profile_id, clerk_membership_id, status)
-            values (:'org_id', :'prof_id', 'diag_mem', 'active') returning id \gset mem_
-          commit;
-
-          begin;
-          select set_config('request.jwt.claims', json_build_object('sub','diag_user','org_id',:'org_id','member_id',:'mem_id')::text, true);
-          set local role authenticated;
-          select current_setting('request.jwt.claims', true) as claims;
-          insert into background_jobs (organization_id, job_type, payload, idempotency_key, priority, scheduled_at, max_attempts)
-            values (:'org_id', 'diag', '{}', 'diag-key', 0, now(), 5)
-            on conflict (organization_id, idempotency_key) do update set updated_at = background_jobs.updated_at
-            returning id, organization_id, status;
-          commit;
-
-          begin;
-          select set_config('request.jwt.claims', json_build_object('sub','diag_user','org_id',:'org_id','member_id',:'mem_id')::text, true);
-          set local role authenticated;
-          insert into background_jobs (organization_id, job_type, payload, idempotency_key, priority, scheduled_at, max_attempts)
-            values (:'org_id', 'diag', '{}', 'diag-key', 0, now(), 5)
-            on conflict (organization_id, idempotency_key) do update set updated_at = background_jobs.updated_at
-            returning id, organization_id, status;
-          commit;
-          SQL
-
       - name: Live tenant-isolation and background-job integration tests
         run: npm run test:integration
 
