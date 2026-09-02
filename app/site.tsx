@@ -142,7 +142,8 @@ function Header() {
     <header>
       <div className="utility">
         <span>STRATEGY. ENGINEERING. SECURITY.</span>
-        <Link href="/contracting">Contracting & Partnerships</Link>
+        <a href="mailto:info@processpilottech.com">info@processpilottech.com</a>
+        <a href="tel:+13467454398">(346) 745-4398</a>
       </div>
       <div className="nav">
         <Brand />
