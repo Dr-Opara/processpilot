@@ -5,6 +5,7 @@ export const pages = [
   "capabilities",
   "industries",
   "contracting",
+  "clients",
   "client-engagements",
   "insights",
   "about",
@@ -149,9 +150,15 @@ function Header() {
         <Brand />
         <nav className="desktopNav" aria-label="Primary navigation">
           {nav.map(([l, h]) => (
-            <Link key={h} href={h}>
-              {l}
-            </Link>
+            h === "/contracting" ? (
+              <details className="navDropdown" key={h}>
+                <summary>{l}</summary>
+                <div>
+                  <Link href="/contracting">Contracting</Link>
+                  <Link href="/clients">Clients</Link>
+                </div>
+              </details>
+            ) : <Link key={h} href={h}>{l}</Link>
           ))}
         </nav>
         <details className="mobileMenu">
@@ -160,9 +167,13 @@ function Header() {
           </summary>
           <nav aria-label="Mobile navigation">
             {nav.map(([l, h]) => (
-              <Link key={h} href={h}>
-                {l}
-              </Link>
+              h === "/contracting" ? (
+                <div className="mobileContractGroup" key={h}>
+                  <span>{l}</span>
+                  <Link href="/contracting">Contracting</Link>
+                  <Link href="/clients">Clients</Link>
+                </div>
+              ) : <Link key={h} href={h}>{l}</Link>
             ))}
             <Link href="/contact">Contact</Link>
             <Link href="/discuss-a-project">Discuss a Project</Link>
@@ -632,6 +643,44 @@ function Engagements() {
     </>
   );
 }
+function Clients() {
+  return (
+    <>
+      <Hero
+        eye="Contracts / Clients"
+        title="Clients and organizations we have supported."
+        text="Selected delivery experience across federal, defense, financial, healthcare, and technology environments."
+      />
+      <section className="wrap">
+        <div className="notice">
+          <b>Relationship disclosure</b>
+          <p>Experience shown below may have been delivered directly, independently, through prior employment, or through a prime or delivery partner. It does not imply endorsement, an active contract, or a direct ProcessPilot client relationship in every case.</p>
+        </div>
+        <div className="clientWorkGrid">
+          {[
+            ["Federal Maritime Commission", "Federal agency end client", "Cybersecurity current-state assessment support, authorization and evidence-gap analysis, risk documentation, Zero Trust review, and security-tool assessment activities."],
+            ["Massed Compute", "Independent contract engagement", "FedRAMP-oriented cybersecurity assessment, readiness analysis, compliance advisory, and security documentation support."],
+            ["PiTech Solutions", "Prime / delivery partner", "Cybersecurity assessment collaboration, federal delivery coordination, evidence review, and client-facing compliance support."],
+            ["U.S. Department of Justice", "Federal agency end client", "Cybersecurity governance, RMF and authorization support, continuous monitoring, POA&M management, cloud and SaaS security, and responsible AI governance experience."],
+            ["U.S. Army / DISA / Defense Health Agency", "Federal agency end clients", "DoD RMF, security controls, STIG and vulnerability-management support, infrastructure security, and mission-assurance experience."],
+            ["U.S. Department of State / CISA", "Federal agency end clients", "Public-sector AI, cybersecurity, program delivery, governance, and mission-support experience."],
+            ["Bank of America", "Prior contractor engagement", "Enterprise technology delivery, program coordination, Agile execution, risk-aware modernization, and cross-functional delivery experience."],
+            ["Booz Allen Hamilton", "Prior contractor engagement", "Federal consulting, cybersecurity program support, delivery coordination, and mission-focused technology experience."],
+            ["MedStar Health", "Prior contractor engagement", "Healthcare technology delivery, enterprise coordination, workflow improvement, and regulated-environment experience."],
+          ].map(([name, relationship, work]) => (
+            <article key={name}>
+              <span className="status">{relationship}</span>
+              <h2>{name}</h2>
+              <p>{work}</p>
+            </article>
+          ))}
+        </div>
+        <p className="fine">Confidential, proprietary, system-specific, and contract-sensitive details are intentionally excluded. No organization logo or government seal is used, and no endorsement is implied.</p>
+      </section>
+      <CTA />
+    </>
+  );
+}
 function Insights() {
   return (
     <>
@@ -937,6 +986,7 @@ export function SitePage({ page }: { page: PageKey }) {
     capabilities: <Capabilities />,
     industries: <Industries />,
     contracting: <Contracting />,
+    clients: <Clients />,
     "client-engagements": <Engagements />,
     insights: <Insights />,
     about: <About />,
