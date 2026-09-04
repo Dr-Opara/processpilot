@@ -196,21 +196,24 @@ function Footer() {
           </Link>
           <p>Strategy. Engineering. Security.</p>
           <p className="fine">
-            <strong>Headquarters</strong>
+            <strong>Texas Office</strong>
             <br />
             24044 Cinco Village Center Blvd, Suite 100
             <br />
             Katy, TX 77494
             <br />
+            <a href="tel:+13467454398">346-745-4398</a>
             <br />
-            <strong>DC Office</strong>
+            <br />
+            <strong>Washington DC Office</strong>
             <br />
             1629 K St NW, Suite 300
             <br />
             Washington, DC 20006
             <br />
+            <a href="tel:+12023868322">202-386-8322</a>
             <br />
-            <a href="tel:+13467454398">(346) 745-4398</a> ·{" "}
+            <br />
             <a href="mailto:info@processpilottech.com">
               info@processpilottech.com
             </a>
@@ -795,27 +798,30 @@ function Simple({
           text="For projects, procurement, partnerships, and teaming opportunities, contact our team."
         />
         <section className="wrap prose">
-          <h2>Headquarters</h2>
+          <h2>Texas Office</h2>
           <p>
             ProcessPilot Technologies LLC
             <br />
             24044 Cinco Village Center Blvd, Suite 100
             <br />
             Katy, TX 77494
+            <br />
+            <a href="tel:+13467454398">346-745-4398</a>
           </p>
-          <h2>DC Office</h2>
+          <h2>Washington DC Office</h2>
           <p>
             ProcessPilot Technologies LLC
             <br />
             1629 K St NW, Suite 300
             <br />
             Washington, DC 20006
+            <br />
+            <a href="tel:+12023868322">202-386-8322</a>
           </p>
           <p>
             <a href="mailto:info@processpilottech.com">
               info@processpilottech.com
-            </a>{" "}
-            · <a href="tel:+13467454398">(346) 745-4398</a>
+            </a>
           </p>
           <h2>Service areas</h2>
           <p>
