@@ -191,8 +191,9 @@ function Footer() {
     <footer>
       <div className="footer">
         <div>
-          <Link href="/" className="footerWordmark">
-            PROCESSPILOT
+          <Link href="/" className="footerWordmark" aria-label="ProcessPilot Technologies home">
+            <span>PROCESSPILOT</span>
+            <small>TECHNOLOGIES</small>
           </Link>
           <p>Strategy. Engineering. Security.</p>
           <p className="fine">
