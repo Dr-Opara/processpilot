@@ -143,7 +143,7 @@ function Header() {
     <header>
       <div className="utility">
         <span>STRATEGY. ENGINEERING. SECURITY.</span>
-        <a href="mailto:info@processpilottech.com">info@processpilottech.com</a>
+        <a href="mailto:contact@processpilottech.com">contact@processpilottech.com</a>
         <a href="tel:+13467454398">(346) 745-4398</a>
       </div>
       <div className="nav">
@@ -215,8 +215,8 @@ function Footer() {
             <a href="tel:+12023868322">202-386-8322</a>
             <br />
             <br />
-            <a href="mailto:info@processpilottech.com">
-              info@processpilottech.com
+            <a href="mailto:contact@processpilottech.com">
+              contact@processpilottech.com
             </a>
           </p>
         </div>
@@ -495,8 +495,8 @@ function Contracting() {
             Nationwide delivery
           </p>
           <p>
-            <a href="mailto:info@processpilottech.com">
-              info@processpilottech.com
+            <a href="mailto:contact@processpilottech.com">
+              contact@processpilottech.com
             </a>
             <br />
             (346) 745-4398
@@ -771,9 +771,9 @@ function Form() {
       <section className="wrap directContact">
         <div>
           <p className="eyebrow">Email</p>
-          <h2><a href="mailto:info@processpilottech.com">info@processpilottech.com</a></h2>
+          <h2><a href="mailto:contact@processpilottech.com">contact@processpilottech.com</a></h2>
           <p className="large">Send a short description of your organization, project, desired timeline, and the best way to reach you.</p>
-          <a className="btn" href="mailto:info@processpilottech.com?subject=ProcessPilot%20Project%20Inquiry">Email ProcessPilot</a>
+          <a className="btn" href="mailto:contact@processpilottech.com?subject=ProcessPilot%20Project%20Inquiry">Email ProcessPilot</a>
         </div>
         <div>
           <p className="eyebrow">Phone</p>
@@ -820,8 +820,8 @@ function Simple({
             <a href="tel:+12023868322">202-386-8322</a>
           </p>
           <p>
-            <a href="mailto:info@processpilottech.com">
-              info@processpilottech.com
+            <a href="mailto:contact@processpilottech.com">
+              contact@processpilottech.com
             </a>
           </p>
           <h2>Service areas</h2>
@@ -870,8 +870,8 @@ function Simple({
           <p>
             You may request access, correction, or deletion of information you
             submitted by contacting{" "}
-            <a href="mailto:info@processpilottech.com">
-              info@processpilottech.com
+            <a href="mailto:contact@processpilottech.com">
+              contact@processpilottech.com
             </a>
             . We may retain limited records when legally required or necessary
             to protect our rights.
@@ -937,8 +937,8 @@ function Simple({
           <h2>Changes and contact</h2>
           <p>
             We may update this website and these terms. Questions may be sent to{" "}
-            <a href="mailto:info@processpilottech.com">
-              info@processpilottech.com
+            <a href="mailto:contact@processpilottech.com">
+              contact@processpilottech.com
             </a>
             .
           </p>
@@ -965,8 +965,8 @@ function Simple({
         <p>
           If you believe you have identified a security issue affecting this
           website, email{" "}
-          <a href="mailto:info@processpilottech.com">
-            info@processpilottech.com
+          <a href="mailto:contact@processpilottech.com">
+            contact@processpilottech.com
           </a>{" "}
           with a clear description and steps to reproduce it. Do not access,
           alter, retain, or disclose data that does not belong to you.
