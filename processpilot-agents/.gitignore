@@ -1,0 +1,5 @@
+dist/server/
+dist/.openai/
+*.private.json
+*.plaintext.json
+.env*
