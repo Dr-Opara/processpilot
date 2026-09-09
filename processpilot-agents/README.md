@@ -16,4 +16,8 @@ See OPERATIONS.md for scope, roles, approvals, schema and the exact encrypted pu
 
 ## Integration boundary
 
-Gmail/GitHub are connected to the scheduled ChatGPT workflow, not exposed as browser credentials. Web search, document creation, PDF review and spreadsheet tools are assigned per role. Procurement portals requiring licenses or login remain explicitly blocked until access is provided. No additional paid model API or n8n subscription is configured.
+Gmail/GitHub connections belong to the scheduled ChatGPT workflow, not the browser. They must be available in the active workspace; repository configuration alone does not establish a live connection. Web search, document creation, PDF review and spreadsheet tools are assigned per role. Procurement portals requiring licenses or login remain explicitly blocked until access is provided. No additional paid model API or n8n subscription is configured.
+
+## Recovery status
+
+The source was recovered from branch `processpilot-agents` and is tracked in draft PR #43. The original Site ID remains in `.openai/hosting.json`; the active workspace currently returns `project_not_found` for it. Do not replace that identity or claim publication until access is restored. The private feed key is not in this repository and must remain private. Gmail must be connected and its mailbox verified before enabling the separate review event automation. The hourly procurement task is enabled, but that setting alone does not verify execution or successful feed publication.
