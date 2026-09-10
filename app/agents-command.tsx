@@ -39,7 +39,7 @@ const TASKS = [
   'Comparing requirements to capabilities',
   'Extracting submission deadline',
   'Checking incumbent and award history',
-  'Preparing opportunity brief for ME',
+  'Preparing opportunity brief for Opara',
 ];
 
 const STATUS: AgentStatus[] = ['Searching','Searching','Reviewing','Qualifying','Searching','Escalating'];
@@ -72,7 +72,7 @@ export default function AgentsCommand() {
   const [filter, setFilter] = useState('All');
   const [activity, setActivity] = useState([
     'TX Agent found a high-fit AI governance opportunity.',
-    'VA Agent escalated a cybersecurity solicitation to ME.',
+    'VA Agent escalated a cybersecurity solicitation to Opara.',
     'CA Agent is extracting requirements from a 62-page RFP.',
     'FL Agent completed a no-bid decision and resumed searching.',
     'NY Agent matched a solicitation to ProcessPilot Secure AI capabilities.',
@@ -104,47 +104,63 @@ export default function AgentsCommand() {
   function decide(id: number, status: 'Approved' | 'Declined') {
     setApprovals(rows => rows.map(row => row.id === id ? { ...row, status } : row));
     const item = approvals.find(row => row.id === id);
-    if (item) setActivity(items => [`ME ${status.toLowerCase()} ${item.state} — ${item.title}.`, ...items].slice(0,8));
+    if (item) setActivity(items => [`Opara ${status.toLowerCase()} ${item.state} — ${item.title}.`, ...items].slice(0,8));
   }
 
   return (
     <main className={styles.shell}>
+      <div className={styles.ambientGrid} />
       <aside className={styles.sidebar}>
         <div className={styles.brand}><span className={styles.logo}>PP</span><div><strong>ProcessPilot</strong><small>Technologies LLC</small></div></div>
+        <div className={styles.networkLabel}><span /> AGENTIC WORKFORCE NETWORK</div>
         <nav className={styles.nav}>
           <button className={styles.active}>⌂ Command Center</button>
-          <button>◎ Agents <span>50</span></button>
+          <button>◎ Agentic Employees <span>50</span></button>
           <button>◫ Opportunities <span>{opportunities}</span></button>
-          <button>✓ ME Approvals <span>{escalated}</span></button>
-          <button>↗ Activity</button>
+          <button>✓ Opara Approvals <span>{escalated}</span></button>
+          <button>↗ Activity Stream</button>
           <button>⚙ Tools & Plugins</button>
         </nav>
+        <div className={styles.cycleCard}>
+          <small>AUTOMATION CYCLE</small>
+          <strong>8 AM → 4 PM CT</strong>
+          <span>Hourly procurement intelligence</span>
+        </div>
         <div className={styles.sidebarBottom}>
           <div className={styles.systemDot}/>
-          <div><strong>Agent network online</strong><small>50 state desks active</small></div>
+          <div><strong>Agent network online</strong><small>Encrypted feeds · 50 state desks</small></div>
         </div>
       </aside>
 
       <section className={styles.workspace}>
         <header className={styles.topbar}>
-          <div><p className={styles.eyebrow}>PROCUREMENT OPERATIONS</p><h1>ProcessPilot Agents</h1><p>Autonomous contract discovery command center</p></div>
-          <div className={styles.meBadge}><span>ME</span><div><strong>Executive Review</strong><small>{escalated} items need attention</small></div></div>
+          <div><p className={styles.eyebrow}>AGENTIC OPERATIONS // LIVE COMMAND</p><h1>ProcessPilot Technologies LLC <span>— Agentic Employees</span></h1><p>Autonomous procurement workforce · monitored, governed, and observable in real time</p></div>
+          <div className={styles.meBadge}><span>O</span><div><strong>Opara</strong><small>{escalated} executive decisions pending</small></div><i /></div>
         </header>
 
+        <section className={styles.commandStrip}>
+          <div><span className={styles.pulse}/><strong>LIVE SYSTEM</strong><small>All employee telemetry synchronized</small></div>
+          <div><span>01</span><strong>DISCOVER</strong><small>Search & monitor</small></div>
+          <div><span>02</span><strong>QUALIFY</strong><small>Score & analyze</small></div>
+          <div><span>03</span><strong>BUILD</strong><small>Draft & package</small></div>
+          <div><span>04</span><strong>APPROVE</strong><small>Opara checkpoint</small></div>
+        </section>
+
         <section className={styles.metrics}>
-          <article><span>ACTIVE AGENTS</span><strong>50</strong><small>All states covered</small></article>
+          <article><span>ACTIVE EMPLOYEES</span><strong>50</strong><small>All states covered</small></article>
           <article><span>SEARCHING NOW</span><strong>{searching}</strong><small>Procurement portals</small></article>
-          <article><span>IN REVIEW</span><strong>{reviewing}</strong><small>Reading & qualifying</small></article>
-          <article><span>OPPORTUNITIES</span><strong>{opportunities}</strong><small>Tracked by agents</small></article>
-          <article className={styles.attention}><span>NEEDS ME</span><strong>{escalated}</strong><small>Awaiting decision</small></article>
+          <article><span>IN ANALYSIS</span><strong>{reviewing}</strong><small>Reading & qualifying</small></article>
+          <article><span>OPPORTUNITIES</span><strong>{opportunities}</strong><small>Tracked by workforce</small></article>
+          <article className={styles.attention}><span>OPARA QUEUE</span><strong>{escalated}</strong><small>Awaiting decision</small></article>
         </section>
 
         <div className={styles.grid}>
           <section className={styles.agentPanel}>
-            <div className={styles.panelHead}><div><h2>Agent Floor</h2><p>Each state agent owns discovery, qualification, and escalation.</p></div><div className={styles.filters}>{['All','Searching','Reviewing','Qualifying','Escalating'].map(x => <button key={x} className={filter===x?styles.filterActive:''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div>
+            <div className={styles.panelHead}><div><h2>Agentic Employee Floor</h2><p>Every employee shows current work, movement, output and handoff state.</p></div><div className={styles.filters}>{['All','Searching','Reviewing','Qualifying','Escalating'].map(x => <button key={x} className={filter===x?styles.filterActive:''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div>
             <div className={styles.agentGrid}>
               {filtered.map((agent, index) => (
                 <button key={agent.code} className={`${styles.agentCard} ${selected?.code===agent.code?styles.agentSelected:''}`} onClick={()=>setSelected(agent)}>
+                  <div className={styles.scanLine}/>
                   <div className={styles.agentTop}><span className={styles.avatar}>{agent.code}</span><span className={`${styles.status} ${statusClass(agent.status)}`}>{agent.status}</span></div>
                   <strong>{agent.state} Agent</strong>
                   <p>{agent.task}</p>
@@ -158,12 +174,12 @@ export default function AgentsCommand() {
 
           <aside className={styles.rightRail}>
             <section className={styles.livePanel}>
-              <div className={styles.panelHead}><div><h2>Live Activity</h2><p>What the team is doing now</p></div><span className={styles.live}>LIVE</span></div>
+              <div className={styles.panelHead}><div><h2>Encrypted Activity Feed</h2><p>Live workforce execution telemetry</p></div><span className={styles.live}>LIVE</span></div>
               <div className={styles.activityFeed}>{activity.map((item,i)=><div key={`${item}-${i}`}><span className={styles.feedDot}/><p>{item}</p><small>{i===0?'now':`${i*2+1}m`}</small></div>)}</div>
             </section>
 
             <section className={styles.approvals}>
-              <div className={styles.panelHead}><div><h2>ME Inbox</h2><p>Human-in-the-loop decisions</p></div><span className={styles.count}>{escalated}</span></div>
+              <div className={styles.panelHead}><div><h2>Opara Command Queue</h2><p>Human-in-the-loop executive decisions</p></div><span className={styles.count}>{escalated}</span></div>
               {approvals.map(item => (
                 <article key={item.id} className={item.status !== 'Pending' ? styles.resolved : ''}>
                   <div><span>{item.state}</span><strong>{item.fit}% fit</strong></div>
@@ -178,12 +194,12 @@ export default function AgentsCommand() {
 
       {selected && <aside className={styles.drawer}>
         <button className={styles.close} onClick={()=>setSelected(null)}>×</button>
-        <div className={styles.drawerHero}><span className={styles.bigAvatar}>{selected.code}</span><div><p>{selected.region} Region</p><h2>{selected.state} Procurement Agent</h2><span className={`${styles.status} ${statusClass(selected.status)}`}>{selected.status}</span></div></div>
+        <div className={styles.drawerHero}><span className={styles.bigAvatar}>{selected.code}</span><div><p>{selected.region} Region · Employee telemetry</p><h2>{selected.state} Procurement Agent</h2><span className={`${styles.status} ${statusClass(selected.status)}`}>{selected.status}</span></div></div>
         <section><span className={styles.sectionLabel}>CURRENT ASSIGNMENT</span><h3>{selected.task}</h3><p>Monitoring public-sector sources, reading solicitation material, checking fit against ProcessPilot Technologies capabilities, and escalating only opportunities that warrant executive review.</p></section>
         <div className={styles.agentStats}><div><strong>{selected.opportunities}</strong><span>Opportunities</span></div><div><strong>24/7</strong><span>Coverage</span></div><div><strong>{selected.lastAction}</strong><span>Last action</span></div></div>
         <section><span className={styles.sectionLabel}>TOOLS & PLUGINS</span><div className={styles.toolList}>{selected.tools.map(tool=><span key={tool}>✓ {tool}</span>)}</div></section>
-        <section><span className={styles.sectionLabel}>WORKFLOW</span><ol className={styles.workflow}><li className={styles.done}>Search procurement sources</li><li className={styles.done}>Open & read solicitation</li><li className={styles.current}>Determine ProcessPilot fit</li><li>Build opportunity brief</li><li>Escalate to ME when warranted</li></ol></section>
-        <button className={styles.primary}>Open full agent workspace →</button>
+        <section><span className={styles.sectionLabel}>WORKFLOW TRACE</span><ol className={styles.workflow}><li className={styles.done}>Search procurement sources</li><li className={styles.done}>Open & read solicitation</li><li className={styles.current}>Determine ProcessPilot fit</li><li>Build opportunity brief</li><li>Escalate to Opara when warranted</li></ol></section>
+        <button className={styles.primary}>Open full employee workspace →</button>
       </aside>}
     </main>
   );
