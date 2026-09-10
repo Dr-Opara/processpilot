@@ -42,6 +42,17 @@ const TASKS = [
   'Preparing opportunity brief for Opara',
 ];
 
+const DEPARTMENTS = [
+  { icon:'⌁', name:'Opportunity Intelligence', lead:'Scout Director', people:6, status:'SEARCHING', action:'Scanning public-sector sources and deduplicating new opportunities' },
+  { icon:'◎', name:'Procurement Operations', lead:'Procurement Director', people:8, status:'QUALIFYING', action:'Routing solicitations to the right state and subject-matter employees' },
+  { icon:'✎', name:'Proposal Studio', lead:'Proposal Lead', people:5, status:'BUILDING', action:'Generating response outlines, narratives, matrices and submission packs' },
+  { icon:'◈', name:'Compliance & Risk', lead:'Compliance Lead', people:3, status:'REVIEWING', action:'Checking clauses, forms, registrations, deadlines and mandatory requirements' },
+  { icon:'⌕', name:'Vendor Research', lead:'Research Lead', people:3, status:'RESEARCHING', action:'Analyzing buyers, incumbents, partners and agency procurement history' },
+  { icon:'↗', name:'Outreach', lead:'Engagement Lead', people:2, status:'DRAFTING', action:'Preparing approved agency, vendor and teaming communications' },
+  { icon:'∑', name:'Pricing & Finance', lead:'Pricing Analyst', people:2, status:'MODELING', action:'Building pricing scenarios, margin checks and contract value forecasts' },
+  { icon:'✓', name:'Contracts & Delivery', lead:'Engagement Manager', people:1, status:'MONITORING', action:'Tracking awards, obligations, kickoff readiness and delivery handoffs' },
+] as const;
+
 const STATUS: AgentStatus[] = ['Searching','Searching','Reviewing','Qualifying','Searching','Escalating'];
 
 const initialAgents: Agent[] = STATES.map(([state, code, region], i) => ({
@@ -73,9 +84,9 @@ export default function AgentsCommand() {
   const [activity, setActivity] = useState([
     'TX Agent found a high-fit AI governance opportunity.',
     'VA Agent escalated a cybersecurity solicitation to Opara.',
-    'CA Agent is extracting requirements from a 62-page RFP.',
-    'FL Agent completed a no-bid decision and resumed searching.',
-    'NY Agent matched a solicitation to ProcessPilot Secure AI capabilities.',
+    'Proposal Studio accepted a new work packet from Procurement Operations.',
+    'Compliance & Risk is validating mandatory submission requirements.',
+    'Vendor Research mapped an incumbent and two teaming candidates.',
   ]);
 
   useEffect(() => {
@@ -154,9 +165,32 @@ export default function AgentsCommand() {
           <article className={styles.attention}><span>OPARA QUEUE</span><strong>{escalated}</strong><small>Awaiting decision</small></article>
         </section>
 
+        <section className={styles.officeMap}>
+          <div className={styles.officeHeader}>
+            <div><span className={styles.sectionLabel}>VIRTUAL OPERATIONS FLOOR</span><h2>Agentic Departments</h2><p>Watch specialized employees work in parallel and hand deliverables across the company.</p></div>
+            <div className={styles.officeLegend}><span><i className={styles.liveDot}/> working</span><span><i className={styles.packetDot}/> work packet</span><span><i className={styles.approvalDot}/> executive gate</span></div>
+          </div>
+          <div className={styles.departmentGrid}>
+            {DEPARTMENTS.map((dept, index) => (
+              <article className={styles.departmentCard} key={dept.name}>
+                <div className={styles.deptTop}><span className={styles.deptIcon}>{dept.icon}</span><span className={styles.deptStatus}><i/>{dept.status}</span></div>
+                <h3>{dept.name}</h3><p className={styles.deptLead}>{dept.lead} · {dept.people} employees</p>
+                <p className={styles.deptAction}>{dept.action}</p>
+                <div className={styles.employeeDots}>{Array.from({length:Math.min(dept.people,8)}).map((_,i)=><span key={i} style={{animationDelay:`-${(index+i)%5}s`}} />)}</div>
+                <div className={styles.deptFooter}><span>encrypted telemetry</span><strong>ACTIVE</strong></div>
+              </article>
+            ))}
+          </div>
+          <div className={styles.handoffRail}>
+            <div className={styles.handoffLabel}>LIVE HANDOFF BUS</div>
+            <div className={styles.handoffTrack}><span className={styles.packetOne}>RFP</span><span className={styles.packetTwo}>FIT</span><span className={styles.packetThree}>DOC</span></div>
+            <div className={styles.handoffNodes}><span>SCOUT</span><span>PROCURE</span><span>PROPOSE</span><span>COMPLY</span><span>OPARA</span></div>
+          </div>
+        </section>
+
         <div className={styles.grid}>
           <section className={styles.agentPanel}>
-            <div className={styles.panelHead}><div><h2>Agentic Employee Floor</h2><p>Every employee shows current work, movement, output and handoff state.</p></div><div className={styles.filters}>{['All','Searching','Reviewing','Qualifying','Escalating'].map(x => <button key={x} className={filter===x?styles.filterActive:''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div>
+            <div className={styles.panelHead}><div><h2>State Procurement Employee Floor</h2><p>Every employee shows current work, movement, output and handoff state.</p></div><div className={styles.filters}>{['All','Searching','Reviewing','Qualifying','Escalating'].map(x => <button key={x} className={filter===x?styles.filterActive:''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div>
             <div className={styles.agentGrid}>
               {filtered.map((agent, index) => (
                 <button key={agent.code} className={`${styles.agentCard} ${selected?.code===agent.code?styles.agentSelected:''}`} onClick={()=>setSelected(agent)}>
