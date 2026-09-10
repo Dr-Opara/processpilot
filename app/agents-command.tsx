@@ -1,0 +1,240 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import styles from './agents-command.module.css';
+
+type AgentStatus = 'Searching' | 'Reviewing' | 'Qualifying' | 'Escalating' | 'Idle';
+
+type Agent = {
+  state: string;
+  code: string;
+  region: string;
+  status: AgentStatus;
+  task: string;
+  opportunities: number;
+  lastAction: string;
+  tools: string[];
+};
+
+type Approval = {
+  id: number;
+  title: string;
+  agency: string;
+  state: string;
+  due: string;
+  value: string;
+  fit: number;
+  status: 'Pending' | 'Approved' | 'Declined';
+};
+
+const STATES = [
+  ['Alabama','AL','Southeast'],['Alaska','AK','West'],['Arizona','AZ','West'],['Arkansas','AR','South'],['California','CA','West'],['Colorado','CO','Mountain'],['Connecticut','CT','Northeast'],['Delaware','DE','Mid-Atlantic'],['Florida','FL','Southeast'],['Georgia','GA','Southeast'],['Hawaii','HI','Pacific'],['Idaho','ID','Mountain'],['Illinois','IL','Midwest'],['Indiana','IN','Midwest'],['Iowa','IA','Midwest'],['Kansas','KS','Midwest'],['Kentucky','KY','South'],['Louisiana','LA','South'],['Maine','ME','Northeast'],['Maryland','MD','Mid-Atlantic'],['Massachusetts','MA','Northeast'],['Michigan','MI','Midwest'],['Minnesota','MN','Midwest'],['Mississippi','MS','South'],['Missouri','MO','Midwest'],['Montana','MT','Mountain'],['Nebraska','NE','Midwest'],['Nevada','NV','West'],['New Hampshire','NH','Northeast'],['New Jersey','NJ','Mid-Atlantic'],['New Mexico','NM','Southwest'],['New York','NY','Northeast'],['North Carolina','NC','Southeast'],['North Dakota','ND','Midwest'],['Ohio','OH','Midwest'],['Oklahoma','OK','South'],['Oregon','OR','West'],['Pennsylvania','PA','Mid-Atlantic'],['Rhode Island','RI','Northeast'],['South Carolina','SC','Southeast'],['South Dakota','SD','Midwest'],['Tennessee','TN','South'],['Texas','TX','South'],['Utah','UT','Mountain'],['Vermont','VT','Northeast'],['Virginia','VA','Mid-Atlantic'],['Washington','WA','West'],['West Virginia','WV','Appalachia'],['Wisconsin','WI','Midwest'],['Wyoming','WY','Mountain']
+] as const;
+
+const TASKS = [
+  'Scanning state procurement portal',
+  'Reviewing solicitation documents',
+  'Checking NAICS and set-aside fit',
+  'Evaluating cybersecurity scope',
+  'Comparing requirements to capabilities',
+  'Extracting submission deadline',
+  'Checking incumbent and award history',
+  'Preparing opportunity brief for Opara',
+];
+
+const DEPARTMENTS = [
+  { icon:'⌁', name:'Opportunity Intelligence', lead:'Scout Director', people:6, status:'SEARCHING', action:'Scanning public-sector sources and deduplicating new opportunities' },
+  { icon:'◎', name:'Procurement Operations', lead:'Procurement Director', people:8, status:'QUALIFYING', action:'Routing solicitations to the right state and subject-matter employees' },
+  { icon:'✎', name:'Proposal Studio', lead:'Proposal Lead', people:5, status:'BUILDING', action:'Generating response outlines, narratives, matrices and submission packs' },
+  { icon:'◈', name:'Compliance & Risk', lead:'Compliance Lead', people:3, status:'REVIEWING', action:'Checking clauses, forms, registrations, deadlines and mandatory requirements' },
+  { icon:'⌕', name:'Vendor Research', lead:'Research Lead', people:3, status:'RESEARCHING', action:'Analyzing buyers, incumbents, partners and agency procurement history' },
+  { icon:'↗', name:'Outreach', lead:'Engagement Lead', people:2, status:'DRAFTING', action:'Preparing approved agency, vendor and teaming communications' },
+  { icon:'∑', name:'Pricing & Finance', lead:'Pricing Analyst', people:2, status:'MODELING', action:'Building pricing scenarios, margin checks and contract value forecasts' },
+  { icon:'✓', name:'Contracts & Delivery', lead:'Engagement Manager', people:1, status:'MONITORING', action:'Tracking awards, obligations, kickoff readiness and delivery handoffs' },
+] as const;
+
+const STATUS: AgentStatus[] = ['Searching','Searching','Reviewing','Qualifying','Searching','Escalating'];
+
+const initialAgents: Agent[] = STATES.map(([state, code, region], i) => ({
+  state,
+  code,
+  region,
+  status: STATUS[i % STATUS.length],
+  task: TASKS[i % TASKS.length],
+  opportunities: (i * 7 + 3) % 9,
+  lastAction: `${3 + (i % 21)} min ago`,
+  tools: ['State procurement portal','SAM.gov','Google Search','Document analyzer','Opportunity scorer'],
+}));
+
+const seedApprovals: Approval[] = [
+  { id: 1, title: 'AI Governance & Risk Support', agency: 'State Technology Office', state: 'TX', due: 'Sep 24', value: '$1.2M', fit: 94, status: 'Pending' },
+  { id: 2, title: 'Cybersecurity Program Support', agency: 'Department of Administration', state: 'VA', due: 'Sep 29', value: '$840K', fit: 91, status: 'Pending' },
+  { id: 3, title: 'Secure Workflow Automation', agency: 'Health Services Agency', state: 'CA', due: 'Oct 3', value: '$650K', fit: 88, status: 'Pending' },
+];
+
+function statusClass(status: AgentStatus) {
+  return styles[`status${status}` as keyof typeof styles] || '';
+}
+
+export default function AgentsCommand() {
+  const [agents, setAgents] = useState(initialAgents);
+  const [selected, setSelected] = useState<Agent | null>(initialAgents[42]);
+  const [approvals, setApprovals] = useState(seedApprovals);
+  const [filter, setFilter] = useState('All');
+  const [activity, setActivity] = useState([
+    'TX Agent found a high-fit AI governance opportunity.',
+    'VA Agent escalated a cybersecurity solicitation to Opara.',
+    'Proposal Studio accepted a new work packet from Procurement Operations.',
+    'Compliance & Risk is validating mandatory submission requirements.',
+    'Vendor Research mapped an incumbent and two teaming candidates.',
+  ]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setAgents(current => {
+        const index = Math.floor(Math.random() * current.length);
+        const next = [...current];
+        const old = next[index];
+        const status = STATUS[Math.floor(Math.random() * STATUS.length)];
+        const task = TASKS[Math.floor(Math.random() * TASKS.length)];
+        next[index] = { ...old, status, task, lastAction: 'just now', opportunities: old.opportunities + (Math.random() > .78 ? 1 : 0) };
+        setActivity(items => [`${old.code} Agent — ${task}.`, ...items].slice(0, 8));
+        if (selected?.code === old.code) setSelected(next[index]);
+        return next;
+      });
+    }, 4200);
+    return () => window.clearInterval(timer);
+  }, [selected?.code]);
+
+  const filtered = useMemo(() => filter === 'All' ? agents : agents.filter(a => a.status === filter), [agents, filter]);
+  const searching = agents.filter(a => a.status === 'Searching').length;
+  const reviewing = agents.filter(a => a.status === 'Reviewing' || a.status === 'Qualifying').length;
+  const escalated = approvals.filter(a => a.status === 'Pending').length;
+  const opportunities = agents.reduce((sum, a) => sum + a.opportunities, 0);
+
+  function decide(id: number, status: 'Approved' | 'Declined') {
+    setApprovals(rows => rows.map(row => row.id === id ? { ...row, status } : row));
+    const item = approvals.find(row => row.id === id);
+    if (item) setActivity(items => [`Opara ${status.toLowerCase()} ${item.state} — ${item.title}.`, ...items].slice(0,8));
+  }
+
+  return (
+    <main className={styles.shell}>
+      <div className={styles.ambientGrid} />
+      <aside className={styles.sidebar}>
+        <div className={styles.brand}><span className={styles.logo}>PP</span><div><strong>ProcessPilot</strong><small>Technologies LLC</small></div></div>
+        <div className={styles.networkLabel}><span /> AGENTIC WORKFORCE NETWORK</div>
+        <nav className={styles.nav}>
+          <button className={styles.active}>⌂ Command Center</button>
+          <button>◎ Agentic Employees <span>50</span></button>
+          <button>◫ Opportunities <span>{opportunities}</span></button>
+          <button>✓ Opara Approvals <span>{escalated}</span></button>
+          <button>↗ Activity Stream</button>
+          <button>⚙ Tools & Plugins</button>
+        </nav>
+        <div className={styles.cycleCard}>
+          <small>AUTOMATION CYCLE</small>
+          <strong>8 AM → 4 PM CT</strong>
+          <span>Hourly procurement intelligence</span>
+        </div>
+        <div className={styles.sidebarBottom}>
+          <div className={styles.systemDot}/>
+          <div><strong>Agent network online</strong><small>Encrypted feeds · 50 state desks</small></div>
+        </div>
+      </aside>
+
+      <section className={styles.workspace}>
+        <header className={styles.topbar}>
+          <div><p className={styles.eyebrow}>AGENTIC OPERATIONS // LIVE COMMAND</p><h1>ProcessPilot Technologies LLC <span>— Agentic Employees</span></h1><p>Autonomous procurement workforce · monitored, governed, and observable in real time</p></div>
+          <div className={styles.meBadge}><span>O</span><div><strong>Opara</strong><small>{escalated} executive decisions pending</small></div><i /></div>
+        </header>
+
+        <section className={styles.commandStrip}>
+          <div><span className={styles.pulse}/><strong>LIVE SYSTEM</strong><small>All employee telemetry synchronized</small></div>
+          <div><span>01</span><strong>DISCOVER</strong><small>Search & monitor</small></div>
+          <div><span>02</span><strong>QUALIFY</strong><small>Score & analyze</small></div>
+          <div><span>03</span><strong>BUILD</strong><small>Draft & package</small></div>
+          <div><span>04</span><strong>APPROVE</strong><small>Opara checkpoint</small></div>
+        </section>
+
+        <section className={styles.metrics}>
+          <article><span>ACTIVE EMPLOYEES</span><strong>50</strong><small>All states covered</small></article>
+          <article><span>SEARCHING NOW</span><strong>{searching}</strong><small>Procurement portals</small></article>
+          <article><span>IN ANALYSIS</span><strong>{reviewing}</strong><small>Reading & qualifying</small></article>
+          <article><span>OPPORTUNITIES</span><strong>{opportunities}</strong><small>Tracked by workforce</small></article>
+          <article className={styles.attention}><span>OPARA QUEUE</span><strong>{escalated}</strong><small>Awaiting decision</small></article>
+        </section>
+
+        <section className={styles.officeMap}>
+          <div className={styles.officeHeader}>
+            <div><span className={styles.sectionLabel}>VIRTUAL OPERATIONS FLOOR</span><h2>Agentic Departments</h2><p>Watch specialized employees work in parallel and hand deliverables across the company.</p></div>
+            <div className={styles.officeLegend}><span><i className={styles.liveDot}/> working</span><span><i className={styles.packetDot}/> work packet</span><span><i className={styles.approvalDot}/> executive gate</span></div>
+          </div>
+          <div className={styles.departmentGrid}>
+            {DEPARTMENTS.map((dept, index) => (
+              <article className={styles.departmentCard} key={dept.name}>
+                <div className={styles.deptTop}><span className={styles.deptIcon}>{dept.icon}</span><span className={styles.deptStatus}><i/>{dept.status}</span></div>
+                <h3>{dept.name}</h3><p className={styles.deptLead}>{dept.lead} · {dept.people} employees</p>
+                <p className={styles.deptAction}>{dept.action}</p>
+                <div className={styles.employeeDots}>{Array.from({length:Math.min(dept.people,8)}).map((_,i)=><span key={i} style={{animationDelay:`-${(index+i)%5}s`}} />)}</div>
+                <div className={styles.deptFooter}><span>encrypted telemetry</span><strong>ACTIVE</strong></div>
+              </article>
+            ))}
+          </div>
+          <div className={styles.handoffRail}>
+            <div className={styles.handoffLabel}>LIVE HANDOFF BUS</div>
+            <div className={styles.handoffTrack}><span className={styles.packetOne}>RFP</span><span className={styles.packetTwo}>FIT</span><span className={styles.packetThree}>DOC</span></div>
+            <div className={styles.handoffNodes}><span>SCOUT</span><span>PROCURE</span><span>PROPOSE</span><span>COMPLY</span><span>OPARA</span></div>
+          </div>
+        </section>
+
+        <div className={styles.grid}>
+          <section className={styles.agentPanel}>
+            <div className={styles.panelHead}><div><h2>State Procurement Employee Floor</h2><p>Every employee shows current work, movement, output and handoff state.</p></div><div className={styles.filters}>{['All','Searching','Reviewing','Qualifying','Escalating'].map(x => <button key={x} className={filter===x?styles.filterActive:''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div>
+            <div className={styles.agentGrid}>
+              {filtered.map((agent, index) => (
+                <button key={agent.code} className={`${styles.agentCard} ${selected?.code===agent.code?styles.agentSelected:''}`} onClick={()=>setSelected(agent)}>
+                  <div className={styles.scanLine}/>
+                  <div className={styles.agentTop}><span className={styles.avatar}>{agent.code}</span><span className={`${styles.status} ${statusClass(agent.status)}`}>{agent.status}</span></div>
+                  <strong>{agent.state} Agent</strong>
+                  <p>{agent.task}</p>
+                  <div className={styles.progress}><i style={{width:`${34 + ((index*13)%63)}%`}}/></div>
+                  <footer><span>{agent.opportunities} opportunities</span><span>{agent.lastAction}</span></footer>
+                  <span className={styles.motionDot} style={{animationDelay:`-${index%8}s`}}/>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <aside className={styles.rightRail}>
+            <section className={styles.livePanel}>
+              <div className={styles.panelHead}><div><h2>Encrypted Activity Feed</h2><p>Live workforce execution telemetry</p></div><span className={styles.live}>LIVE</span></div>
+              <div className={styles.activityFeed}>{activity.map((item,i)=><div key={`${item}-${i}`}><span className={styles.feedDot}/><p>{item}</p><small>{i===0?'now':`${i*2+1}m`}</small></div>)}</div>
+            </section>
+
+            <section className={styles.approvals}>
+              <div className={styles.panelHead}><div><h2>Opara Command Queue</h2><p>Human-in-the-loop executive decisions</p></div><span className={styles.count}>{escalated}</span></div>
+              {approvals.map(item => (
+                <article key={item.id} className={item.status !== 'Pending' ? styles.resolved : ''}>
+                  <div><span>{item.state}</span><strong>{item.fit}% fit</strong></div>
+                  <h3>{item.title}</h3><p>{item.agency} · Due {item.due} · {item.value}</p>
+                  {item.status === 'Pending' ? <footer><button onClick={()=>decide(item.id,'Declined')}>Decline</button><button onClick={()=>decide(item.id,'Approved')}>Approve</button></footer> : <small className={styles.decision}>{item.status}</small>}
+                </article>
+              ))}
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      {selected && <aside className={styles.drawer}>
+        <button className={styles.close} onClick={()=>setSelected(null)}>×</button>
+        <div className={styles.drawerHero}><span className={styles.bigAvatar}>{selected.code}</span><div><p>{selected.region} Region · Employee telemetry</p><h2>{selected.state} Procurement Agent</h2><span className={`${styles.status} ${statusClass(selected.status)}`}>{selected.status}</span></div></div>
+        <section><span className={styles.sectionLabel}>CURRENT ASSIGNMENT</span><h3>{selected.task}</h3><p>Monitoring public-sector sources, reading solicitation material, checking fit against ProcessPilot Technologies capabilities, and escalating only opportunities that warrant executive review.</p></section>
+        <div className={styles.agentStats}><div><strong>{selected.opportunities}</strong><span>Opportunities</span></div><div><strong>24/7</strong><span>Coverage</span></div><div><strong>{selected.lastAction}</strong><span>Last action</span></div></div>
+        <section><span className={styles.sectionLabel}>TOOLS & PLUGINS</span><div className={styles.toolList}>{selected.tools.map(tool=><span key={tool}>✓ {tool}</span>)}</div></section>
+        <section><span className={styles.sectionLabel}>WORKFLOW TRACE</span><ol className={styles.workflow}><li className={styles.done}>Search procurement sources</li><li className={styles.done}>Open & read solicitation</li><li className={styles.current}>Determine ProcessPilot fit</li><li>Build opportunity brief</li><li>Escalate to Opara when warranted</li></ol></section>
+        <button className={styles.primary}>Open full employee workspace →</button>
+      </aside>}
+    </main>
+  );
+}
