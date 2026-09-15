@@ -632,9 +632,9 @@ function Engagements() {
         <div className="eng">
           <article className="ageEngagement">
             <span className="status">Active · 2026 – 2028</span>
-            <h2>AGE Solutions | DoD / DISA</h2>
+            <h2>Sub Contractor | DoD/DISA</h2>
             <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
-            <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
+            <Link className="missionLink" href="/engagements/dod-disa-subcontractor">View engagement <span>→</span></Link>
           </article>
           {eng.map(([n, s, d]) => (
             <article key={n}>
@@ -669,9 +669,9 @@ function Clients() {
         <div className="clientWorkGrid">
           <article className="ageEngagement">
             <span className="status">Active · 2026 – 2028</span>
-            <h2>AGE Solutions | DoD / DISA</h2>
+            <h2>Sub Contractor | DoD/DISA</h2>
             <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
-            <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
+            <Link className="missionLink" href="/engagements/dod-disa-subcontractor">View engagement <span>→</span></Link>
           </article>
           {[
             ["Federal Maritime Commission", "Federal agency end client", "Cybersecurity current-state assessment support, authorization and evidence-gap analysis, risk documentation, Zero Trust review, and security-tool assessment activities."],
@@ -697,7 +697,7 @@ function Clients() {
     </>
   );
 }
-function AgeSolutionsDetail() {
+function DodDisaSubcontractorDetail() {
   const capabilities = [
     "Artificial Intelligence Engineering",
     "Generative AI / Large Language Models",
@@ -739,7 +739,7 @@ function AgeSolutionsDetail() {
     <>
       <Hero
         eye="Active Engagement · 2026 – 2028"
-        title="AGE Solutions | DoD / DISA"
+        title="Sub Contractor | DoD/DISA"
         text="Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments."
       />
       <section className="wrap">
@@ -759,7 +759,7 @@ function AgeSolutionsDetail() {
         <aside className="panel ageProfile">
           <p className="eyebrow orange">Engagement profile</p>
           <h3>Artificial Intelligence Engineer / Emerging Technology & AI Engineering Support</h3>
-          <p><b>Client:</b> AGE Solutions</p>
+          <p><b>Engagement:</b> Subcontractor AI Engineering Support</p>
           <p><b>Customer environment:</b> DoD / DISA</p>
           <p><b>Status:</b> Active</p>
           <p><b>Year:</b> 2026 – 2028</p>
@@ -801,7 +801,7 @@ function AgeSolutionsDetail() {
       <section className="wrap prose ageDisclosure">
         <p className="eyebrow">Controlled disclosure</p>
         <h2>Capability-level engagement information only.</h2>
-        <p>Public descriptions of this engagement intentionally exclude classified information, sensitive government architectures, specific mission operations, government system vulnerabilities, controlled technical information, customer proprietary information, internal AGE Solutions information, and non-public models, systems, data sources, or architectures.</p>
+        <p>Public descriptions of this engagement intentionally exclude classified information, sensitive government architectures, specific mission operations, government system vulnerabilities, controlled technical information, customer proprietary information, prime-contractor or customer proprietary information, and non-public models, systems, data sources, or architectures.</p>
       </section>
       <CTA />
     </>
@@ -1105,12 +1105,12 @@ function Simple({
     </>
   );
 }
-export function AgeSolutionsPage() {
+export function DodDisaSubcontractorPage() {
   return (
     <>
       <a className="skipLink" href="#main-content">Skip to main content</a>
       <Header />
-      <main id="main-content"><AgeSolutionsDetail /></main>
+      <main id="main-content"><DodDisaSubcontractorDetail /></main>
       <Footer />
     </>
   );
