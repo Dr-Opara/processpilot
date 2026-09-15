@@ -1,0 +1,79 @@
+name: Apply ProcessPilot content fix
+
+on:
+  push:
+    branches:
+      - processpilot-content-fix
+    paths:
+      - .github/workflows/apply-processpilot-content-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: processpilot-content-fix
+          persist-credentials: true
+
+      - name: Apply requested content updates
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          site_path = Path('app/site.tsx')
+          site = site_path.read_text()
+
+          old_email = 'contact@processpilottech.com'
+          new_email = 'contract@processpilottech.com'
+          if old_email not in site:
+              raise SystemExit('Existing contact email was not found')
+          site = site.replace(old_email, new_email)
+
+          old_term = '2026 – Present'
+          new_term = '2026 – 2028'
+          if old_term not in site:
+              raise SystemExit('Existing AGE engagement term was not found')
+          site = site.replace(old_term, new_term)
+
+          if 'Supporting the DoD / DISA mission through our prime contractor' not in site:
+              start = site.index('function AgeSolutionsDetail()')
+              marker = '      />\n      <section className="wrap split ageMission">'
+              pos = site.index(marker, start)
+              block = '''      />
+      <section className="wrap">
+        <div className="notice agePrimeNotice">
+          <b>Supporting the DoD / DISA mission through our prime contractor</b>
+          <p>We are thrilled to support DoD / DISA in AI engineering and emerging technology as a subcontractor to AGE Solutions, our prime contractor. Through this engagement, ProcessPilot Technologies contributes secure AI engineering, emerging technology evaluation, AI security, and mission-focused technical support in alignment with applicable federal and customer requirements.</p>
+        </div>
+      </section>
+      <section className="wrap split ageMission">'''
+              site = site[:pos] + site[pos:].replace(marker, block, 1)
+
+          site_path.write_text(site)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Commit validated changes
+        shell: bash
+        run: |
+          git config user.name "ProcessPilot Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/apply-processpilot-content-fix.yml
+          git rm -f .github/workflows/processpilot-content-update.yml
+          git add app/site.tsx
+          git commit -m "Update AGE engagement term and contracts email"
+          git push origin HEAD:processpilot-content-fix
