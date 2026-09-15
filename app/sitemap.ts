@@ -1,11 +1,19 @@
 import type { MetadataRoute } from "next";
 import { pages } from "./site";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return pages
+  const standardPages = pages
     .filter((x) => x !== "client-engagements")
     .map((x) => ({
       url: `https://processpilottech.com${x === "home" ? "" : `/${x}`}`,
-      changeFrequency: "monthly",
+      changeFrequency: "monthly" as const,
       priority: x === "home" ? 1 : 0.7,
     }));
+  return [
+    ...standardPages,
+    {
+      url: "https://processpilottech.com/engagements/age-solutions",
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
 }

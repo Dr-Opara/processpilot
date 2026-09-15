@@ -630,6 +630,12 @@ function Engagements() {
           </p>
         </div>
         <div className="eng">
+          <article className="ageEngagement">
+            <span className="status">Active · 2026 – Present</span>
+            <h2>AGE Solutions | DoD / DISA</h2>
+            <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
+            <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
+          </article>
           {eng.map(([n, s, d]) => (
             <article key={n}>
               <span className="status">{s}</span>
@@ -661,6 +667,12 @@ function Clients() {
           <p>Experience shown below may have been delivered directly, independently, through prior employment, or through a prime or delivery partner. It does not imply endorsement, an active contract, or a direct ProcessPilot client relationship in every case.</p>
         </div>
         <div className="clientWorkGrid">
+          <article className="ageEngagement">
+            <span className="status">Active · 2026 – Present</span>
+            <h2>AGE Solutions | DoD / DISA</h2>
+            <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
+            <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
+          </article>
           {[
             ["Federal Maritime Commission", "Federal agency end client", "Cybersecurity current-state assessment support, authorization and evidence-gap analysis, risk documentation, Zero Trust review, and security-tool assessment activities."],
             ["Massed Compute", "Independent contract engagement", "FedRAMP-oriented cybersecurity assessment, readiness analysis, compliance advisory, and security documentation support."],
@@ -685,6 +697,111 @@ function Clients() {
     </>
   );
 }
+function AgeSolutionsDetail() {
+  const capabilities = [
+    "Artificial Intelligence Engineering",
+    "Generative AI / Large Language Models",
+    "Agentic AI Systems",
+    "Retrieval-Augmented Generation (RAG)",
+    "AI/ML Technology Evaluation",
+    "Proof-of-Concept Development",
+    "Emerging Technology Assessment",
+    "AI Security Engineering",
+    "Secure AI Architecture",
+    "NIST AI RMF",
+    "Zero Trust Architecture",
+    "DoD / DISA Mission Systems",
+    "Cloud & Hybrid AI Integration",
+    "Model Evaluation & Performance Testing",
+    "AI Governance & Risk Management",
+    "DevSecOps Integration",
+    "Technical Architecture & Documentation",
+    "Executive Technical Recommendations",
+  ];
+  const evaluationCriteria = [
+    "Mission effectiveness", "Accuracy", "Groundedness", "Hallucination risk",
+    "Security", "Scalability", "Performance", "Latency",
+    "Integration complexity", "Operational readiness", "Cost", "Maintainability",
+  ];
+  const securityPractices = [
+    "Prompt-injection defense", "Data-leakage prevention",
+    "Identity and access controls", "Least privilege",
+    "Human-in-the-loop controls", "Model and application monitoring",
+    "Logging and auditability", "NIST AI RMF", "NIST RMF",
+    "Zero Trust", "Responsible AI", "Secure GenAI deployment",
+  ];
+  const lifecycle = [
+    "Research", "Technology Evaluation", "Architecture", "Proof of Concept",
+    "Testing", "Security Assessment", "Mission Evaluation", "Recommendation",
+    "Operational Transition",
+  ];
+  return (
+    <>
+      <Hero
+        eye="Active Engagement · 2026 – Present"
+        title="AGE Solutions | DoD / DISA"
+        text="Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments."
+      />
+      <section className="wrap split ageMission">
+        <div>
+          <p className="eyebrow">Mission</p>
+          <h2>Advance emerging AI capabilities with mission-ready engineering discipline.</h2>
+          <p className="large">Evaluate and advance emerging AI technologies that can improve mission capabilities while meeting Department of Defense requirements for security, interoperability, scalability, reliability, and operational readiness.</p>
+          <p className="eyebrow">AI Engineering</p>
+          <p className="large">Design and evaluate AI-enabled architectures involving LLMs, RAG pipelines, agentic AI, multi-step reasoning, tool orchestration, APIs, and secure enterprise integrations.</p>
+        </div>
+        <aside className="panel ageProfile">
+          <p className="eyebrow orange">Engagement profile</p>
+          <h3>Artificial Intelligence Engineer / Emerging Technology & AI Engineering Support</h3>
+          <p><b>Client:</b> AGE Solutions</p>
+          <p><b>Customer environment:</b> DoD / DISA</p>
+          <p><b>Status:</b> Active</p>
+          <p><b>Year:</b> 2026 – Present</p>
+          <p className="fine">Capability-level description only. Classified, controlled, proprietary, system-specific, mission-specific, and customer-sensitive details are intentionally excluded.</p>
+        </aside>
+      </section>
+      <section className="band ageScope">
+        <div className="wrap">
+          <p className="eyebrow">Core capabilities / scope</p>
+          <h2>AI Engineering | AI Security | Cybersecurity | Emerging Technology | Federal Mission Support</h2>
+          <div className="tags">{capabilities.map((capability) => <span key={capability}>{capability}</span>)}</div>
+        </div>
+      </section>
+      <section className="wrap cards two ageDetailGrid">
+        <article className="card">
+          <p className="eyebrow">Emerging Technology Evaluation</p>
+          <h2>Structured technical evaluation for mission use.</h2>
+          <p>Research new AI technologies and develop structured evaluation plans, technical assessments, demonstrations, prototypes, and proofs of concept.</p>
+          <ul>{evaluationCriteria.map((item) => <li key={item}>{item}</li>)}</ul>
+        </article>
+        <article className="card">
+          <p className="eyebrow">AI Security & Governance</p>
+          <h2>Secure adoption from architecture through operation.</h2>
+          <p>Support secure AI adoption through engineering controls, governance, risk management, and accountable human oversight.</p>
+          <ul>{securityPractices.map((item) => <li key={item}>{item}</li>)}</ul>
+        </article>
+        <article className="card">
+          <p className="eyebrow">DoD / DISA Integration</p>
+          <h2>Mission-aware integration across cloud and hybrid environments.</h2>
+          <p>Support the assessment and integration of AI capabilities into cloud, hybrid, and mission environments while accounting for authorization, cybersecurity, interoperability, architecture, and operational requirements.</p>
+        </article>
+        <article className="card">
+          <p className="eyebrow">Prototype to Production</p>
+          <h2>Move from research to operational transition.</h2>
+          <p>Support a disciplined lifecycle from initial evaluation through secure mission transition.</p>
+          <div className="tags">{lifecycle.map((step) => <span key={step}>{step}</span>)}</div>
+        </article>
+      </section>
+      <section className="wrap prose ageDisclosure">
+        <p className="eyebrow">Controlled disclosure</p>
+        <h2>Capability-level engagement information only.</h2>
+        <p>Public descriptions of this engagement intentionally exclude classified information, sensitive government architectures, specific mission operations, government system vulnerabilities, controlled technical information, customer proprietary information, internal AGE Solutions information, and non-public models, systems, data sources, or architectures.</p>
+      </section>
+      <CTA />
+    </>
+  );
+}
+
 function Insights() {
   return (
     <>
@@ -982,6 +1099,17 @@ function Simple({
     </>
   );
 }
+export function AgeSolutionsPage() {
+  return (
+    <>
+      <a className="skipLink" href="#main-content">Skip to main content</a>
+      <Header />
+      <main id="main-content"><AgeSolutionsDetail /></main>
+      <Footer />
+    </>
+  );
+}
+
 export function SitePage({ page }: { page: PageKey }) {
   const map: Record<PageKey, ReactNode> = {
     home: (
