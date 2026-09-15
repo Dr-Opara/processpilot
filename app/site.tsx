@@ -143,7 +143,7 @@ function Header() {
     <header>
       <div className="utility">
         <span>STRATEGY. ENGINEERING. SECURITY.</span>
-        <a href="mailto:contact@processpilottech.com">contact@processpilottech.com</a>
+        <a href="mailto:contract@processpilottech.com">contract@processpilottech.com</a>
         <a href="tel:+13467454398">(346) 745-4398</a>
       </div>
       <div className="nav">
@@ -215,8 +215,8 @@ function Footer() {
             <a href="tel:+12023868322">202-386-8322</a>
             <br />
             <br />
-            <a href="mailto:contact@processpilottech.com">
-              contact@processpilottech.com
+            <a href="mailto:contract@processpilottech.com">
+              contract@processpilottech.com
             </a>
           </p>
         </div>
@@ -495,8 +495,8 @@ function Contracting() {
             Nationwide delivery
           </p>
           <p>
-            <a href="mailto:contact@processpilottech.com">
-              contact@processpilottech.com
+            <a href="mailto:contract@processpilottech.com">
+              contract@processpilottech.com
             </a>
             <br />
             (346) 745-4398
@@ -631,7 +631,7 @@ function Engagements() {
         </div>
         <div className="eng">
           <article className="ageEngagement">
-            <span className="status">Active · 2026 – Present</span>
+            <span className="status">Active · 2026 – 2028</span>
             <h2>AGE Solutions | DoD / DISA</h2>
             <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
             <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
@@ -668,7 +668,7 @@ function Clients() {
         </div>
         <div className="clientWorkGrid">
           <article className="ageEngagement">
-            <span className="status">Active · 2026 – Present</span>
+            <span className="status">Active · 2026 – 2028</span>
             <h2>AGE Solutions | DoD / DISA</h2>
             <p>Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments.</p>
             <Link className="missionLink" href="/engagements/age-solutions">View engagement <span>→</span></Link>
@@ -738,10 +738,16 @@ function AgeSolutionsDetail() {
   return (
     <>
       <Hero
-        eye="Active Engagement · 2026 – Present"
+        eye="Active Engagement · 2026 – 2028"
         title="AGE Solutions | DoD / DISA"
         text="Artificial Intelligence engineering and emerging technology support focused on secure GenAI, agentic AI, RAG, AI/ML technology evaluations, proof-of-concept development, cloud integration, AI security, and operational deployment within DoD mission environments."
       />
+      <section className="wrap">
+        <div className="notice agePrimeNotice">
+          <b>Supporting the DoD / DISA mission through our prime contractor</b>
+          <p>We are thrilled to support DoD / DISA in AI engineering and emerging technology as a subcontractor to AGE Solutions, our prime contractor. Through this engagement, ProcessPilot Technologies contributes secure AI engineering, emerging technology evaluation, AI security, and mission-focused technical support in alignment with applicable federal and customer requirements.</p>
+        </div>
+      </section>
       <section className="wrap split ageMission">
         <div>
           <p className="eyebrow">Mission</p>
@@ -756,7 +762,7 @@ function AgeSolutionsDetail() {
           <p><b>Client:</b> AGE Solutions</p>
           <p><b>Customer environment:</b> DoD / DISA</p>
           <p><b>Status:</b> Active</p>
-          <p><b>Year:</b> 2026 – Present</p>
+          <p><b>Year:</b> 2026 – 2028</p>
           <p className="fine">Capability-level description only. Classified, controlled, proprietary, system-specific, mission-specific, and customer-sensitive details are intentionally excluded.</p>
         </aside>
       </section>
@@ -888,9 +894,9 @@ function Form() {
       <section className="wrap directContact">
         <div>
           <p className="eyebrow">Email</p>
-          <h2><a href="mailto:contact@processpilottech.com">contact@processpilottech.com</a></h2>
+          <h2><a href="mailto:contract@processpilottech.com">contract@processpilottech.com</a></h2>
           <p className="large">Send a short description of your organization, project, desired timeline, and the best way to reach you.</p>
-          <a className="btn" href="mailto:contact@processpilottech.com?subject=ProcessPilot%20Project%20Inquiry">Email ProcessPilot</a>
+          <a className="btn" href="mailto:contract@processpilottech.com?subject=ProcessPilot%20Project%20Inquiry">Email ProcessPilot</a>
         </div>
         <div>
           <p className="eyebrow">Phone</p>
@@ -937,8 +943,8 @@ function Simple({
             <a href="tel:+12023868322">202-386-8322</a>
           </p>
           <p>
-            <a href="mailto:contact@processpilottech.com">
-              contact@processpilottech.com
+            <a href="mailto:contract@processpilottech.com">
+              contract@processpilottech.com
             </a>
           </p>
           <h2>Service areas</h2>
@@ -987,8 +993,8 @@ function Simple({
           <p>
             You may request access, correction, or deletion of information you
             submitted by contacting{" "}
-            <a href="mailto:contact@processpilottech.com">
-              contact@processpilottech.com
+            <a href="mailto:contract@processpilottech.com">
+              contract@processpilottech.com
             </a>
             . We may retain limited records when legally required or necessary
             to protect our rights.
@@ -1054,8 +1060,8 @@ function Simple({
           <h2>Changes and contact</h2>
           <p>
             We may update this website and these terms. Questions may be sent to{" "}
-            <a href="mailto:contact@processpilottech.com">
-              contact@processpilottech.com
+            <a href="mailto:contract@processpilottech.com">
+              contract@processpilottech.com
             </a>
             .
           </p>
@@ -1082,8 +1088,8 @@ function Simple({
         <p>
           If you believe you have identified a security issue affecting this
           website, email{" "}
-          <a href="mailto:contact@processpilottech.com">
-            contact@processpilottech.com
+          <a href="mailto:contract@processpilottech.com">
+            contract@processpilottech.com
           </a>{" "}
           with a clear description and steps to reproduce it. Do not access,
           alter, retain, or disclose data that does not belong to you.
