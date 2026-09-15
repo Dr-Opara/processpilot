@@ -1,2 +1,5 @@
-import { SitePage } from "./site";
-export default function Home(){return <SitePage page="home"/>}
+import AgentsCommand from './agents-command';
+
+export default function Home() {
+  return <AgentsCommand />;
+}
